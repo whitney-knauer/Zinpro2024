@@ -1,0 +1,99 @@
+---
+title: "Health Analysis"
+author: "WAK"
+date: "today"
+format: 
+  html:
+    toc: true 
+    toc-float: true
+    toc-location: left
+---
+
+## 
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+library(epiDisplay)
+library(knitr)
+library(pROC)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(gmodels)
+library(ggbeeswarm)
+library(dplyr)
+library(ggpubr)
+library(psych)
+library(lme4)
+library(Matrix)
+library(lmerTest)
+library(irr)
+library(lmerTest)
+library(emmeans)
+library(doBy)       
+library(gmodels)    
+library(car)           
+library(cowplot)       
+library(gridGraphics)  
+library(multcomp)
+library(hms)
+```
+
+```{r}
+#| include: false
+#| echo: false
+#| warning: false
+
+enroll <- read_csv('data/enroll with IgG.csv')
+
+clean <- 
+ enroll[-c(157:998), ]
+
+
+```
+
+## Data Exploration
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Serum IgG at 8 hrs", 
+       title = "Boxplot of Treatment vs. IgG at 8 hours")
+
+
+
+
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Serum IgG at 24 hrs", 
+       title = "Boxplot of Treatment vs. IgG at 24 hours")
+
+
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+```
