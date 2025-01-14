@@ -40,6 +40,7 @@ library(cowplot)
 library(gridGraphics)  
 library(multcomp)
 library(hms)
+library(gt)
 ```
 
 ```{r}
@@ -94,6 +95,27 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
 ```{r}
 #| echo: false
 #| warning: false
+
+n_group <- 
+  clean |> 
+  group_by(D0Fed2TxGrp) |> 
+  summarize (Count = n())
+
+gt(n_group)
+
+summary_sex <- 
+  clean |> 
+  group_by(D0Fed2TxGrp, SexMF) |> 
+  summarize(Count = n())
+
+gt(summary_sex)
+
+summary_cb <- 
+  clean |> 
+  group_by(D0Fed2TxGrp, CrossbredYN) |> 
+  summarize(Count = n())
+
+gt(summary_cb)
 
 
 ```
