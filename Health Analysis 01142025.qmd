@@ -96,6 +96,48 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
 #| echo: false
 #| warning: false
 
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed1MinOld, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Age at Feeding", 
+       title = "Boxplot of Treatment vs. Age at First Feeding(hrs)")
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2HrsOld, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Age at Feeding", 
+       title = "Boxplot of Treatment vs. Age at Second Feeding(hrs)")
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed12IntervHrs, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Interval between Feedings (hrs)", 
+       title = "Boxplot of Treatment vs. Interval between first and second feeding")
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
 n_group <- 
   clean |> 
   group_by(D0Fed2TxGrp) |> 
@@ -116,6 +158,9 @@ summary_cb <-
   summarize(Count = n())
 
 gt(summary_cb)
+
+
+
 
 
 ```
