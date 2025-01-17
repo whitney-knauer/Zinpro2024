@@ -166,5 +166,34 @@ merged_data <- merged_data |>
   ) |> 
   ungroup()
 
+#creates a new variable called hoursfrom which groups behaviors by hours from the second feeding. This will allow looking at the 8hrs prior to feeding and the 8 or 12 hrs later. Should probably make a new df to look at that. 
 
+merged_data <- merged_data |> 
+  mutate(
+    hoursfrom = case_when(
+      tffeed == 0 ~ 0,                                      
+      tffeed < 0 ~ as.integer((abs(tffeed) - 1) %/% 4 + 1) * -1,  
+      tffeed > 0 ~ as.integer((tffeed - 1) %/% 4 + 1)           
+    )
+  )
+
+
+standing <- merged_data |> 
+   filter(hoursfrom >= -8 & hoursfrom <= 8) |> 
+  group_by(hoursfrom) |> 
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`)
+  ) |> 
+  ungroup()
+
+standing |> 
+ggplot(aes(x = hoursfrom, y = `Lying [t]`)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Lying Time in the 16hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Lying Time (s)"
+  ) 
 ```
