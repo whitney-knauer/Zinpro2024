@@ -178,7 +178,20 @@ merged_data <- merged_data |>
   )
 
 
-standing <- merged_data |> 
+
+```
+
+## New Data Set and Data Visualization!
+
+This data set uses the merged_data set and filters out all hours except for the +/-8hrs around feeding time. Then makes a graph of calf behavior before and after feeding.
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+
+laying <- merged_data |> 
    filter(hoursfrom >= -8 & hoursfrom <= 8) |> 
   group_by(hoursfrom) |> 
   summarize(
@@ -186,7 +199,7 @@ standing <- merged_data |>
   ) |> 
   ungroup()
 
-standing |> 
+laying |> 
 ggplot(aes(x = hoursfrom, y = `Lying [t]`)) +
   theme_classic() +
   geom_point() +  
