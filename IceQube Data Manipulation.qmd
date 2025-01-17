@@ -185,6 +185,8 @@ merged_data <- merged_data |>
 
 This data set uses the merged_data set and filters out all hours except for the +/-8hrs around feeding time. Then makes a graph of calf behavior before and after feeding.
 
+# something is wonky with the times - ***need to sum by hour, then average across hours!***
+
 ```{r}
 #| include: false
 #| warning: false
@@ -197,16 +199,45 @@ laying <- merged_data |>
   summarize(
     `Lying [t]` = mean(`Lying [t]`)
   ) |> 
+  mutate(
+    lyingm = `Lying [t]`/60) |> 
   ungroup()
 
 laying |> 
-ggplot(aes(x = hoursfrom, y = `Lying [t]`)) +
+ggplot(aes(x = hoursfrom, y = lyingm)) +
   theme_classic() +
   geom_point() +  
   geom_line() +   
   labs(
     title = "Lying Time in the 16hrs around the second feeding",
     x = "Hours from feeding Time",
-    y = "Lying Time (s)"
+    y = "Lying Time (min)"
+  ) 
+```
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+standing <- merged_data |> 
+   filter(hoursfrom >= -8 & hoursfrom <= 8) |> 
+  group_by(hoursfrom) |> 
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`)
+  ) |> 
+  mutate(
+    standm = `Standing [t]`/60) |> 
+  ungroup()
+
+standing |> 
+ggplot(aes(x = hoursfrom, y = standm)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Standin Time in the 16hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Standing Time (min)"
   ) 
 ```
