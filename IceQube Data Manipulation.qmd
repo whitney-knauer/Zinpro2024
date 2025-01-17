@@ -1,0 +1,121 @@
+---
+title: "IceQube Play"
+author: "WAK"
+date: "today"
+format: 
+  html:
+    toc: true 
+    toc-float: true
+    toc-location: left
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+library(epiDisplay)
+library(knitr)
+library(pROC)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(gmodels)
+library(ggbeeswarm)
+library(dplyr)
+library(readr)
+library(ggpubr)
+library(psych)
+library(lme4)
+library(Matrix)
+library(lmerTest)
+library(irr)
+library(lmerTest)
+library(emmeans)
+library(doBy)       
+library(gmodels)    
+library(car)           
+library(cowplot)       
+library(gridGraphics)  
+library(multcomp)
+library(hms)
+library(gt)
+library(lubridate)
+```
+
+## Data Steps
+
+Pull in data. Goal is to bring in IceQube data to then match to specific calves and specific times. Let's see!
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+
+directory <- "C:/Users/knaue020/Documents/GitHub/Zinpro2024/data/IceQube Data"
+csv_files <- list.files(path=directory, pattern= "\\.csv$", full.names=TRUE)
+
+first_file <- csv_files[1]
+first_data <- read.csv(first_file, skip = 7, header = FALSE, stringsAsFactors = FALSE)
+
+col_names <- first_data[1, ]
+
+data_list <- lapply(csv_files, function(file) {
+full_data <- read.csv(file, skip = 8, header = FALSE, stringsAsFactors = FALSE)
+  colnames(full_data) <- col_names
+  full_data$file_name <- gsub("\\.csv$", "", basename(file))
+  
+  return(full_data)
+})
+
+combined_data <- bind_rows(data_list, .id = "source_file")
+
+
+
+combined_data <- 
+  combined_data |> 
+  mutate(
+    file_name_clean = str_remove(file_name, "^IceQube Extended\\s+"),
+    device_id = str_extract(file_name_clean, "^[^_]+"),           
+    date = str_extract(file_name_clean, "(?<=_)[^_]+(?=__)"),   
+    time = str_extract(file_name_clean, "(?<=__)[^;].*"),        
+    time = str_replace_all(time, ";", ":")
+  ) |> 
+  select(-file_name_clean)
+
+
+```
+
+## Merge with Calf Key
+
+Now Steps taken to merge calfkey with combined_data set so we can start arduous process of tagging on and off times along with feeding times.
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+
+key<- read_csv("data/IceQubeKey.csv")
+
+key<-
+  key |> 
+  mutate(IceCubeNumber = as.character(IceCubeNumber))
+
+key<-
+  key |> 
+  rename(
+    date = Birthdate, 
+    device_id = IceCubeNumber
+  )
+
+key<-key |> 
+  mutate(date=myd(date))
+
+merged_data <- 
+  combined_data |> 
+  left_join(key, by = c("device_id", "date"))
+
+
+```

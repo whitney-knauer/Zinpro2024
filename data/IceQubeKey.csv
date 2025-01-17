@@ -1,4 +1,4 @@
-CalfID,Birthdate,IceCubeNumber,IceCubeOnTime,D0Fed1Time,D0Fed2Time,IceCubeOffDate,IceCubeOffTime
+CalfID,Birthdate,IceCubeNumber,OnTime,Fed1Time,Fed2Time,OffDate,OffTime
 117,6/10/2024,61371948,11:03,11:02,19:02,6/13/2024,10:04
 80,7/2/2024,61371948,13:36,13:35,21:35,7/5/2024,9:10
 61,7/10/2024,61371948,13:33,13:48,21:48,7/13/2024,9:00
