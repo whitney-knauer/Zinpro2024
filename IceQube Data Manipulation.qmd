@@ -73,16 +73,28 @@ combined_data <- bind_rows(data_list, .id = "source_file")
 
 
 
+
 combined_data <- 
   combined_data |> 
   mutate(
     file_name_clean = str_remove(file_name, "^IceQube Extended\\s+"),
     device_id = str_extract(file_name_clean, "^[^_]+"),           
-    date = str_extract(file_name_clean, "(?<=_)[^_]+(?=__)"),   
+    datem = str_extract(file_name_clean, "(?<=_)[^_]+(?=__)"), 
+    datem = mdy(datem),
     time = str_extract(file_name_clean, "(?<=__)[^;].*"),        
-    time = str_replace_all(time, ";", ":")
+    time = str_replace_all(time, ";", ":"), 
   ) |> 
-  select(-file_name_clean)
+  select(-file_name_clean) 
+
+
+combined_data <- 
+  combined_data |> 
+  mutate(
+          Date=mdy(Date),
+          Time=hms::as.hms(Time), 
+         `Standing [t]`=hms::as.hms(`Standing [t]`), 
+         `Lying [t]`=hms::as.hms(`Lying [t]`), 
+         time=hms::as.hms(time))
 
 
 ```
@@ -106,16 +118,53 @@ key<-
 key<-
   key |> 
   rename(
-    date = Birthdate, 
+    datem = Birthdate, 
     device_id = IceCubeNumber
   )
 
 key<-key |> 
-  mutate(date=myd(date))
+  mutate(datem=mdy(datem), 
+         OnDate=mdy(OnDate), 
+         OffDate=mdy(OffDate))
 
 merged_data <- 
   combined_data |> 
-  left_join(key, by = c("device_id", "date"))
+  select(-file_name) |> 
+  left_join(key, by = c("device_id", "datem"))
+
+
+```
+
+Have to manipulate the key to match with the date the tags were cleared. So added an "on date" variable to the merged data set, which corresponds to the bdat of the calf.
+
+Not sure how to proceed. Now need to figure out how to tag when the IceQubes went on, when the second feeding was administered, and when the tags came off so that the data is only representative of when the tags were on the calf. Would additionally like to add some variables that show time from second feeding (0) with time before going -1, -2, etc, and time after going +1, +2, for each calf.
+
+## Using Merged Data Set to do more stuff
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+#adds a variable called "match_flag" that flags when a calf was fed their second feeding
+
+merged_data <- merged_data |> 
+  mutate(
+    match_flag = if_else(
+      Date == OnDate & 
+      abs(as.numeric(Time - Fed2Time, units = "mins")) <= 7.5, 
+      1,  
+      0    )) 
+
+#adds variable tffeed, which calls time of feeding 0, all time before progressively negative, all time after progressively positive
+
+merged_data <- merged_data |> 
+  group_by(CalfID) |>  
+  mutate(
+    tffeed = if_else(match_flag == 1, 0, NA_integer_),  
+    tffeed = if_else(is.na(tffeed), row_number() - which(match_flag == 1), tffeed)  
+  ) |> 
+  ungroup()
 
 
 ```
