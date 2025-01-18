@@ -132,6 +132,9 @@ merged_data <-
   select(-file_name) |> 
   left_join(key, by = c("device_id", "datem"))
 
+na_count <- sum(!complete.cases(merged_data))
+print(na_count)
+na_data <- merged_data[!complete.cases(merged_data), ]
 
 ```
 
@@ -185,8 +188,6 @@ merged_data <- merged_data |>
 
 This data set uses the merged_data set and filters out all hours except for the +/-8hrs around feeding time. Then makes a graph of calf behavior before and after feeding.
 
-# something is wonky with the times - ***need to sum by hour, then average across hours!***
-
 ```{r}
 #| include: false
 #| warning: false
@@ -194,14 +195,17 @@ This data set uses the merged_data set and filters out all hours except for the 
 
 
 laying <- merged_data |> 
-   filter(hoursfrom >= -8 & hoursfrom <= 8) |> 
-  group_by(hoursfrom) |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 16) |> 
+  group_by(CalfID, hoursfrom) |>  
   summarize(
-    `Lying [t]` = mean(`Lying [t]`)
-  ) |> 
+    `Lying [t]` = sum(`Lying [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom) |>  
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`, na.rm = TRUE)) |> 
   mutate(
-    lyingm = `Lying [t]`/60) |> 
+    lyingm = `Lying [t]` / 60) |> 
   ungroup()
+
 
 laying |> 
 ggplot(aes(x = hoursfrom, y = lyingm)) +
@@ -209,10 +213,11 @@ ggplot(aes(x = hoursfrom, y = lyingm)) +
   geom_point() +  
   geom_line() +   
   labs(
-    title = "Lying Time in the 16hrs around the second feeding",
+    title = "Lying Time in the 24hrs around the second feeding",
     x = "Hours from feeding Time",
-    y = "Lying Time (min)"
-  ) 
+    y = "Lying Time (min)")+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
 ```{r}
@@ -221,14 +226,17 @@ ggplot(aes(x = hoursfrom, y = lyingm)) +
 
 
 standing <- merged_data |> 
-   filter(hoursfrom >= -8 & hoursfrom <= 8) |> 
-  group_by(hoursfrom) |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 16) |> 
+  group_by(CalfID, hoursfrom) |>  
   summarize(
-    `Standing [t]` = mean(`Standing [t]`)
-  ) |> 
+    `Standing [t]` = sum(`Standing [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom) |>  
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`, na.rm = TRUE)) |> 
   mutate(
-    standm = `Standing [t]`/60) |> 
+    standm = `Standing [t]` / 60) |> 
   ungroup()
+
 
 standing |> 
 ggplot(aes(x = hoursfrom, y = standm)) +
@@ -236,8 +244,75 @@ ggplot(aes(x = hoursfrom, y = standm)) +
   geom_point() +  
   geom_line() +   
   labs(
-    title = "Standin Time in the 16hrs around the second feeding",
+    title = "Standin Time in the 24hrs around the second feeding",
     x = "Hours from feeding Time",
-    y = "Standing Time (min)"
-  ) 
+    y = "Standing Time (min)") +
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
+```
+
+## Graphs by Treatment Group
+
+```{r}
+{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+
+layinggrp <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 16) |> 
+  group_by(CalfID, hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Lying [t]` = sum(`Lying [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`, na.rm = TRUE)) |> 
+  mutate(
+    lyingm = `Lying [t]` / 60) |> 
+  ungroup()
+
+
+layinggrp |> 
+ggplot(aes(x = hoursfrom, y = lyingm, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Lying Time in the 24hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Lying Time (min)")+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
+```
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+standinggrp <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 16) |> 
+  group_by(CalfID, hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Standing [t]` = sum(`Standing [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`, na.rm = TRUE)) |> 
+  mutate(
+    standm = `Standing [t]` / 60) |> 
+  ungroup()
+
+
+standinggrp |> 
+ggplot(aes(x = hoursfrom, y = standm, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Standin Time in the 24hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Standing Time (min)") +
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
