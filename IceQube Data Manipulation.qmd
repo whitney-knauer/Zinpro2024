@@ -151,15 +151,22 @@ Not sure how to proceed. Now need to figure out how to tag when the IceQubes wen
 
 #adds a variable called "match_flag" that flags when a calf was fed their second feeding
 
+#but want to flag a bit different. Need to think on how to do this!
+
 merged_data <- merged_data |> 
   mutate(
     match_flag = if_else(
       Date == OnDate & 
-      abs(as.numeric(Time - Fed2Time, units = "mins")) <= 7.5, 
+        (as.numeric(Fed2Time - Time, units="mins") >=0 &
+        as.numeric(Fed2Time - Time, units = "mins") <= 14), 
       1,  
       0    )) 
 
 #adds variable tffeed, which calls time of feeding 0, all time before progressively negative, all time after progressively positive
+
+merged_data |> 
+  group_by(CalfID) |> 
+  summarize(matches = list(which(match_flag == 1)))
 
 merged_data <- merged_data |> 
   group_by(CalfID) |>  
@@ -181,7 +188,7 @@ merged_data <- merged_data |>
   )
 
 
-
+write.csv(merged_data, "data/merged_data.csv", row.names = FALSE)
 ```
 
 ## New Data Set and Data Visualization!
@@ -189,7 +196,6 @@ merged_data <- merged_data |>
 This data set uses the merged_data set and filters out all hours except for the +/-8hrs around feeding time. Then makes a graph of calf behavior before and after feeding.
 
 ```{r}
-#| include: false
 #| warning: false
 #| echo: false
 
@@ -254,8 +260,6 @@ ggplot(aes(x = hoursfrom, y = standm)) +
 ## Graphs by Treatment Group
 
 ```{r}
-{r}
-#| include: false
 #| warning: false
 #| echo: false
 
@@ -310,9 +314,73 @@ ggplot(aes(x = hoursfrom, y = standm, color=D0Fed2TxGrp)) +
   geom_point() +  
   geom_line() +   
   labs(
-    title = "Standin Time in the 24hrs around the second feeding",
+    title = "Standing Time in the 24hrs around the second feeding",
     x = "Hours from feeding Time",
     y = "Standing Time (min)") +
     scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
+```
+
+## Time (15min increments vs. hours)
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+layinggrp_min <- merged_data |> 
+  filter(tffeed >= -8 & tffeed <= 8) |> 
+  group_by(CalfID, tffeed, D0Fed2TxGrp) |>  
+  summarize(
+    `Lying [t]` = sum(`Lying [t]`, na.rm = TRUE)) |> 
+  group_by(tffeed, D0Fed2TxGrp) |>  
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`, na.rm = TRUE)) |> 
+  mutate(
+    lyingm = `Lying [t]` / 60) |> 
+  ungroup()
+
+
+layinggrp_min |> 
+ggplot(aes(x = tffeed, y = lyingm, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Lying Time in the 2hrs around the second feeding",
+    x = "Min(15) from feeding Time",
+    y = "Lying Time (min)")+
+    scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+```
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+standinggrp_min <- merged_data |> 
+  filter(tffeed >= -8 & tffeed <= 8) |> 
+  group_by(CalfID, tffeed, D0Fed2TxGrp) |>  
+  summarize(
+    `Standing [t]` = sum(`Standing [t]`, na.rm = TRUE)) |> 
+  group_by(tffeed, D0Fed2TxGrp) |>  
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`, na.rm = TRUE)) |> 
+  mutate(
+    standm = `Standing [t]` / 60) |> 
+  ungroup()
+
+
+standinggrp_min |> 
+ggplot(aes(x = tffeed, y = standm, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Standing Time in the 4hrs around the second feeding",
+    x = "Min(15) from feeding Time",
+    y = "Standing Time (min)") +
+    scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
 ```
