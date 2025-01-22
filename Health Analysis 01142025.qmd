@@ -53,10 +53,30 @@ enroll <- read_csv('data/enroll with IgG.csv')
 clean <- 
  enroll[-c(157:998), ]
 
+clean <-
+  clean |> 
+  mutate(
+    D0Fed2VolRefusemL = as.numeric(D0Fed2VolRefusemL)
+  )
+
 
 ```
 
 ## Data Exploration
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = BirthWtLbs, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Birth Weight (lbs)", 
+       title = "Boxplot of Treatment vs. Birth Weight")
+```
 
 ```{r}
 #| echo: false
@@ -138,29 +158,73 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed12IntervHrs, color=D0Fed2TxGrp)) 
 #| echo: false
 #| warning: false
 
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = D0Fed2VolRefusemL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Refusal (ml)", 
+       title = "Boxplot of Treatment vs. refusal at second feeding")
+
+
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = D1MilkRefusemL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "24hr milk refusal", 
+       title = "Boxplot of Treatment vs. 24hr milk refusal")
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
 n_group <- 
   clean |> 
   group_by(D0Fed2TxGrp) |> 
   summarize (Count = n())
 
-gt(n_group)
 
 summary_sex <- 
   clean |> 
   group_by(D0Fed2TxGrp, SexMF) |> 
   summarize(Count = n())
 
-gt(summary_sex)
 
 summary_cb <- 
   clean |> 
   group_by(D0Fed2TxGrp, CrossbredYN) |> 
   summarize(Count = n())
 
-gt(summary_cb)
+
+summary_size<-
+  clean |> 
+  group_by(D0Fed2TxGrp, CalfSizeLgSm) |> 
+  summarize(Count=n())
+
+
+sick_<-
+  clean |> 
+  group_by(D0Fed2TxGrp, FarmDzYN) |> 
+  summarize(count=n())
 
 
 
-
-
+n_group
+summary_sex
+summary_cb
+summary_size
+sick_
 ```
