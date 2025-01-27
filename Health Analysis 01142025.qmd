@@ -59,6 +59,7 @@ clean <-
     D0Fed2VolRefusemL = as.numeric(D0Fed2VolRefusemL)
   )
 
+stp <- read_csv('data/stptrouw.csv')
 
 ```
 
@@ -89,7 +90,8 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, color=D0Fed2TxGrp)) +
   geom_jitter() +
   labs(x = "Second Feeding Treatment", 
        y = "Serum IgG at 8 hrs", 
-       title = "Boxplot of Treatment vs. IgG at 8 hours")
+       title = "Treatment vs. IgG at 8 hours")+
+  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
 
 
 
@@ -107,9 +109,26 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
   geom_jitter() +
   labs(x = "Second Feeding Treatment", 
        y = "Serum IgG at 24 hrs", 
-       title = "Boxplot of Treatment vs. IgG at 24 hours")
+       title = "Treatment vs. IgG at 24 hours")+
+  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
+ 
 
 
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+ggplot(mapping = aes(x = CalfSizeLgSm, y = Result24hrgL, color=CalfSizeLgSm)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Calf Size", 
+       y = "Serum IgG at 24 hrs", 
+       title = "Calf Size vs. IgG at 24 hours")+
+  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
 ```
 
 ```{r}
@@ -227,4 +246,41 @@ summary_sex
 summary_cb
 summary_size
 sick_
+```
+
+### Histogram of stp for presentation
+
+```{r}
+#| echo: false
+#| warning: false
+
+stp<-
+  stp |> 
+  filter (
+    STP <= 10)
+
+
+fpt<- 
+  stp |> 
+  mutate(
+    FPT = case_when(
+      STP<= 5.1 ~ 1, 
+      STP > 5.1 ~ 0)) |> 
+  group_by(FPT) |> 
+  count()
+
+
+stp |> 
+ggplot(mapping = aes(x = STP)) +
+  theme_classic() +
+  geom_histogram(bins =40, fill = "steelblue", color = "black") +
+  scale_x_continuous(breaks = seq(0, max(table(stp$STP)), by = 1))+
+  labs( 
+       y = "Number of Calves", 
+       x = "Serum Total Protein (g/dL)",
+       title = "STP of calves at Arrival") 
+  
+
+
+
 ```
