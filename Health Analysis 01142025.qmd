@@ -121,6 +121,10 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
 #| warning: false
 
 clean |> 
+  group_by(CalfSizeLgSm) |> 
+  count()
+
+clean |> 
 ggplot(mapping = aes(x = CalfSizeLgSm, y = Result24hrgL, color=CalfSizeLgSm)) +
   theme_classic()+
   geom_boxplot(outlier.shape=NA) +
