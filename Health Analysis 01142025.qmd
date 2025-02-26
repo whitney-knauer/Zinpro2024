@@ -1,5 +1,5 @@
 ---
-title: "Health Analysis"
+title: "Calf Health and IgG Analysis"
 author: "WAK"
 date: "today"
 format: 
@@ -48,167 +48,43 @@ library(gt)
 #| echo: false
 #| warning: false
 
-enroll <- read_csv('data/enroll with IgG.csv')
+enroll <- read_csv('data/Zinpro 2024 enrollment final.csv')
 
-clean <- 
- enroll[-c(157:998), ]
 
 clean <-
+  enroll |> 
+  filter(removeyn != 1)
+
+#removes calf 113, who did not have correct information    
+
+#changes these variables to "hours" vs. "seconds"
+clean$DOFed2HrsOld <- as.numeric(clean$DOFed2HrsOld)/3600
+clean$DOFed12IntervHrs <- as.numeric(clean$DOFed12IntervHrs)/3600
+clean$DOFed1MinOld <- as.numeric(clean$DOFed1MinOld)/60
+  
+clean<- 
   clean |> 
-  mutate(
-    D0Fed2VolRefusemL = as.numeric(D0Fed2VolRefusemL)
-  )
-
-stp <- read_csv('data/stptrouw.csv')
-
-```
-
-## Data Exploration
-
-```{r}
-#| echo: false
-#| warning: false
-
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = BirthWtLbs, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Birth Weight (lbs)", 
-       title = "Boxplot of Treatment vs. Birth Weight")
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Serum IgG at 8 hrs", 
-       title = "Treatment vs. IgG at 8 hours")+
-  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
+  mutate(refuse=
+           case_when(
+             D0Fed2VolRefusemL > 0    ~ 1, 
+             D0Fed2VolRefusemL == 0   ~ 0))
 
 
+clean<- 
+  clean |> 
+  mutate(refuseM1=
+           case_when(
+             D1MilkRefusemL > 0    ~ 1, 
+             D1MilkRefusemL == 0   ~ 0))
 
 
 ```
 
-```{r}
-#| echo: false
-#| warning: false
+## Descriptive Analysis 
 
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Serum IgG at 24 hrs", 
-       title = "Treatment vs. IgG at 24 hours")+
-  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
- 
+### Calf Enrollment Characteristics
 
-
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-clean |> 
-  group_by(CalfSizeLgSm) |> 
-  count()
-
-clean |> 
-ggplot(mapping = aes(x = CalfSizeLgSm, y = Result24hrgL, color=CalfSizeLgSm)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Calf Size", 
-       y = "Serum IgG at 24 hrs", 
-       title = "Calf Size vs. IgG at 24 hours")+
-  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed1MinOld, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Age at Feeding", 
-       title = "Boxplot of Treatment vs. Age at First Feeding(hrs)")
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2HrsOld, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Age at Feeding", 
-       title = "Boxplot of Treatment vs. Age at Second Feeding(hrs)")
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed12IntervHrs, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Interval between Feedings (hrs)", 
-       title = "Boxplot of Treatment vs. Interval between first and second feeding")
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-#| echo: false
-#| warning: false
-
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = D0Fed2VolRefusemL, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Refusal (ml)", 
-       title = "Boxplot of Treatment vs. refusal at second feeding")
-
-
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
-clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = D1MilkRefusemL, color=D0Fed2TxGrp)) +
-  theme_classic()+
-  geom_boxplot(outlier.shape=NA) +
-  geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "24hr milk refusal", 
-       title = "Boxplot of Treatment vs. 24hr milk refusal")
-```
+This generally describes calves in each treatment group by various indicators (breed, sex, size). Calves were balanced between treatment groups (n=31). Majority of enrolled calves were crossbreds, and fairly evenly split between large and small, and male and female. There was one calf who did not have their sex recorded.
 
 ```{r}
 #| echo: false
@@ -241,7 +117,8 @@ summary_size<-
 sick_<-
   clean |> 
   group_by(D0Fed2TxGrp, FarmDzYN) |> 
-  summarize(count=n())
+  summarize(count=n(), .groups="drop") |> 
+  mutate(proportion = signif(count/sum(count), digits=2))
 
 
 
@@ -252,39 +129,414 @@ summary_size
 sick_
 ```
 
-### Histogram of stp for presentation
+### Birth Weight by Treatment Group
+
+Calf birth weight was relatively consistent between treatment groups. Calves weighed between 83 and 87lbs at birth/enrollment.
 
 ```{r}
 #| echo: false
 #| warning: false
 
-stp<-
-  stp |> 
-  filter (
-    STP <= 10)
 
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(BirthWtLbs), 
+             sd = sd(BirthWtLbs))
 
-fpt<- 
-  stp |> 
-  mutate(
-    FPT = case_when(
-      STP<= 5.1 ~ 1, 
-      STP > 5.1 ~ 0)) |> 
-  group_by(FPT) |> 
-  count()
-
-
-stp |> 
-ggplot(mapping = aes(x = STP)) +
-  theme_classic() +
-  geom_histogram(bins =40, fill = "steelblue", color = "black") +
-  scale_x_continuous(breaks = seq(0, max(table(stp$STP)), by = 1))+
-  labs( 
-       y = "Number of Calves", 
-       x = "Serum Total Protein (g/dL)",
-       title = "STP of calves at Arrival") 
+lm_bw <- lm(BirthWtLbs ~ D0Fed2TxGrp, data=clean)
+summary(lm_bw)
   
 
+clean |> 
+  group_by (D0Fed2TxGrp, CalfSizeLgSm) |> 
+  summarize (mean = mean(BirthWtLbs), 
+             sd = sd(BirthWtLbs))
 
 
+lm_bwsize <- lm(BirthWtLbs ~ D0Fed2TxGrp*CalfSizeLgSm, data=clean)
+summary(lm_bwsize)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = BirthWtLbs, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Birth Weight (lbs)", 
+       title = "Boxplot of Treatment vs. Birth Weight")+
+  scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 25))
+```
+
+### Age at First Feeding(hrs)
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(DOFed1MinOld), 
+             sd = sd(DOFed1MinOld))
+
+lm_minold <- lm(DOFed1MinOld ~ D0Fed2TxGrp, data=clean)
+summary(lm_minold)
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed1MinOld, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Age at first feeding(min)", 
+       title = "Treatment vs. Age(min) at first feeding")
+
+```
+
+### Colostral IgG Feeding 1
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(F1ColostIgGgL), 
+             sd = sd(F1ColostIgGgL))
+
+lm_F1Colost <- lm(F1ColostIgGgL ~ D0Fed2TxGrp, data=clean)
+summary(lm_F1Colost)
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1ColostIgGgL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "First Feeding IgG in Colostrum", 
+       title = "Treatment vs. ColostIgG")+
+  scale_y_continuous(limits = c(0, 125), breaks = seq(0, 125, by = 25))
+
+```
+
+### Feeding 1 Total IgG Dose
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(F1DoseIgGfedg), 
+             sd = sd(F1DoseIgGfedg))
+
+lm_F1Dose <- lm(F1DoseIgGfedg ~ D0Fed2TxGrp, data=clean)
+summary(lm_F1Dose)
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1DoseIgGfedg, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "First Feeding IgG Dose", 
+       title = "Treatment vs. ColostIgG Dose")+
+  scale_y_continuous(limits = c(0, 450), breaks = seq(0, 450, by = 50))
+```
+
+### Assn between bacteria and Colostral IgG
+
+```{r}
+#| echo: false
+#| warning: false
+
+lm_coliform <- lm(F1ColostIgGgL~F1LogColif, data=clean)
+summary(lm_coliform)
+
+clean |> 
+ggplot(mapping = aes(x = F1ColostIgGgL, y = F1LogColif)) +
+  theme_classic()+
+  geom_point() +
+  geom_smooth(method = "lm", se=TRUE, color="red")+
+  labs(x = "Colostral IgG", y = "Log Coliform Count", title = "Scatterplot of Colostral IgG vs. Coliform")
+
+
+
+
+lm_spc <- lm(F1ColostIgGgL~F1SPC, data=clean)
+summary(lm_spc)
+
+clean |> 
+ggplot(mapping = aes(x = F1ColostIgGgL, y = F1SPC)) +
+  theme_classic()+
+  geom_point() +
+  geom_smooth(method = "lm", se=TRUE, color="red")+
+  labs(x = "Colostral IgG", y = "SPC", title = "Scatterplot of Colostral IgG vs. SPC")
+```
+
+### Brix% vs Colostral IgG
+
+```{r}
+#| echo: false
+#| warning: false
+
+lm_brix <- lm(F1ColostIgGgL~F1Brixpct, data=clean)
+summary(lm_brix)
+
+clean |> 
+ggplot(mapping = aes(x = F1ColostIgGgL, y = F1Brixpct)) +
+  theme_classic()+
+  geom_point() +
+  geom_smooth(method = "lm", se=TRUE, color="red")+
+  labs(x = "Colostral IgG", y = "Brix %", title = "Scatterplot of Colostral IgG vs. Brix")
+```
+
+### Hrs Old At Second Feeding
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(DOFed2HrsOld), 
+             sd = sd(DOFed2HrsOld))
+
+lm_hrsold <- lm(DOFed2HrsOld ~ D0Fed2TxGrp, data=clean)
+summary(lm_hrsold)
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2HrsOld, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Hours old at second Feeding", 
+       title = "Treatment vs. Age(hrs) at second feeding")
+
+```
+
+### Interval Feeding 1 - 2
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(DOFed12IntervHrs), 
+             sd = sd(DOFed12IntervHrs))
+
+lm_intvhrs <- lm(DOFed12IntervHrs ~ D0Fed2TxGrp, data=clean)
+summary(lm_intvhrs)
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed12IntervHrs, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Feeding Interval", 
+       title = "Treatment vs. Feeding Interval(hrs)")
+```
+
+### 8hr IgG by Treatment Group
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(Result8hrgL), 
+             sd = sd(Result8hrgL))
+
+lm_8hr <- lm(Result8hrgL ~ D0Fed2TxGrp, data=clean)
+summary(lm_8hr)
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Serum IgG at 8 hrs", 
+       title = "Treatment vs. IgG at 8 hours")+
+  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
+
+
+
+
+```
+
+### Refusals, second feeding (mLs and Refusal Y/N)
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(D0Fed2VolRefusemL), 
+             sd = sd(D0Fed2VolRefusemL))
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (refuse = sum(refuse))
+
+
+lm_refuse <- lm(D0Fed2VolRefusemL ~ D0Fed2TxGrp, data=clean)
+summary(lm_refuse)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = D0Fed2VolRefusemL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Refusals (mLs)", 
+       title = "Treatment vs. Refusals(mLs)")
+
+
+```
+
+### Second Feeding Colostral IgG
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(F2ColostIgGgL), 
+             sd = sd(F2ColostIgGgL))
+
+
+lm_colst2 <- lm(F2ColostIgGgL ~ D0Fed2TxGrp, data=clean)
+summary(lm_colst2)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2ColostIgGgL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Second Feeding IgG", 
+       title = "Treatment vs. Second Feeding IgG")
+```
+
+### Second Feeding Dose IgG
+
+Dose this account for calves that didn't drink everything? That is why there is the weird variation?
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(F2DoseIgGfedg), 
+             sd = sd(F2DoseIgGfedg))
+
+
+lm_colst2dose <- lm(F2DoseIgGfedg ~ D0Fed2TxGrp, data=clean)
+summary(lm_colst2dose)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Second Feeding IgG dose", 
+       title = "Treatment vs. Second Feeding IgG dose")
+```
+
+### Total Dose IgG Fed (F1 + F2)
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(F1F2TotIgGconsumg), 
+             sd = sd(F1F2TotIgGconsumg))
+
+
+lm_colstdose <- lm(F1F2TotIgGconsumg ~ D0Fed2TxGrp, data=clean)
+summary(lm_colstdose)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1F2TotIgGconsumg, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Total IgG Dose", 
+       title = "Treatment vs. Total IgG Dose")
+```
+
+### 24hr serum IgG
+
+```{r}
+#| echo: false
+#| warning: false
+
+#one calf in the CSB group that doesn't have a 24hr blood IgG
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(Result24hrgL, na.rm=TRUE), 
+             sd = sd(Result24hrgL, na.rm=TRUE))
+
+lm_24hr <- lm(Result24hrgL ~ D0Fed2TxGrp, data=clean)
+summary(lm_24hr)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Serum IgG at 24 hrs", 
+       title = "Treatment vs. IgG at 24 hours")+
+  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
+ 
+
+
+```
+
+### Second Milk Feeding - Refusals
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(D1MilkRefusemL), 
+             sd = sd(D1MilkRefusemL))
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (refuse = sum(refuseM1))
+
+
+lm_refF2 <- lm(D1MilkRefusemL ~ D0Fed2TxGrp, data=clean)
+summary(lm_refF2)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = D1MilkRefusemL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "24hr milk refusal", 
+       title = "Boxplot of Treatment vs. 24hr milk refusal")
 ```
