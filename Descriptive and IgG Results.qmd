@@ -455,7 +455,7 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
        title = "Treatment vs. Second Feeding IgG dose")
 ```
 
-### Total Dose IgG Fed (F1 + F2)
+### Total Dose IgG Consumed (F1 + F2)
 
 ```{r}
 #| echo: false
@@ -478,7 +478,8 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1F2TotIgGconsumg, color=D0Fed2TxGrp))
   geom_jitter() +
   labs(x = "Second Feeding Treatment", 
        y = "Total IgG Dose", 
-       title = "Treatment vs. Total IgG Dose")
+       title = "Treatment vs. Total IgG Dose")+
+  scale_y_continuous(limits = c(0, 600), breaks = seq(0, 600, by = 100))
 ```
 
 ### 24hr serum IgG
