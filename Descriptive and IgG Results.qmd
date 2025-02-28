@@ -80,7 +80,7 @@ clean<-
 
 ```
 
-## Descriptive Analysis 
+## Descriptive Analysis
 
 ### Calf Enrollment Characteristics
 
@@ -168,7 +168,7 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = BirthWtLbs, color=D0Fed2TxGrp)) +
   scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 25))
 ```
 
-### Age at First Feeding(hrs)
+### Age at First Feeding(min)
 
 ```{r}
 #| echo: false

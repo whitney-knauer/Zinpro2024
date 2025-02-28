@@ -1,0 +1,183 @@
+---
+title: "Health and Health Score Results"
+author: "WAK"
+date: "today"
+format: 
+  html:
+    toc: true 
+    toc-float: true
+    toc-location: left
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+library(epiDisplay)
+library(knitr)
+library(pROC)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(gmodels)
+library(ggbeeswarm)
+library(dplyr)
+library(ggpubr)
+library(psych)
+library(lme4)
+library(Matrix)
+library(lmerTest)
+library(irr)
+library(lmerTest)
+library(emmeans)
+library(doBy)       
+library(gmodels)    
+library(car)           
+library(cowplot)       
+library(gridGraphics)  
+library(multcomp)
+library(hms)
+library(gt)
+```
+
+```{r}
+#| include: false
+#| echo: false
+#| warning: false
+
+enroll <- read_csv('data/Zinpro 2024 enrollment final.csv')
+
+clean <-
+  enroll |> 
+  filter(removeyn != 1)
+
+#removes calf 113, who did not have correct information    
+
+#changes these variables to "hours" vs. "seconds"
+clean$DOFed2HrsOld <- as.numeric(clean$DOFed2HrsOld)/3600
+clean$DOFed12IntervHrs <- as.numeric(clean$DOFed12IntervHrs)/3600
+clean$DOFed1MinOld <- as.numeric(clean$DOFed1MinOld)/60
+  
+clean<- 
+  clean |> 
+  mutate(refuse=
+           case_when(
+             D0Fed2VolRefusemL > 0    ~ 1, 
+             D0Fed2VolRefusemL == 0   ~ 0))
+
+
+
+health <- read_csv('data/CHSdata_2024_08_12_08_57.csv')
+health<- health |> 
+  filter(`Calf Age` != 4)
+
+#Get rid of two calves who had d4 recorded instead of d3
+
+#Create a better data set and craete variables for TRS, Fever, Scours, scour severity, and brd
+
+health<-
+health |> 
+  mutate(
+    age = `Calf Age`, 
+    .after = CalfID
+    )
+
+health
+
+
+Full<-
+health |> 
+  select(CalfID, age, BodyTemp, Appetite, Attitude, Nose, Eye, Ear, Cough, Temperature, Fecal, Navel, Joint) |> 
+  mutate(
+    TRS = Nose + Eye + Ear + Cough + Temperature,
+    BRD = if_else(TRS>=4, 1, 0),
+    Scour = if_else(Fecal>=2, 1, 0),
+    Fever = if_else(Temperature>=2, 1, 0), 
+    DiarSS = case_when(
+      Fecal <= 1       ~ "Normal", 
+      Fecal == 2       ~ "Mild",
+      Fecal == 3       ~ "Severe"),
+    #DiarSS = factor(DiarSS, levels = c("Normal", "Mild", "Severe"))
+    )
+
+
+Full
+
+#merge Full and enroll
+
+hs <- merge(Full, clean, by = "CalfID", all.x = TRUE)
+
+#had to remove weird calves
+
+hs <- hs |> 
+  filter(!as.numeric(CalfID) %in% c(113, 191, 1133))
+```
+
+### Data Checks
+
+We should have n=155 obs total (n=31 obs per day) for each treatment group but it appears we are missing some data. In addition, not every calf has a recorded observation for each of the health score categories. Not sure that matters too much, but something to note.
+
+```{r}
+#| echo: false
+#| warning: false
+
+hs |> 
+  count(age)
+
+hs |> 
+  count(D0Fed2TxGrp)
+
+hs |> 
+  group_by(age, D0Fed2TxGrp) |> 
+  count()
+
+
+
+```
+
+### Tables of All Health Outcomes by day 
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+CrossTable(hs$age,  hs$Appetite, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Attitude, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Nose, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Eye, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Ear, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Cough, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Temperature, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$TRS, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$BRD, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Scour, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Fever, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$DiarSS, prop.r=FALSE, prop.c = FALSE)
+
+
+hs |> 
+  ggplot(mapping=aes(x=BodyTemp))+
+  theme_classic()+
+  geom_histogram(binwidth=0.2, 
+                 fill="skyblue", 
+                 color="black", 
+                 alpha=0.7)+
+  labs(title = "Histogram of Calf Body Temperature")
+
+
+
+
+strat <- hs$age
+BRD <- table(hs$D0Fed2TxGrp, hs$BRD, strat)
+print(BRD)
+
+
+Scour <- table(hs$D0Fed2TxGrp, hs$Scour, strat)
+print(Scour)
+
+#What BT = a fever??
+Fever <- table(hs$D0Fed2TxGrp, hs$Fever, strat)
+print(Fever)
+```
