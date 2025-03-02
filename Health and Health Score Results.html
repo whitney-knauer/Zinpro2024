@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="WAK">
+<meta name="dcterms.date" content="2025-03-02">
+
+<title>Health and Health Score Results</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="Health and Health Score Results_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Health and Health Score Results_files/libs/quarto-html/quarto.js"></script>
+<script src="Health and Health Score Results_files/libs/quarto-html/popper.min.js"></script>
+<script src="Health and Health Score Results_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Health and Health Score Results_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Health and Health Score Results_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Health and Health Score Results_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Health and Health Score Results_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Health and Health Score Results_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Health and Health Score Results_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data-checks" id="toc-data-checks" class="nav-link active" data-scroll-target="#data-checks">Data Checks</a></li>
+  <li><a href="#tables-of-all-health-outcomes-by-day-and-trt-group" id="toc-tables-of-all-health-outcomes-by-day-and-trt-group" class="nav-link" data-scroll-target="#tables-of-all-health-outcomes-by-day-and-trt-group">Tables of All Health Outcomes by day and TRT Group</a></li>
+  <li><a href="#scour-model" id="toc-scour-model" class="nav-link" data-scroll-target="#scour-model">Scour Model</a></li>
+  <li><a href="#sick-model" id="toc-sick-model" class="nav-link" data-scroll-target="#sick-model">Sick Model</a></li>
+  <li><a href="#appetite---health-score" id="toc-appetite---health-score" class="nav-link" data-scroll-target="#appetite---health-score">Appetite - Health Score</a></li>
+  <li><a href="#refusals---first-milk-feeding" id="toc-refusals---first-milk-feeding" class="nav-link" data-scroll-target="#refusals---first-milk-feeding">Refusals - First Milk Feeding</a></li>
+  <li><a href="#farm-reported-disease-yn" id="toc-farm-reported-disease-yn" class="nav-link" data-scroll-target="#farm-reported-disease-yn">Farm Reported Disease (y/n)</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Health and Health Score Results</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>WAK </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 2, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="data-checks" class="level3">
+<h3 class="anchored" data-anchor-id="data-checks">Data Checks</h3>
+<p>We should have n=155 obs total (n=31 obs per day) for each treatment group but it appears we are missing some data. In addition, not every calf has a recorded observation for each of the health score categories. Not sure that matters too much, but something to note.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  age   n
+1   1 150
+2   2 149
+3   3 144</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  D0Fed2TxGrp  n
+1         CSB 89
+2         CST 89
+3         MCB 90
+4         MCT 87
+5         MRB 88</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 3
+# Groups:   age, D0Fed2TxGrp [15]
+     age D0Fed2TxGrp     n
+   &lt;dbl&gt; &lt;chr&gt;       &lt;int&gt;
+ 1     1 CSB            30
+ 2     1 CST            30
+ 3     1 MCB            30
+ 4     1 MCT            29
+ 5     1 MRB            31
+ 6     2 CSB            30
+ 7     2 CST            30
+ 8     2 MCB            31
+ 9     2 MCT            29
+10     2 MRB            29
+11     3 CSB            29
+12     3 CST            29
+13     3 MCB            29
+14     3 MCT            29
+15     3 MRB            28</code></pre>
+</div>
+</div>
+</section>
+<section id="tables-of-all-health-outcomes-by-day-and-trt-group" class="level3">
+<h3 class="anchored" data-anchor-id="tables-of-all-health-outcomes-by-day-and-trt-group">Tables of All Health Outcomes by day and TRT Group</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  430 
+
+ 
+             | hs$Appetite 
+      hs$age |         0 |         1 |         2 |         3 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+           1 |        79 |        16 |        24 |        24 |       143 | 
+             |    12.194 |     8.056 |    23.170 |    25.128 |           | 
+             |     0.184 |     0.037 |     0.056 |     0.056 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+           2 |       135 |         7 |         4 |         2 |       148 | 
+             |     1.667 |     0.192 |     3.297 |     5.723 |           | 
+             |     0.314 |     0.016 |     0.009 |     0.005 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+           3 |       137 |         1 |         0 |         1 |       139 | 
+             |     4.883 |     5.887 |     9.051 |     6.842 |           | 
+             |     0.319 |     0.002 |     0.000 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+Column Total |       351 |        24 |        28 |        27 |       430 | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$Attitude 
+      hs$age |         0 |         1 |         2 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|
+           1 |       132 |        12 |         6 |       150 | 
+             |     0.475 |     2.753 |     5.530 |           | 
+             |     0.299 |     0.027 |     0.014 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           2 |       140 |         8 |         1 |       149 | 
+             |     0.004 |     0.046 |     0.784 |           | 
+             |     0.317 |     0.018 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           3 |       141 |         2 |         0 |       143 | 
+             |     0.408 |     3.680 |     2.265 |           | 
+             |     0.319 |     0.005 |     0.000 |           | 
+-------------|-----------|-----------|-----------|-----------|
+Column Total |       413 |        22 |         7 |       442 | 
+-------------|-----------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  443 
+
+ 
+             | hs$Nose 
+      hs$age |         0 |         1 | Row Total | 
+-------------|-----------|-----------|-----------|
+           1 |       147 |         3 |       150 | 
+             |     0.026 |     3.876 |           | 
+             |     0.332 |     0.007 |           | 
+-------------|-----------|-----------|-----------|
+           2 |       149 |         0 |       149 | 
+             |     0.007 |     1.009 |           | 
+             |     0.336 |     0.000 |           | 
+-------------|-----------|-----------|-----------|
+           3 |       144 |         0 |       144 | 
+             |     0.007 |     0.975 |           | 
+             |     0.325 |     0.000 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       440 |         3 |       443 | 
+-------------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  443 
+
+ 
+             | hs$Eye 
+      hs$age |         0 | Row Total | 
+-------------|-----------|-----------|
+           1 |       150 |       150 | 
+             |     0.339 |           | 
+-------------|-----------|-----------|
+           2 |       149 |       149 | 
+             |     0.336 |           | 
+-------------|-----------|-----------|
+           3 |       144 |       144 | 
+             |     0.325 |           | 
+-------------|-----------|-----------|
+Column Total |       443 |       443 | 
+-------------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  443 
+
+ 
+             | hs$Ear 
+      hs$age |         0 |         1 | Row Total | 
+-------------|-----------|-----------|-----------|
+           1 |       149 |         1 |       150 | 
+             |     0.001 |     0.154 |           | 
+             |     0.336 |     0.002 |           | 
+-------------|-----------|-----------|-----------|
+           2 |       148 |         1 |       149 | 
+             |     0.001 |     0.159 |           | 
+             |     0.334 |     0.002 |           | 
+-------------|-----------|-----------|-----------|
+           3 |       144 |         0 |       144 | 
+             |     0.003 |     0.650 |           | 
+             |     0.325 |     0.000 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       441 |         2 |       443 | 
+-------------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$Cough 
+      hs$age |         0 |         1 |         2 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|
+           1 |       141 |         6 |         2 |       149 | 
+             |     0.090 |     1.417 |     2.607 |           | 
+             |     0.319 |     0.014 |     0.005 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           2 |       146 |         3 |         0 |       149 | 
+             |     0.013 |     0.135 |     0.674 |           | 
+             |     0.330 |     0.007 |     0.000 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           3 |       142 |         2 |         0 |       144 | 
+             |     0.036 |     0.700 |     0.652 |           | 
+             |     0.321 |     0.005 |     0.000 |           | 
+-------------|-----------|-----------|-----------|-----------|
+Column Total |       429 |        11 |         2 |       442 | 
+-------------|-----------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  443 
+
+ 
+             | hs$Temperature 
+      hs$age |         0 |         1 |         2 |         3 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+           1 |        45 |        98 |         7 |         0 |       150 | 
+             |    11.260 |     2.105 |    24.235 |     1.016 |           | 
+             |     0.102 |     0.221 |     0.016 |     0.000 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+           2 |        14 |        71 |        62 |         2 |       149 | 
+             |     6.438 |     2.036 |    17.513 |     0.973 |           | 
+             |     0.032 |     0.160 |     0.140 |     0.005 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+           3 |        22 |        81 |        40 |         1 |       144 | 
+             |     0.712 |     0.001 |     0.589 |     0.001 |           | 
+             |     0.050 |     0.183 |     0.090 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+Column Total |        81 |       250 |       109 |         3 |       443 | 
+-------------|-----------|-----------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$TRS 
+      hs$age |         0 |         1 |         2 |         3 |         4 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           1 |        43 |        90 |        13 |         2 |         1 |       149 | 
+             |    10.614 |     0.798 |    15.935 |     0.180 |     0.157 |           | 
+             |     0.097 |     0.204 |     0.029 |     0.005 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           2 |        14 |        71 |        59 |         4 |         1 |       149 | 
+             |     5.748 |     1.455 |    12.447 |     0.630 |     0.157 |           | 
+             |     0.032 |     0.161 |     0.133 |     0.009 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           3 |        21 |        82 |        39 |         2 |         0 |       144 | 
+             |     0.766 |     0.101 |     0.223 |     0.141 |     0.652 |           | 
+             |     0.048 |     0.186 |     0.088 |     0.005 |     0.000 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+Column Total |        78 |       243 |       111 |         8 |         2 |       442 | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  426 
+
+ 
+             | hs$THS 
+      hs$age |         0 |         1 |         2 |         3 |         4 |         5 |         6 |         7 |         8 |         9 |        10 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+           1 |         3 |        22 |        36 |        27 |        15 |        16 |        11 |         6 |         3 |         3 |         0 |       142 | 
+             |     0.000 |     0.733 |     1.042 |     2.398 |     0.720 |     1.333 |     4.167 |     5.762 |     4.000 |     2.083 |     0.333 |           | 
+             |     0.007 |     0.052 |     0.085 |     0.063 |     0.035 |     0.038 |     0.026 |     0.014 |     0.007 |     0.007 |     0.000 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+           2 |         1 |        15 |        40 |        41 |        27 |        14 |         6 |         1 |         0 |         1 |         0 |       146 | 
+             |     1.409 |     0.786 |     0.341 |     0.355 |     3.176 |     0.224 |     0.005 |     0.816 |     1.028 |     0.100 |     0.343 |           | 
+             |     0.002 |     0.035 |     0.094 |     0.096 |     0.063 |     0.033 |     0.014 |     0.002 |     0.000 |     0.002 |     0.000 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+           3 |         5 |        18 |        52 |        41 |        14 |         6 |         1 |         0 |         0 |         0 |         1 |       138 | 
+             |     1.490 |     0.002 |     2.677 |     0.917 |     0.945 |     2.749 |     4.002 |     2.268 |     0.972 |     1.296 |     1.411 |           | 
+             |     0.012 |     0.042 |     0.122 |     0.096 |     0.033 |     0.014 |     0.002 |     0.000 |     0.000 |     0.000 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+Column Total |         9 |        55 |       128 |       109 |        56 |        36 |        18 |         7 |         3 |         4 |         1 |       426 | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$BRD 
+      hs$age |         0 |         1 | Row Total | 
+-------------|-----------|-----------|-----------|
+           1 |       148 |         1 |       149 | 
+             |     0.001 |     0.157 |           | 
+             |     0.335 |     0.002 |           | 
+-------------|-----------|-----------|-----------|
+           2 |       148 |         1 |       149 | 
+             |     0.001 |     0.157 |           | 
+             |     0.335 |     0.002 |           | 
+-------------|-----------|-----------|-----------|
+           3 |       144 |         0 |       144 | 
+             |     0.003 |     0.652 |           | 
+             |     0.326 |     0.000 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       440 |         2 |       442 | 
+-------------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$Scour 
+      hs$age |         0 |         1 | Row Total | 
+-------------|-----------|-----------|-----------|
+           1 |       117 |        32 |       149 | 
+             |     0.439 |     2.220 |           | 
+             |     0.265 |     0.072 |           | 
+-------------|-----------|-----------|-----------|
+           2 |       119 |        30 |       149 | 
+             |     0.234 |     1.181 |           | 
+             |     0.269 |     0.068 |           | 
+-------------|-----------|-----------|-----------|
+           3 |       133 |        11 |       144 | 
+             |     1.359 |     6.871 |           | 
+             |     0.301 |     0.025 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       369 |        73 |       442 | 
+-------------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$Fever 
+      hs$age |         1 | Row Total | 
+-------------|-----------|-----------|
+           1 |       150 |       150 | 
+             |     0.339 |           | 
+-------------|-----------|-----------|
+           2 |       149 |       149 | 
+             |     0.337 |           | 
+-------------|-----------|-----------|
+           3 |       143 |       143 | 
+             |     0.324 |           | 
+-------------|-----------|-----------|
+Column Total |       442 |       442 | 
+-------------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$DiarSS 
+      hs$age |      Mild |    Normal |    Severe | Row Total | 
+-------------|-----------|-----------|-----------|-----------|
+           1 |        26 |       117 |         6 |       149 | 
+             |     1.068 |     0.439 |     2.050 |           | 
+             |     0.059 |     0.265 |     0.014 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           2 |        27 |       119 |         3 |       149 | 
+             |     1.564 |     0.234 |     0.041 |           | 
+             |     0.061 |     0.269 |     0.007 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           3 |        10 |       133 |         1 |       144 | 
+             |     5.397 |     1.359 |     1.565 |           | 
+             |     0.023 |     0.301 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|
+Column Total |        63 |       369 |        10 |       442 | 
+-------------|-----------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  426 
+
+ 
+             | hs$Sick 
+      hs$age |         0 |         1 | Row Total | 
+-------------|-----------|-----------|-----------|
+           1 |        88 |        54 |       142 | 
+             |     1.516 |     3.651 |           | 
+             |     0.207 |     0.127 |           | 
+-------------|-----------|-----------|-----------|
+           2 |        97 |        49 |       146 | 
+             |     0.368 |     0.886 |           | 
+             |     0.228 |     0.115 |           | 
+-------------|-----------|-----------|-----------|
+           3 |       116 |        22 |       138 | 
+             |     3.507 |     8.446 |           | 
+             |     0.272 |     0.052 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       301 |       125 |       426 | 
+-------------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  430 
+
+ 
+             | hs$Refuse 
+      hs$age |         0 |         1 | Row Total | 
+-------------|-----------|-----------|-----------|
+           1 |        95 |        48 |       143 | 
+             |     7.078 |    48.256 |           | 
+             |     0.221 |     0.112 |           | 
+-------------|-----------|-----------|-----------|
+           2 |       142 |         6 |       148 | 
+             |     1.295 |     8.832 |           | 
+             |     0.330 |     0.014 |           | 
+-------------|-----------|-----------|-----------|
+           3 |       138 |         1 |       139 | 
+             |     2.323 |    15.835 |           | 
+             |     0.321 |     0.002 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       375 |        55 |       430 | 
+-------------|-----------|-----------|-----------|
+
+ </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Health-and-Health-Score-Results_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , strat = 1
+
+     
+       0  1
+  CSB 29  0
+  CST 29  1
+  MCB 30  0
+  MCT 29  0
+  MRB 31  0
+
+, , strat = 2
+
+     
+       0  1
+  CSB 30  0
+  CST 30  0
+  MCB 31  0
+  MCT 29  0
+  MRB 28  1
+
+, , strat = 3
+
+     
+       0  1
+  CSB 29  0
+  CST 29  0
+  MCB 29  0
+  MCT 29  0
+  MRB 28  0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , strat = 1
+
+     
+       0  1
+  CSB 25  4
+  CST 22  8
+  MCB 25  5
+  MCT 21  8
+  MRB 24  7
+
+, , strat = 2
+
+     
+       0  1
+  CSB 25  5
+  CST 22  8
+  MCB 25  6
+  MCT 26  3
+  MRB 21  8
+
+, , strat = 3
+
+     
+       0  1
+  CSB 27  2
+  CST 24  5
+  MCB 28  1
+  MCT 27  2
+  MRB 27  1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , strat = 1
+
+     
+       1
+  CSB 30
+  CST 30
+  MCB 30
+  MCT 29
+  MRB 31
+
+, , strat = 2
+
+     
+       1
+  CSB 30
+  CST 30
+  MCB 31
+  MCT 29
+  MRB 29
+
+, , strat = 3
+
+     
+       1
+  CSB 29
+  CST 29
+  MCB 29
+  MCT 28
+  MRB 28</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , strat = 1
+
+     
+       0  1
+  CSB 23  4
+  CST 19 10
+  MCB 16 13
+  MCT 17 10
+  MRB 13 17
+
+, , strat = 2
+
+     
+       0  1
+  CSB 22  8
+  CST 18 11
+  MCB 21  8
+  MCT 19 10
+  MRB 17 12
+
+, , strat = 3
+
+     
+       0  1
+  CSB 24  4
+  CST 19  8
+  MCB 26  2
+  MCT 23  5
+  MRB 24  3</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , strat = 1
+
+     
+       0  1
+  CSB 25  3
+  CST 22  7
+  MCB 16 13
+  MCT 17 10
+  MRB 15 15
+
+, , strat = 2
+
+     
+       0  1
+  CSB 30  0
+  CST 29  1
+  MCB 30  0
+  MCT 28  1
+  MRB 25  4
+
+, , strat = 3
+
+     
+       0  1
+  CSB 28  0
+  CST 28  0
+  MCB 28  0
+  MCT 27  1
+  MRB 27  0</code></pre>
+</div>
+</div>
+</section>
+<section id="scour-model" class="level3">
+<h3 class="anchored" data-anchor-id="scour-model">Scour Model</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     
+       0  1
+  CSB 77 11
+  CST 68 21
+  MCB 78 12
+  MCT 74 13
+  MRB 72 16</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+             0          1
+  1 0.78523490 0.21476510
+  2 0.79865772 0.20134228
+  3 0.92361111 0.07638889</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  N 0.7837838 0.2162162
+  Y 0.8451087 0.1548913</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    
+             0         1
+  LG 0.8836364 0.1163636
+  SM 0.7544910 0.2455090</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  F 0.8529412 0.1470588
+  M 0.8109453 0.1890547</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$age 
+    hs$Scour |         1 |         2 |         3 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|
+           0 |       117 |       119 |       133 |       369 | 
+             |     0.439 |     0.234 |     1.359 |           | 
+             |     0.317 |     0.322 |     0.360 |     0.835 | 
+             |     0.785 |     0.799 |     0.924 |           | 
+             |     0.265 |     0.269 |     0.301 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           1 |        32 |        30 |        11 |        73 | 
+             |     2.220 |     1.181 |     6.871 |           | 
+             |     0.438 |     0.411 |     0.151 |     0.165 | 
+             |     0.215 |     0.201 |     0.076 |           | 
+             |     0.072 |     0.068 |     0.025 |           | 
+-------------|-----------|-----------|-----------|-----------|
+Column Total |       149 |       149 |       144 |       442 | 
+             |     0.337 |     0.337 |     0.326 |           | 
+-------------|-----------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Alternative hypothesis: two.sided
+p =  0.0010668 
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$CrossbredYN 
+    hs$Scour |         N |         Y | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |        58 |       311 |       369 | 
+             |     0.231 |     0.046 |           | 
+             |     0.157 |     0.843 |     0.835 | 
+             |     0.784 |     0.845 |           | 
+             |     0.131 |     0.704 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        16 |        57 |        73 | 
+             |     1.168 |     0.235 |           | 
+             |     0.219 |     0.781 |     0.165 | 
+             |     0.216 |     0.155 |           | 
+             |     0.036 |     0.129 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |        74 |       368 |       442 | 
+             |     0.167 |     0.833 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  0.665061 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.228691 
+95% confidence interval:  0.3470261 1.329111 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.1313773 
+95% confidence interval:  0 1.192923 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.9256381 
+95% confidence interval:  0.3811845 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$CalfSizeLgSm 
+    hs$Scour |        LG |        SM | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |       243 |       126 |       369 | 
+             |     0.784 |     1.291 |           | 
+             |     0.659 |     0.341 |     0.835 | 
+             |     0.884 |     0.754 |           | 
+             |     0.550 |     0.285 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        32 |        41 |        73 | 
+             |     3.964 |     6.528 |           | 
+             |     0.438 |     0.562 |     0.165 | 
+             |     0.116 |     0.246 |           | 
+             |     0.072 |     0.093 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       275 |       167 |       442 | 
+             |     0.622 |     0.378 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  2.465605 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.0005488604 
+95% confidence interval:  1.43783 4.260454 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.9998563 
+95% confidence interval:  0 3.918296 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.0003790003 
+95% confidence interval:  1.559249 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  439 
+
+ 
+             | hs$SexMF 
+    hs$Scour |         F |         M | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |       203 |       163 |       366 | 
+             |     0.106 |     0.125 |           | 
+             |     0.555 |     0.445 |     0.834 | 
+             |     0.853 |     0.811 |           | 
+             |     0.462 |     0.371 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        35 |        38 |        73 | 
+             |     0.529 |     0.627 |           | 
+             |     0.479 |     0.521 |     0.166 | 
+             |     0.147 |     0.189 |           | 
+             |     0.080 |     0.087 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       238 |       201 |       439 | 
+             |     0.542 |     0.458 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  1.351196 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.2494266 
+95% confidence interval:  0.7917678 2.31167 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.9040662 
+95% confidence interval:  0 2.130288 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.1471807 
+95% confidence interval:  0.858469 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  442 
+
+ 
+             | hs$D0Fed2TxGrp 
+    hs$Scour |       CSB |       CST |       MCB |       MCT |       MRB | Row Total | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           0 |        77 |        68 |        78 |        74 |        72 |       369 | 
+             |     0.170 |     0.534 |     0.109 |     0.026 |     0.029 |           | 
+             |     0.209 |     0.184 |     0.211 |     0.201 |     0.195 |     0.835 | 
+             |     0.875 |     0.764 |     0.867 |     0.851 |     0.818 |           | 
+             |     0.174 |     0.154 |     0.176 |     0.167 |     0.163 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           1 |        11 |        21 |        12 |        13 |        16 |        73 | 
+             |     0.859 |     2.701 |     0.552 |     0.130 |     0.148 |           | 
+             |     0.151 |     0.288 |     0.164 |     0.178 |     0.219 |     0.165 | 
+             |     0.125 |     0.236 |     0.133 |     0.149 |     0.182 |           | 
+             |     0.025 |     0.048 |     0.027 |     0.029 |     0.036 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+Column Total |        88 |        89 |        90 |        87 |        88 |       442 | 
+             |     0.199 |     0.201 |     0.204 |     0.197 |     0.199 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Alternative hypothesis: two.sided
+p =  0.2879404 
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: Scour ~ D0Fed2TxGrp + age + CalfSizeLgSm + (1 | CalfID)
+   Data: hs
+
+     AIC      BIC   logLik deviance df.resid 
+   382.3    415.1   -183.2    366.3      434 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.0145 -0.4570 -0.3467 -0.2375  3.9461 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ CalfID (Intercept) 0.1343   0.3664  
+Number of obs: 442, groups:  CalfID, 149
+
+Fixed effects:
+               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)     -0.9330     0.4478  -2.083 0.037218 *  
+D0Fed2TxGrpCSB  -0.6091     0.4550  -1.339 0.180638    
+D0Fed2TxGrpCST   0.3568     0.4043   0.883 0.377495    
+D0Fed2TxGrpMCB  -0.5002     0.4457  -1.122 0.261731    
+D0Fed2TxGrpMCT  -0.2583     0.4368  -0.591 0.554316    
+age             -0.5484     0.1737  -3.157 0.001596 ** 
+CalfSizeLgSmSM   1.0374     0.2894   3.585 0.000337 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) D0F2TGCSB D0F2TGCST D0F2TGMCB D0F2TGMCT age   
+D0Fd2TxGCSB -0.393                                               
+D0Fd2TxGCST -0.494  0.474                                        
+D0Fd2TxGMCB -0.409  0.447     0.483                              
+D0Fd2TxGMCT -0.443  0.446     0.500     0.454                    
+age         -0.607  0.010    -0.042     0.017    -0.007          
+ClfSzLgSmSM -0.287 -0.126     0.028    -0.107    -0.026    -0.098</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> D0Fed2TxGrp  prob     SE  df asymp.LCL asymp.UCL
+ CSB         0.108 0.0359 Inf    0.0549     0.201
+ CST         0.241 0.0524 Inf    0.1532     0.357
+ MCB         0.119 0.0381 Inf    0.0619     0.216
+ MCT         0.146 0.0429 Inf    0.0804     0.252
+ MRB         0.182 0.0484 Inf    0.1050     0.296
+
+Results are averaged over the levels of: CalfSizeLgSm 
+Confidence level used: 0.95 
+Intervals are back-transformed from the logit scale </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Odds Ratios:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+     0.3933761      0.5438373      1.4287958      0.6064213      0.7723826 
+           age CalfSizeLgSmSM 
+     0.5778636      2.8217794 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Type III p-values:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: Scour
+               Chisq Df Pr(&gt;Chisq)    
+(Intercept)   4.3404  1  0.0372176 *  
+D0Fed2TxGrp   6.5049  4  0.1644790    
+age           9.9643  1  0.0015961 ** 
+CalfSizeLgSm 12.8512  1  0.0003373 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Adjusted Proportions:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+     0.2823187      0.3522633      0.5882733      0.3774983      0.4357877 
+           age CalfSizeLgSmSM 
+     0.3662316      0.7383418 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: glmer(formula = Scour ~ D0Fed2TxGrp + age + CalfSizeLgSm + (1 | 
+    CalfID), data = hs, family = "binomial")
+
+Linear Hypotheses:
+               Estimate Std. Error z value Pr(&gt;|z|)
+CSB - MRB == 0  -0.6091     0.4550  -1.339    0.666
+CST - MRB == 0   0.3568     0.4043   0.883    0.903
+MCB - MRB == 0  -0.5002     0.4457  -1.122    0.794
+MCT - MRB == 0  -0.2583     0.4368  -0.591    0.976
+CST - CSB == 0   0.9659     0.4426   2.182    0.186
+MCB - CSB == 0   0.1089     0.4735   0.230    0.999
+MCT - CSB == 0   0.3508     0.4696   0.747    0.945
+MCB - CST == 0  -0.8570     0.4336  -1.977    0.277
+MCT - CST == 0  -0.6151     0.4214  -1.460    0.588
+MCT - MCB == 0   0.2419     0.4610   0.525    0.985
+(Adjusted p values reported -- single-step method)</code></pre>
+</div>
+</div>
+</section>
+<section id="sick-model" class="level3">
+<h3 class="anchored" data-anchor-id="sick-model">Sick Model</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     
+       0  1
+  MRB 54 32
+  CSB 69 16
+  CST 56 29
+  MCB 63 23
+  MCT 59 25</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  1 0.6197183 0.3802817
+  2 0.6643836 0.3356164
+  3 0.8405797 0.1594203</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  N 0.7638889 0.2361111
+  Y 0.6949153 0.3050847</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    
+             0         1
+  LG 0.6830189 0.3169811
+  SM 0.7453416 0.2546584</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  F 0.7641921 0.2358079
+  M 0.6358974 0.3641026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  426 
+
+ 
+             | hs$age 
+     hs$Sick |         1 |         2 |         3 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|
+           0 |        88 |        97 |       116 |       301 | 
+             |     1.516 |     0.368 |     3.507 |           | 
+             |     0.292 |     0.322 |     0.385 |     0.707 | 
+             |     0.620 |     0.664 |     0.841 |           | 
+             |     0.207 |     0.228 |     0.272 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           1 |        54 |        49 |        22 |       125 | 
+             |     3.651 |     0.886 |     8.446 |           | 
+             |     0.432 |     0.392 |     0.176 |     0.293 | 
+             |     0.380 |     0.336 |     0.159 |           | 
+             |     0.127 |     0.115 |     0.052 |           | 
+-------------|-----------|-----------|-----------|-----------|
+Column Total |       142 |       146 |       138 |       426 | 
+             |     0.333 |     0.343 |     0.324 |           | 
+-------------|-----------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Alternative hypothesis: two.sided
+p =  5.822219e-05 
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  426 
+
+ 
+             | hs$CrossbredYN 
+     hs$Sick |         N |         Y | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |        55 |       246 |       301 | 
+             |     0.335 |     0.068 |           | 
+             |     0.183 |     0.817 |     0.707 | 
+             |     0.764 |     0.695 |           | 
+             |     0.129 |     0.577 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        17 |       108 |       125 | 
+             |     0.806 |     0.164 |           | 
+             |     0.136 |     0.864 |     0.293 | 
+             |     0.236 |     0.305 |           | 
+             |     0.040 |     0.254 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |        72 |       354 |       426 | 
+             |     0.169 |     0.831 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  1.41926 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.2595839 
+95% confidence interval:  0.7687918 2.733646 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.9073812 
+95% confidence interval:  0 2.466046 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.1513241 
+95% confidence interval:  0.8398923 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  426 
+
+ 
+             | hs$CalfSizeLgSm 
+     hs$Sick |        LG |        SM | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |       181 |       120 |       301 | 
+             |     0.208 |     0.342 |           | 
+             |     0.601 |     0.399 |     0.707 | 
+             |     0.683 |     0.745 |           | 
+             |     0.425 |     0.282 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        84 |        41 |       125 | 
+             |     0.501 |     0.825 |           | 
+             |     0.672 |     0.328 |     0.293 | 
+             |     0.317 |     0.255 |           | 
+             |     0.197 |     0.096 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       265 |       161 |       426 | 
+             |     0.622 |     0.378 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  0.7367353 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.1886151 
+95% confidence interval:  0.4613276 1.165171 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.1033734 
+95% confidence interval:  0 1.087531 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.9311903 
+95% confidence interval:  0.4959692 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  424 
+
+ 
+             | hs$SexMF 
+     hs$Sick |         F |         M | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |       175 |       124 |       299 | 
+             |     1.131 |     1.328 |           | 
+             |     0.585 |     0.415 |     0.705 | 
+             |     0.764 |     0.636 |           | 
+             |     0.413 |     0.292 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        54 |        71 |       125 | 
+             |     2.704 |     3.176 |           | 
+             |     0.432 |     0.568 |     0.295 | 
+             |     0.236 |     0.364 |           | 
+             |     0.127 |     0.167 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       229 |       195 |       424 | 
+             |     0.540 |     0.460 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  1.852863 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.00535181 
+95% confidence interval:  1.190643 2.896064 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.9986216 
+95% confidence interval:  0 2.70384 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.002721846 
+95% confidence interval:  1.273287 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  426 
+
+ 
+             | hs$D0Fed2TxGrp 
+     hs$Sick |       MRB |       CSB |       CST |       MCB |       MCT | Row Total | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           0 |        54 |        69 |        56 |        63 |        59 |       301 | 
+             |     0.753 |     1.331 |     0.274 |     0.082 |     0.002 |           | 
+             |     0.179 |     0.229 |     0.186 |     0.209 |     0.196 |     0.707 | 
+             |     0.628 |     0.812 |     0.659 |     0.733 |     0.702 |           | 
+             |     0.127 |     0.162 |     0.131 |     0.148 |     0.138 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           1 |        32 |        16 |        29 |        23 |        25 |       125 | 
+             |     1.814 |     3.205 |     0.660 |     0.198 |     0.005 |           | 
+             |     0.256 |     0.128 |     0.232 |     0.184 |     0.200 |     0.293 | 
+             |     0.372 |     0.188 |     0.341 |     0.267 |     0.298 |           | 
+             |     0.075 |     0.038 |     0.068 |     0.054 |     0.059 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+Column Total |        86 |        85 |        85 |        86 |        84 |       426 | 
+             |     0.202 |     0.200 |     0.200 |     0.202 |     0.197 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Alternative hypothesis: two.sided
+p =  0.07441026 
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: Sick ~ D0Fed2TxGrp + age + SexMF + (1 | CalfID)
+   Data: hs
+
+     AIC      BIC   logLik deviance df.resid 
+   495.8    528.2   -239.9    479.8      416 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.1625 -0.6499 -0.4846  0.9450  3.0109 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ CalfID (Intercept) 0.162    0.4024  
+Number of obs: 424, groups:  CalfID, 148
+
+Fixed effects:
+               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)      0.2677     0.3773   0.710  0.47797    
+D0Fed2TxGrpCSB  -0.9920     0.3886  -2.553  0.01069 *  
+D0Fed2TxGrpCST  -0.1423     0.3551  -0.401  0.68854    
+D0Fed2TxGrpMCB  -0.4450     0.3631  -1.226  0.22035    
+D0Fed2TxGrpMCT  -0.3514     0.3595  -0.977  0.32838    
+age             -0.5871     0.1459  -4.023 5.75e-05 ***
+SexMFM           0.6492     0.2386   2.721  0.00652 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) D0F2TGCSB D0F2TGCST D0F2TGMCB D0F2TGMCT age   
+D0Fd2TxGCSB -0.427                                               
+D0Fd2TxGCST -0.434  0.443                                        
+D0Fd2TxGMCB -0.472  0.433     0.470                              
+D0Fd2TxGMCT -0.441  0.439     0.480     0.466                    
+age         -0.678  0.048    -0.006     0.021     0.002          
+SexMFM      -0.265 -0.049    -0.064     0.043    -0.033    -0.071</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> D0Fed2TxGrp  prob     SE  df asymp.LCL asymp.UCL
+ CSB         0.172 0.0441 Inf     0.102     0.276
+ CST         0.327 0.0568 Inf     0.227     0.447
+ MCB         0.265 0.0530 Inf     0.174     0.380
+ MCT         0.283 0.0540 Inf     0.190     0.399
+ MRB         0.359 0.0580 Inf     0.255     0.479
+
+Results are averaged over the levels of: SexMF 
+Confidence level used: 0.95 
+Intervals are back-transformed from the logit scale </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Odds Ratios:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+     1.3070130      0.3708494      0.8673241      0.6408244      0.7037328 
+           age         SexMFM 
+     0.5559445      1.9140635 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Type III p-values:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: Sick
+              Chisq Df Pr(&gt;Chisq)    
+(Intercept)  0.5035  1   0.477970    
+D0Fed2TxGrp  7.3747  4   0.117364    
+age         16.1840  1  5.748e-05 ***
+SexMF        7.4015  1   0.006517 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Adjusted Proportions:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+     0.5665391      0.2705253      0.4644743      0.3905502      0.4130535 
+           age         SexMFM 
+     0.3573036      0.6568366 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: glmer(formula = Sick ~ D0Fed2TxGrp + age + SexMF + (1 | CalfID), 
+    data = hs, family = "binomial")
+
+Linear Hypotheses:
+               Estimate Std. Error z value Pr(&gt;|z|)  
+CSB - MRB == 0 -0.99196    0.38857  -2.553    0.079 .
+CST - MRB == 0 -0.14234    0.35512  -0.401    0.995  
+MCB - MRB == 0 -0.44500    0.36309  -1.226    0.736  
+MCT - MRB == 0 -0.35136    0.35949  -0.977    0.865  
+CST - CSB == 0  0.84962    0.39344   2.159    0.195  
+MCB - CSB == 0  0.54696    0.40065   1.365    0.649  
+MCT - CSB == 0  0.64060    0.39702   1.614    0.488  
+MCB - CST == 0 -0.30266    0.36985  -0.818    0.925  
+MCT - CST == 0 -0.20901    0.36431  -0.574    0.979  
+MCT - MCB == 0  0.09364    0.37326   0.251    0.999  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+(Adjusted p values reported -- single-step method)</code></pre>
+</div>
+</div>
+</section>
+<section id="appetite---health-score" class="level3">
+<h3 class="anchored" data-anchor-id="appetite---health-score">Appetite - Health Score</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     
+       0  1
+  MRB 67 19
+  CSB 83  3
+  CST 79  8
+  MCB 74 13
+  MCT 72 12</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+              0           1
+  1 0.664335664 0.335664336
+  2 0.959459459 0.040540541
+  3 0.992805755 0.007194245</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  N 0.8219178 0.1780822
+  Y 0.8823529 0.1176471</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    
+             0         1
+  LG 0.8726592 0.1273408
+  SM 0.8711656 0.1288344</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  F 0.8836207 0.1163793
+  M 0.8564103 0.1435897</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  430 
+
+ 
+             | hs$age 
+   hs$Refuse |         1 |         2 |         3 | Row Total | 
+-------------|-----------|-----------|-----------|-----------|
+           0 |        95 |       142 |       138 |       375 | 
+             |     7.078 |     1.295 |     2.323 |           | 
+             |     0.253 |     0.379 |     0.368 |     0.872 | 
+             |     0.664 |     0.959 |     0.993 |           | 
+             |     0.221 |     0.330 |     0.321 |           | 
+-------------|-----------|-----------|-----------|-----------|
+           1 |        48 |         6 |         1 |        55 | 
+             |    48.256 |     8.832 |    15.835 |           | 
+             |     0.873 |     0.109 |     0.018 |     0.128 | 
+             |     0.336 |     0.041 |     0.007 |           | 
+             |     0.112 |     0.014 |     0.002 |           | 
+-------------|-----------|-----------|-----------|-----------|
+Column Total |       143 |       148 |       139 |       430 | 
+             |     0.333 |     0.344 |     0.323 |           | 
+-------------|-----------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Alternative hypothesis: two.sided
+p =  3.900226e-19 
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  430 
+
+ 
+             | hs$CrossbredYN 
+   hs$Refuse |         N |         Y | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |        60 |       315 |       375 | 
+             |     0.211 |     0.043 |           | 
+             |     0.160 |     0.840 |     0.872 | 
+             |     0.822 |     0.882 |           | 
+             |     0.140 |     0.733 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        13 |        42 |        55 | 
+             |     1.437 |     0.294 |           | 
+             |     0.236 |     0.764 |     0.128 | 
+             |     0.178 |     0.118 |           | 
+             |     0.030 |     0.098 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |        73 |       357 |       430 | 
+             |     0.170 |     0.830 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  0.6161651 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.1777458 
+95% confidence interval:  0.3018233 1.328888 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.1140819 
+95% confidence interval:  0 1.178349 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.940894 
+95% confidence interval:  0.3341866 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  430 
+
+ 
+             | hs$CalfSizeLgSm 
+   hs$Refuse |        LG |        SM | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |       233 |       142 |       375 | 
+             |     0.000 |     0.000 |           | 
+             |     0.621 |     0.379 |     0.872 | 
+             |     0.873 |     0.871 |           | 
+             |     0.542 |     0.330 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        34 |        21 |        55 | 
+             |     0.001 |     0.001 |           | 
+             |     0.618 |     0.382 |     0.128 | 
+             |     0.127 |     0.129 |           | 
+             |     0.079 |     0.049 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       267 |       163 |       430 | 
+             |     0.621 |     0.379 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  1.013436 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  1 
+95% confidence interval:  0.5363252 1.878174 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.5801308 
+95% confidence interval:  0 1.714459 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.5377497 
+95% confidence interval:  0.5914501 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  427 
+
+ 
+             | hs$SexMF 
+   hs$Refuse |         F |         M | Row Total | 
+-------------|-----------|-----------|-----------|
+           0 |       205 |       167 |       372 | 
+             |     0.041 |     0.049 |           | 
+             |     0.551 |     0.449 |     0.871 | 
+             |     0.884 |     0.856 |           | 
+             |     0.480 |     0.391 |           | 
+-------------|-----------|-----------|-----------|
+           1 |        27 |        28 |        55 | 
+             |     0.278 |     0.331 |           | 
+             |     0.491 |     0.509 |     0.129 | 
+             |     0.116 |     0.144 |           | 
+             |     0.063 |     0.066 |           | 
+-------------|-----------|-----------|-----------|
+Column Total |       232 |       195 |       427 | 
+             |     0.543 |     0.457 |           | 
+-------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  1.272277 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.4688203 
+95% confidence interval:  0.6930399 2.339416 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.8367483 
+95% confidence interval:  0 2.13358 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.2443744 
+95% confidence interval:  0.7594914 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  430 
+
+ 
+             | hs$D0Fed2TxGrp 
+   hs$Refuse |       MRB |       CSB |       CST |       MCB |       MCT | Row Total | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           0 |        67 |        83 |        79 |        74 |        72 |       375 | 
+             |     0.853 |     0.853 |     0.129 |     0.046 |     0.022 |           | 
+             |     0.179 |     0.221 |     0.211 |     0.197 |     0.192 |     0.872 | 
+             |     0.779 |     0.965 |     0.908 |     0.851 |     0.857 |           | 
+             |     0.156 |     0.193 |     0.184 |     0.172 |     0.167 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+           1 |        19 |         3 |         8 |        13 |        12 |        55 | 
+             |     5.818 |     5.818 |     0.879 |     0.315 |     0.147 |           | 
+             |     0.345 |     0.055 |     0.145 |     0.236 |     0.218 |     0.128 | 
+             |     0.221 |     0.035 |     0.092 |     0.149 |     0.143 |           | 
+             |     0.044 |     0.007 |     0.019 |     0.030 |     0.028 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+Column Total |        86 |        86 |        87 |        87 |        84 |       430 | 
+             |     0.200 |     0.200 |     0.202 |     0.202 |     0.195 |           | 
+-------------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Alternative hypothesis: two.sided
+p =  0.003154685 
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: Refuse ~ D0Fed2TxGrp + age + (1 | CalfID)
+   Data: hs
+
+     AIC      BIC   logLik deviance df.resid 
+   240.0    268.5   -113.0    226.0      423 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.0527 -0.2949 -0.0905 -0.0484 14.9766 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ CalfID (Intercept) 0.2488   0.4988  
+Number of obs: 430, groups:  CalfID, 149
+
+Fixed effects:
+               Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)      2.6810     0.6488   4.132 3.59e-05 ***
+D0Fed2TxGrpCSB  -2.4863     0.7602  -3.271  0.00107 ** 
+D0Fed2TxGrpCST  -1.3420     0.5729  -2.342  0.01916 *  
+D0Fed2TxGrpMCB  -0.6336     0.5039  -1.257  0.20866    
+D0Fed2TxGrpMCT  -0.6577     0.5147  -1.278  0.20133    
+age             -2.5230     0.4445  -5.676 1.38e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) D0F2TGCSB D0F2TGCST D0F2TGMCB D0F2TGMCT
+D0Fd2TxGCSB -0.441                                        
+D0Fd2TxGCST -0.506  0.392                                 
+D0Fd2TxGMCB -0.465  0.369     0.458                       
+D0Fd2TxGMCT -0.458  0.367     0.453     0.473             
+age         -0.855  0.270     0.258     0.154     0.155   </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> D0Fed2TxGrp    prob      SE  df asymp.LCL asymp.UCL
+ CSB         0.00794 0.00673 Inf   0.00150    0.0409
+ CST         0.02452 0.01578 Inf   0.00685    0.0839
+ MCB         0.04856 0.02569 Inf   0.01687    0.1318
+ MCT         0.04746 0.02567 Inf   0.01611    0.1316
+ MRB         0.08774 0.03773 Inf   0.03677    0.1950
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the logit scale </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Odds Ratios:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+   14.59917248     0.08322077     0.26133100     0.53069101     0.51803984 
+           age 
+    0.08021826 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Type III p-values:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: Refuse
+             Chisq Df Pr(&gt;Chisq)    
+(Intercept) 17.077  1  3.590e-05 ***
+D0Fed2TxGrp 12.242  4    0.01564 *  
+age         32.217  1  1.379e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Adjusted Proportions:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+    0.93589404     0.07682716     0.20718669     0.34670029     0.34125576 
+           age 
+    0.07426116 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: glmer(formula = Refuse ~ D0Fed2TxGrp + age + (1 | CalfID), data = hs, 
+    family = "binomial")
+
+Linear Hypotheses:
+               Estimate Std. Error z value Pr(&gt;|z|)   
+CSB - MRB == 0 -2.48626    0.76016  -3.271  0.00923 **
+CST - MRB == 0 -1.34197    0.57291  -2.342  0.12781   
+MCB - MRB == 0 -0.63358    0.50394  -1.257  0.71188   
+MCT - MRB == 0 -0.65770    0.51473  -1.278  0.69922   
+CST - CSB == 0  1.14429    0.75126   1.523  0.54030   
+MCB - CSB == 0  1.85268    0.74118   2.500  0.08785 . 
+MCT - CSB == 0  1.82856    0.74560   2.452  0.09857 . 
+MCB - CST == 0  0.70839    0.56371   1.257  0.71219   
+MCT - CST == 0  0.68426    0.57075   1.199  0.74686   
+MCT - MCB == 0 -0.02413    0.52297  -0.046  1.00000   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+(Adjusted p values reported -- single-step method)</code></pre>
+</div>
+</div>
+</section>
+<section id="refusals---first-milk-feeding" class="level3">
+<h3 class="anchored" data-anchor-id="refusals---first-milk-feeding">Refusals - First Milk Feeding</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     
+       0  1
+  CSB 24  6
+  CST 20 10
+  MCB 10 20
+  MCT 16 13
+  MRB 13 18</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  1 0.5533333 0.4466667</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+        0     1
+  N 0.480 0.520
+  Y 0.568 0.432</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    
+             0         1
+  LG 0.5376344 0.4623656
+  SM 0.5789474 0.4210526</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+            0         1
+  F 0.5750000 0.4250000
+  M 0.5217391 0.4782609</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  150 
+
+ 
+              | hsd1$CrossbredYN 
+hsd1$refuseM1 |         N |         Y | Row Total | 
+--------------|-----------|-----------|-----------|
+            0 |        12 |        71 |        83 | 
+              |     0.243 |     0.049 |           | 
+              |     0.145 |     0.855 |     0.553 | 
+              |     0.480 |     0.568 |           | 
+              |     0.080 |     0.473 |           | 
+--------------|-----------|-----------|-----------|
+            1 |        13 |        54 |        67 | 
+              |     0.301 |     0.060 |           | 
+              |     0.194 |     0.806 |     0.447 | 
+              |     0.520 |     0.432 |           | 
+              |     0.087 |     0.360 |           | 
+--------------|-----------|-----------|-----------|
+ Column Total |        25 |       125 |       150 | 
+              |     0.167 |     0.833 |           | 
+--------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  0.7037462 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.5099356 
+95% confidence interval:  0.2696064 1.821751 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.277558 
+95% confidence interval:  0 1.584812 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.8480401 
+95% confidence interval:  0.3107334 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  150 
+
+ 
+              | hsd1$CalfSizeLgSm 
+hsd1$refuseM1 |        LG |        SM | Row Total | 
+--------------|-----------|-----------|-----------|
+            0 |        50 |        33 |        83 | 
+              |     0.041 |     0.068 |           | 
+              |     0.602 |     0.398 |     0.553 | 
+              |     0.538 |     0.579 |           | 
+              |     0.333 |     0.220 |           | 
+--------------|-----------|-----------|-----------|
+            1 |        43 |        24 |        67 | 
+              |     0.051 |     0.084 |           | 
+              |     0.642 |     0.358 |     0.447 | 
+              |     0.462 |     0.421 |           | 
+              |     0.287 |     0.160 |           | 
+--------------|-----------|-----------|-----------|
+ Column Total |        93 |        57 |       150 | 
+              |     0.620 |     0.380 |           | 
+--------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  0.8466127 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.7352998 
+95% confidence interval:  0.4109161 1.731126 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.3732349 
+95% confidence interval:  0 1.55745 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.7460372 
+95% confidence interval:  0.4578908 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  149 
+
+ 
+              | hsd1$SexMF 
+hsd1$refuseM1 |         F |         M | Row Total | 
+--------------|-----------|-----------|-----------|
+            0 |        46 |        36 |        82 | 
+              |     0.088 |     0.103 |           | 
+              |     0.561 |     0.439 |     0.550 | 
+              |     0.575 |     0.522 |           | 
+              |     0.309 |     0.242 |           | 
+--------------|-----------|-----------|-----------|
+            1 |        34 |        33 |        67 | 
+              |     0.108 |     0.125 |           | 
+              |     0.507 |     0.493 |     0.450 | 
+              |     0.425 |     0.478 |           | 
+              |     0.228 |     0.221 |           | 
+--------------|-----------|-----------|-----------|
+ Column Total |        80 |        69 |       149 | 
+              |     0.537 |     0.463 |           | 
+--------------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Sample estimate odds ratio:  1.23839 
+
+Alternative hypothesis: true odds ratio is not equal to 1
+p =  0.6204946 
+95% confidence interval:  0.616816 2.493127 
+
+Alternative hypothesis: true odds ratio is less than 1
+p =  0.7929664 
+95% confidence interval:  0 2.245927 
+
+Alternative hypothesis: true odds ratio is greater than 1
+p =  0.313265 
+95% confidence interval:  0.6841169 Inf 
+
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+   Cell Contents
+|-------------------------|
+|                       N |
+| Chi-square contribution |
+|           N / Row Total |
+|           N / Col Total |
+|         N / Table Total |
+|-------------------------|
+
+ 
+Total Observations in Table:  150 
+
+ 
+              | hsd1$D0Fed2TxGrp 
+hsd1$refuseM1 |       CSB |       CST |       MCB |       MCT |       MRB | Row Total | 
+--------------|-----------|-----------|-----------|-----------|-----------|-----------|
+            0 |        24 |        20 |        10 |        16 |        13 |        83 | 
+              |     3.299 |     0.696 |     2.624 |     0.000 |     1.006 |           | 
+              |     0.289 |     0.241 |     0.120 |     0.193 |     0.157 |     0.553 | 
+              |     0.800 |     0.667 |     0.333 |     0.552 |     0.419 |           | 
+              |     0.160 |     0.133 |     0.067 |     0.107 |     0.087 |           | 
+--------------|-----------|-----------|-----------|-----------|-----------|-----------|
+            1 |         6 |        10 |        20 |        13 |        18 |        67 | 
+              |     4.087 |     0.863 |     3.251 |     0.000 |     1.246 |           | 
+              |     0.090 |     0.149 |     0.299 |     0.194 |     0.269 |     0.447 | 
+              |     0.200 |     0.333 |     0.667 |     0.448 |     0.581 |           | 
+              |     0.040 |     0.067 |     0.133 |     0.087 |     0.120 |           | 
+--------------|-----------|-----------|-----------|-----------|-----------|-----------|
+ Column Total |        30 |        30 |        30 |        29 |        31 |       150 | 
+              |     0.200 |     0.200 |     0.200 |     0.193 |     0.207 |           | 
+--------------|-----------|-----------|-----------|-----------|-----------|-----------|
+
+ 
+Fisher's Exact Test for Count Data
+------------------------------------------------------------
+Alternative hypothesis: two.sided
+p =  0.001641195 
+
+ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
+  Approximation) [glmerMod]
+ Family: binomial  ( logit )
+Formula: refuseM1 ~ D0Fed2TxGrp + (1 | CalfID)
+   Data: hsd1
+
+     AIC      BIC   logLik deviance df.resid 
+   200.4    218.4    -94.2    188.4      144 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.3535 -0.8623 -0.4780  0.8122  1.9129 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ CalfID (Intercept) 0.1845   0.4295  
+Number of obs: 150, groups:  CalfID, 148
+
+Fixed effects:
+               Estimate Std. Error z value Pr(&gt;|z|)   
+(Intercept)      0.3427     0.3866   0.886  0.37536   
+D0Fed2TxGrpCSB  -1.7848     0.6615  -2.698  0.00697 **
+D0Fed2TxGrpCST  -1.0674     0.5835  -1.829  0.06735 . 
+D0Fed2TxGrpMCB   0.3820     0.5573   0.686  0.49299   
+D0Fed2TxGrpMCT  -0.5602     0.5548  -1.010  0.31266   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) D0F2TGCSB D0F2TGCST D0F2TGMCB
+D0Fd2TxGCSB -0.635                              
+D0Fd2TxGCST -0.696  0.502                       
+D0Fd2TxGMCB -0.659  0.356     0.417             
+D0Fd2TxGMCT -0.708  0.470     0.505     0.453   </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> D0Fed2TxGrp  prob     SE  df asymp.LCL asymp.UCL
+ CSB         0.191 0.0792 Inf    0.0798     0.392
+ CST         0.326 0.0923 Inf    0.1755     0.524
+ MCB         0.674 0.0923 Inf    0.4756     0.825
+ MCT         0.446 0.0969 Inf    0.2717     0.634
+ MRB         0.585 0.0939 Inf    0.3977     0.750
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the logit scale </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Odds Ratios:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+     1.4087234      0.1678272      0.3438963      1.4652792      0.5710986 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Type III p-values:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: refuseM1
+              Chisq Df Pr(&gt;Chisq)  
+(Intercept)  0.7859  1    0.37536  
+D0Fed2TxGrp 11.6267  4    0.02035 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Adjusted Proportions:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) D0Fed2TxGrpCSB D0Fed2TxGrpCST D0Fed2TxGrpMCB D0Fed2TxGrpMCT 
+     0.5848423      0.1437089      0.2558949      0.5943664      0.3635027 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: glmer(formula = refuseM1 ~ D0Fed2TxGrp + (1 | CalfID), data = hsd1, 
+    family = "binomial")
+
+Linear Hypotheses:
+               Estimate Std. Error z value Pr(&gt;|z|)  
+CSB - MRB == 0  -1.7848     0.6615  -2.698   0.0535 .
+CST - MRB == 0  -1.0674     0.5835  -1.829   0.3539  
+MCB - MRB == 0   0.3820     0.5573   0.686   0.9592  
+MCT - MRB == 0  -0.5602     0.5548  -1.010   0.8496  
+CST - CSB == 0   0.7174     0.6247   1.148   0.7787  
+MCB - CSB == 0   2.1669     0.6972   3.108   0.0159 *
+MCT - CSB == 0   1.2246     0.6331   1.934   0.2965  
+MCB - CST == 0   1.4495     0.6161   2.352   0.1272  
+MCT - CST == 0   0.5072     0.5667   0.895   0.8978  
+MCT - MCB == 0  -0.9422     0.5817  -1.620   0.4819  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+(Adjusted p values reported -- single-step method)</code></pre>
+</div>
+</div>
+</section>
+<section id="farm-reported-disease-yn" class="level3">
+<h3 class="anchored" data-anchor-id="farm-reported-disease-yn">Farm Reported Disease (y/n)</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     
+       N  Y
+  CSB 19 12
+  CST 19 12
+  MCB 19 12
+  MCT 23  8
+  MRB 17 14</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+   D0Fed2TxGrp FarmDzYN count proportion
+   &lt;chr&gt;       &lt;chr&gt;    &lt;int&gt;      &lt;dbl&gt;
+ 1 CSB         N           19      0.12 
+ 2 CSB         Y           12      0.077
+ 3 CST         N           19      0.12 
+ 4 CST         Y           12      0.077
+ 5 MCB         N           19      0.12 
+ 6 MCB         Y           12      0.077
+ 7 MCT         N           23      0.15 
+ 8 MCT         Y            8      0.052
+ 9 MRB         N           17      0.11 
+10 MRB         Y           14      0.09 </code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

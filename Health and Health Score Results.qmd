@@ -152,8 +152,9 @@ hs |>
 
 ### Tables of All Health Outcomes by day and TRT Group
 
+Age is days in age (same as Day post Colostrum Feeding)
+
 ```{r}
-#| echo: false
 #| warning: false
 
 
@@ -200,14 +201,13 @@ print(Fever)
 Sick <- table(hs$D0Fed2TxGrp, hs$Sick, strat)
 print(Sick)
 
-Hungry <- table(hs$D0Fed2TxGrp, hs$Hungry, strat)
+Hungry <- table(hs$D0Fed2TxGrp, hs$Refuse, strat)
 print(Hungry)
 ```
 
 ### Scour Model
 
 ```{r}
-#| echo: false
 #| warning: false
 
 
@@ -262,7 +262,6 @@ summary(contrasts)
 ### Sick Model
 
 ```{r}
-#| echo: false
 #| warning: false
 
 
@@ -316,7 +315,6 @@ summary(contrasts)
 ### Appetite - Health Score
 
 ```{r}
-#| echo: false
 #| warning: false
 
 
@@ -368,10 +366,9 @@ contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
 ```
 
-###  Refusals - First Milk Feeding
+### Refusals - First Milk Feeding
 
 ```{r}
-#| echo: false
 #| warning: false
 
 
@@ -425,7 +422,6 @@ summary(contrasts)
 ### Farm Reported Disease (y/n)
 
 ```{r}
-#| echo: false
 #| warning: false
 
 table(clean$D0Fed2TxGrp, clean$FarmDzYN)

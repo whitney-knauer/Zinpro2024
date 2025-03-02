@@ -43,9 +43,11 @@ library(gt)
 library(lubridate)
 ```
 
-## Data Steps
+## Data Steps - All
 
-Pull in data. Goal is to bring in IceQube data to then match to specific calves and specific times. Let's see!
+### Pull in data. 
+
+Goal is to bring in IceQube data to then match to specific calves and specific times. Let's see!
 
 ```{r}
 #| include: false
@@ -99,7 +101,7 @@ combined_data <-
 
 ```
 
-## Merge with Calf Key
+### Merge with Calf Key
 
 Now Steps taken to merge calfkey with combined_data set so we can start arduous process of tagging on and off times along with feeding times.
 
@@ -136,13 +138,24 @@ na_count <- sum(!complete.cases(merged_data))
 print(na_count)
 na_data <- merged_data[!complete.cases(merged_data), ]
 
+#create a variable so can look at tubed vs. bottle 
+merged_data<- 
+  merged_data |> 
+  mutate(bottleyn=
+           case_when(
+             D0Fed2TxGrp == "CSB"    ~ "Y",
+             D0Fed2TxGrp == "MCB"    ~ "Y",
+             D0Fed2TxGrp == "MRB"    ~ "Y",
+             D0Fed2TxGrp == "CST"    ~ "N",
+             D0Fed2TxGrp == "MCT"    ~ "N"))
+
 ```
 
 Have to manipulate the key to match with the date the tags were cleared. So added an "on date" variable to the merged data set, which corresponds to the bdat of the calf.
 
 Not sure how to proceed. Now need to figure out how to tag when the IceQubes went on, when the second feeding was administered, and when the tags came off so that the data is only representative of when the tags were on the calf. Would additionally like to add some variables that show time from second feeding (0) with time before going -1, -2, etc, and time after going +1, +2, for each calf.
 
-## Using Merged Data Set to do more stuff
+### Using Merged Data Set to do more stuff
 
 ```{r}
 #| include: false
@@ -191,7 +204,9 @@ merged_data <- merged_data |>
 write.csv(merged_data, "data/merged_data.csv", row.names = FALSE)
 ```
 
-## New Data Set and Data Visualization!
+## All Calves
+
+### Laying
 
 This data set uses the merged_data set and filters out all hours except for the +/-8hrs around feeding time. Then makes a graph of calf behavior before and after feeding.
 
@@ -226,6 +241,8 @@ ggplot(aes(x = hoursfrom, y = lyingm)) +
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
+### Standing
+
 ```{r}
 #| warning: false
 #| echo: false
@@ -257,7 +274,9 @@ ggplot(aes(x = hoursfrom, y = standm)) +
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
-## Graphs by Treatment Group
+## By Treatment Group - Summarized by Hr
+
+### Laying
 
 ```{r}
 #| warning: false
@@ -290,6 +309,8 @@ ggplot(aes(x = hoursfrom, y = lyingm, color=D0Fed2TxGrp)) +
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
+### Standing
+
 ```{r}
 #| warning: false
 #| echo: false
@@ -321,7 +342,9 @@ ggplot(aes(x = hoursfrom, y = standm, color=D0Fed2TxGrp)) +
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
-## Time (15min increments vs. hours)
+## By Treatment Group - 15min Intervals
+
+### Laying
 
 ```{r}
 #| warning: false
@@ -354,6 +377,8 @@ ggplot(aes(x = tffeed, y = lyingm, color=D0Fed2TxGrp)) +
     scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
 ```
 
+### Standing
+
 ```{r}
 #| warning: false
 #| echo: false
@@ -374,6 +399,140 @@ standinggrp_min <- merged_data |>
 
 standinggrp_min |> 
 ggplot(aes(x = tffeed, y = standm, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Standing Time in the 4hrs around the second feeding",
+    x = "Min(15) from feeding Time",
+    y = "Standing Time (min)") +
+    scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+```
+
+## Tubed vs. Bottled
+
+### Hours from feeding time - Laying Time
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+layingbot <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 16) |> 
+  group_by(CalfID, hoursfrom, bottleyn) |>  
+  summarize(
+    `Lying [t]` = sum(`Lying [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom, bottleyn) |>  
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`, na.rm = TRUE)) |> 
+  mutate(
+    lyingm = `Lying [t]` / 60) |> 
+  ungroup()
+
+
+layingbot |> 
+ggplot(aes(x = hoursfrom, y = lyingm, color=bottleyn)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Lying Time in the 24hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Lying Time (min)")+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
+```
+
+### Hours from feeding time - Standing Time
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+standinggrpbot <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 16) |> 
+  group_by(CalfID, hoursfrom, bottleyn) |>  
+  summarize(
+    `Standing [t]` = sum(`Standing [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom, bottleyn) |>  
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`, na.rm = TRUE)) |> 
+  mutate(
+    standm = `Standing [t]` / 60) |> 
+  ungroup()
+
+
+standinggrpbot |> 
+ggplot(aes(x = hoursfrom, y = standm, color=bottleyn)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Standing Time in the 24hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Standing Time (min)") +
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
+```
+
+### Minutes from feeding time - Laying Time
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+layinggrpb_min <- merged_data |> 
+  filter(tffeed >= -8 & tffeed <= 8) |> 
+  group_by(CalfID, tffeed, bottleyn) |>  
+  summarize(
+    `Lying [t]` = sum(`Lying [t]`, na.rm = TRUE)) |> 
+  group_by(tffeed, bottleyn) |>  
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`, na.rm = TRUE)) |> 
+  mutate(
+    lyingm = `Lying [t]` / 60) |> 
+  ungroup()
+
+
+layinggrpb_min |> 
+ggplot(aes(x = tffeed, y = lyingm, color=bottleyn)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Lying Time in the 2hrs around the second feeding",
+    x = "Min(15) from feeding Time",
+    y = "Lying Time (min)")+
+    scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+```
+
+### Minutes from feeding time - Standing Time
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+standinggrp_min <- merged_data |> 
+  filter(tffeed >= -8 & tffeed <= 8) |> 
+  group_by(CalfID, tffeed, bottleyn) |>  
+  summarize(
+    `Standing [t]` = sum(`Standing [t]`, na.rm = TRUE)) |> 
+  group_by(tffeed, bottleyn) |>  
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`, na.rm = TRUE)) |> 
+  mutate(
+    standm = `Standing [t]` / 60) |> 
+  ungroup()
+
+
+standinggrp_min |> 
+ggplot(aes(x = tffeed, y = standm, color=bottleyn)) +
   theme_classic() +
   geom_point() +  
   geom_line() +   

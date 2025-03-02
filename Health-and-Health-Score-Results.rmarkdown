@@ -1,0 +1,458 @@
+---
+title: "Health and Health Score Results"
+author: "WAK"
+date: "today"
+format: 
+  html:
+    toc: true 
+    toc-float: true
+    toc-location: left
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+library(epiDisplay)
+library(knitr)
+library(pROC)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(gmodels)
+library(ggbeeswarm)
+library(dplyr)
+library(ggpubr)
+library(psych)
+library(lme4)
+library(Matrix)
+library(lmerTest)
+library(irr)
+library(lmerTest)
+library(emmeans)
+library(doBy)       
+library(gmodels)    
+library(car)           
+library(cowplot)       
+library(gridGraphics)  
+library(multcomp)
+library(hms)
+library(gt)
+```
+
+```{r}
+#| include: false
+#| echo: false
+#| warning: false
+
+enroll <- read_csv('data/Zinpro 2024 enrollment final.csv')
+
+clean <-
+  enroll |> 
+  filter(removeyn != 1)
+
+#removes calf 113, who did not have correct information    
+
+#changes these variables to "hours" vs. "seconds"
+clean$DOFed2HrsOld <- as.numeric(clean$DOFed2HrsOld)/3600
+clean$DOFed12IntervHrs <- as.numeric(clean$DOFed12IntervHrs)/3600
+clean$DOFed1MinOld <- as.numeric(clean$DOFed1MinOld)/60
+  
+clean<- 
+  clean |> 
+  mutate(refuse=
+           case_when(
+             D0Fed2VolRefusemL > 0    ~ 1, 
+             D0Fed2VolRefusemL == 0   ~ 0))
+
+clean<- 
+  clean |> 
+  mutate(refuseM1=
+           case_when(
+             D1MilkRefusemL > 0    ~ 1, 
+             D1MilkRefusemL == 0   ~ 0))
+
+
+
+health <- read_csv('data/CHSdata_2024_08_12_08_57.csv')
+health<- health |> 
+  filter(`Calf Age` != 4)
+
+#Get rid of two calves who had d4 recorded instead of d3
+
+#Create a better data set and craete variables for TRS, Fever, Scours, scour severity, and brd
+
+health<-
+health |> 
+  mutate(
+    age = `Calf Age`, 
+    .after = CalfID
+    )
+
+health
+
+
+Full<-
+health |> 
+  select(CalfID, age, BodyTemp, Appetite, Attitude, Nose, Eye, Ear, Cough, Temperature, Fecal, Navel, Joint) |> 
+  mutate(
+    TRS = Nose + Eye + Ear + Cough + Temperature,
+    THS = Appetite + Attitude + Nose + Eye + Ear + Cough + Temperature + Fecal + Navel + Joint, 
+    BRD = if_else(TRS>=4, 1, 0),
+    Refuse = if_else(Appetite>=2, 1, 0),
+    Scour = if_else(Fecal>=2, 1, 0),
+    Fever = if_else(BodyTemp>=2, 1, 0), 
+    Sick = if_else(THS>=4, 1, 0), 
+    DiarSS = case_when(
+      Fecal <= 1       ~ "Normal", 
+      Fecal == 2       ~ "Mild",
+      Fecal == 3       ~ "Severe"),
+    #DiarSS = factor(DiarSS, levels = c("Normal", "Mild", "Severe"))
+    )
+
+
+Full
+
+#merge Full and enroll
+
+hs <- merge(Full, clean, by = "CalfID", all.x = TRUE)
+
+#had to remove weird calves
+
+hs <- hs |> 
+  filter(!as.numeric(CalfID) %in% c(113, 191, 1133))
+
+
+hsd1<- hs |> 
+  filter(age == 1)
+```
+
+
+### Data Checks
+
+We should have n=155 obs total (n=31 obs per day) for each treatment group but it appears we are missing some data. In addition, not every calf has a recorded observation for each of the health score categories. Not sure that matters too much, but something to note.
+
+
+```{r}
+#| echo: false
+#| warning: false
+
+hs |> 
+  count(age)
+
+hs |> 
+  count(D0Fed2TxGrp)
+
+hs |> 
+  group_by(age, D0Fed2TxGrp) |> 
+  count()
+
+
+
+```
+
+
+### Tables of All Health Outcomes by day and TRT Group
+
+
+```{r}
+#| warning: false
+
+
+CrossTable(hs$age,  hs$Appetite, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Attitude, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Nose, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Eye, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Ear, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Cough, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Temperature, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$TRS, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$THS, prop.r = FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$BRD, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Scour, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Fever, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$DiarSS, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Sick, prop.r=FALSE, prop.c = FALSE)
+CrossTable(hs$age,  hs$Refuse, prop.r=FALSE, prop.c = FALSE)
+
+hs |> 
+  ggplot(mapping=aes(x=BodyTemp))+
+  theme_classic()+
+  geom_histogram(binwidth=0.2, 
+                 fill="skyblue", 
+                 color="black", 
+                 alpha=0.7)+
+  labs(title = "Histogram of Calf Body Temperature")
+
+
+
+
+strat <- hs$age
+BRD <- table(hs$D0Fed2TxGrp, hs$BRD, strat)
+print(BRD)
+
+
+Scour <- table(hs$D0Fed2TxGrp, hs$Scour, strat)
+print(Scour)
+
+#What BT = a fever??
+Fever <- table(hs$D0Fed2TxGrp, hs$Fever, strat)
+print(Fever)
+
+Sick <- table(hs$D0Fed2TxGrp, hs$Sick, strat)
+print(Sick)
+
+Hungry <- table(hs$D0Fed2TxGrp, hs$Refuse, strat)
+print(Hungry)
+```
+
+
+### Scour Model
+
+
+```{r}
+#| warning: false
+
+
+#What proportion of calves scour in each group?
+
+table(hs$D0Fed2TxGrp, hs$Scour)
+#        0  1
+#   CSB 77 11 = 11/88=12.5
+#   CST 68 21 = 21/89=23.6
+#   MCB 78 12 = 12/90=13.3
+#   MCT 74 13 = 13/87=14.9
+#   MRB 72 16 = 16/88=18.2
+
+prop.table(table(hs$age, hs$Scour), margin = 1)  
+prop.table(table(hs$CrossbredYN, hs$Scour), margin = 1)  
+prop.table(table(hs$CalfSizeLgSm, hs$Scour), margin = 1)  
+prop.table(table(hs$SexMF, hs$Scour), margin = 1)  
+
+
+CrossTable(hs$Scour,  hs$age, fisher=TRUE) #yes include in model
+CrossTable(hs$Scour,  hs$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(hs$Scour,  hs$CalfSizeLgSm,  fisher=TRUE) #yes, less than 0.1
+CrossTable(hs$Scour,  hs$SexMF, fisher=TRUE) #no
+CrossTable(hs$Scour,  hs$D0Fed2TxGrp, fisher = TRUE) #no
+
+
+
+# Fit a repeated measures mixed effects model for scours.
+hs$D0Fed2TxGrp <- factor(hs$D0Fed2TxGrp) 
+hs$D0Fed2TxGrp <- relevel(hs$D0Fed2TxGrp, ref = "MRB")
+model <- glmer(Scour ~ D0Fed2TxGrp + age +  CalfSizeLgSm + (1 | CalfID), family = "binomial", data = hs)
+
+summary(model)
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+fixed_effects <- fixef(model)
+odds_ratios <- exp(fixed_effects)
+cat("Odds Ratios:\n")
+print(odds_ratios)
+
+type3_p_values <- Anova(model, type="III", test="Chisq")
+cat("\nType III p-values:\n")
+print(type3_p_values)
+adjusted_proportions <- odds_ratios / (1 + odds_ratios)
+cat("\nAdjusted Proportions:\n")
+print(adjusted_proportions)
+contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
+summary(contrasts)
+
+```
+
+
+### Sick Model
+
+
+```{r}
+#| warning: false
+
+
+#What proportion of calves had a HS>=4 in each group?
+
+table(hs$D0Fed2TxGrp, hs$Sick)
+#        0  1
+#   CSB 69 16 = 16/85=18.8
+#   CST 56 29 = 29/85=34.1
+#   MCB 63 23 = 23/86=26.7
+#   MCT 59 25 = 25/84=29.7
+#   MRB 54 32 = 32/86=37.2
+
+prop.table(table(hs$age, hs$Sick), margin = 1)  
+prop.table(table(hs$CrossbredYN, hs$Sick), margin = 1)  
+prop.table(table(hs$CalfSizeLgSm, hs$Sick), margin = 1)  
+prop.table(table(hs$SexMF, hs$Sick), margin = 1)  
+
+
+CrossTable(hs$Sick,  hs$age, fisher=TRUE) #yes include in model
+CrossTable(hs$Sick,  hs$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(hs$Sick,  hs$CalfSizeLgSm,  fisher=TRUE) #no
+CrossTable(hs$Sick,  hs$SexMF, fisher=TRUE) #yes
+CrossTable(hs$Sick,  hs$D0Fed2TxGrp, fisher = TRUE) #0.07
+
+
+
+# Fit a repeated measures mixed effects model for scours.
+hs$D0Fed2TxGrp <- factor(hs$D0Fed2TxGrp) 
+hs$D0Fed2TxGrp <- relevel(hs$D0Fed2TxGrp, ref = "MRB")
+model <- glmer(Sick ~ D0Fed2TxGrp + age +  SexMF + (1 | CalfID), family = "binomial", data = hs)
+
+summary(model)
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+fixed_effects <- fixef(model)
+odds_ratios <- exp(fixed_effects)
+cat("Odds Ratios:\n")
+print(odds_ratios)
+
+type3_p_values <- Anova(model, type="III", test="Chisq")
+cat("\nType III p-values:\n")
+print(type3_p_values)
+adjusted_proportions <- odds_ratios / (1 + odds_ratios)
+cat("\nAdjusted Proportions:\n")
+print(adjusted_proportions)
+contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
+summary(contrasts)
+```
+
+
+### Appetite - Health Score
+
+
+```{r}
+#| warning: false
+
+
+
+#What proportion of calves refused milk in each group?
+
+table(hs$D0Fed2TxGrp, hs$Refuse)
+#       0  1
+#  CSB 83  3 = 3/86=3.4
+#  CST 79  8 = 8/87=9.2
+#  MCB 74 13 = 13/87=14.9
+#  MCT 72 12 = 12/84=14.3
+#  MRB 67 19 = 19/86=22.1
+
+prop.table(table(hs$age, hs$Refuse), margin = 1)  
+prop.table(table(hs$CrossbredYN, hs$Refuse), margin = 1)  
+prop.table(table(hs$CalfSizeLgSm, hs$Refuse), margin = 1)  
+prop.table(table(hs$SexMF, hs$Refuse), margin = 1)  
+
+
+CrossTable(hs$Refuse,  hs$age, fisher=TRUE) #yes include in model
+CrossTable(hs$Refuse,  hs$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(hs$Refuse,  hs$CalfSizeLgSm,  fisher=TRUE) #no
+CrossTable(hs$Refuse,  hs$SexMF, fisher=TRUE) #no
+CrossTable(hs$Refuse,  hs$D0Fed2TxGrp, fisher = TRUE) #yes
+
+
+
+# Fit a repeated measures mixed effects model for scours.
+hs$D0Fed2TxGrp <- factor(hs$D0Fed2TxGrp) 
+hs$D0Fed2TxGrp <- relevel(hs$D0Fed2TxGrp, ref = "MRB")
+model <- glmer(Refuse ~ D0Fed2TxGrp + age + (1 | CalfID), family = "binomial", data = hs)
+
+summary(model)
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+fixed_effects <- fixef(model)
+odds_ratios <- exp(fixed_effects)
+cat("Odds Ratios:\n")
+print(odds_ratios)
+
+type3_p_values <- Anova(model, type="III", test="Chisq")
+cat("\nType III p-values:\n")
+print(type3_p_values)
+adjusted_proportions <- odds_ratios / (1 + odds_ratios)
+cat("\nAdjusted Proportions:\n")
+print(adjusted_proportions)
+contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
+summary(contrasts)
+```
+
+
+### Refusals - First Milk Feeding
+
+
+```{r}
+#| warning: false
+
+
+
+#What proportion of calves refused milk at the first feeding?
+
+table(hsd1$D0Fed2TxGrp, hsd1$refuseM1)
+#       0  1
+#  CSB 24  6 = 6/30=20
+#  CST 20 10 = 10/30=33
+#  MCB 10 20 = 20/30=66
+#  MCT 16 13 = 13/29=44
+#  MRB 13 18 = 18/31=58
+
+prop.table(table(hsd1$age, hsd1$refuseM1), margin = 1)  
+prop.table(table(hsd1$CrossbredYN, hsd1$refuseM1), margin = 1)  
+prop.table(table(hsd1$CalfSizeLgSm, hsd1$refuseM1), margin = 1)  
+prop.table(table(hsd1$SexMF, hsd1$refuseM1), margin = 1)  
+
+
+CrossTable(hsd1$refuseM1,  hsd1$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(hsd1$refuseM1,  hsd1$CalfSizeLgSm,  fisher=TRUE) #no
+CrossTable(hsd1$refuseM1,  hsd1$SexMF, fisher=TRUE) #no
+CrossTable(hsd1$refuseM1,  hsd1$D0Fed2TxGrp, fisher = TRUE) #yes
+
+
+
+# Fit a repeated measures mixed effects model for scours.
+hsd1$D0Fed2TxGrp <- factor(hsd1$D0Fed2TxGrp) 
+hsd1$D0Fed2TxGrp <- relevel(hsd1$D0Fed2TxGrp, ref = "MRB")
+model <- glmer(refuseM1 ~ D0Fed2TxGrp + (1 | CalfID), family = "binomial", data = hsd1)
+
+summary(model)
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+fixed_effects <- fixef(model)
+odds_ratios <- exp(fixed_effects)
+cat("Odds Ratios:\n")
+print(odds_ratios)
+
+type3_p_values <- Anova(model, type="III", test="Chisq")
+cat("\nType III p-values:\n")
+print(type3_p_values)
+adjusted_proportions <- odds_ratios / (1 + odds_ratios)
+cat("\nAdjusted Proportions:\n")
+print(adjusted_proportions)
+contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
+summary(contrasts)
+```
+
+
+### Farm Reported Disease (y/n)
+
+
+```{r}
+#| warning: false
+
+table(clean$D0Fed2TxGrp, clean$FarmDzYN)
+
+#       N  Y
+#  CSB 19 12 = 12/31= 7.7
+#  CST 19 12 = 12/31= 7.7
+#  MCB 19 12 = 12/31= 7.7
+#  MCT 23  8 = 8/31= 5.2
+#  MRB 17 14 = 14/31= 9.0
+
+
+sick_<-
+  clean |> 
+  group_by(D0Fed2TxGrp, FarmDzYN) |> 
+  summarize(count=n(), .groups="drop") |> 
+  mutate(proportion = signif(count/sum(count), digits=2))
+sick_
+
+
+```
+

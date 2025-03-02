@@ -512,7 +512,7 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
 
 ```
 
-### Second Milk Feeding - Refusals
+### First Milk (only) Feeding - Refusals
 
 ```{r}
 #| echo: false
