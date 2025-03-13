@@ -69,6 +69,8 @@ clean<-
              D0Fed2VolRefusemL > 0    ~ 1, 
              D0Fed2VolRefusemL == 0   ~ 0))
 
+clean$refuse <- as.factor(clean$refuse)
+
 
 clean<- 
   clean |> 
@@ -76,6 +78,16 @@ clean<-
            case_when(
              D1MilkRefusemL > 0    ~ 1, 
              D1MilkRefusemL == 0   ~ 0))
+
+clean<- 
+  clean |> 
+  mutate(
+    propconsume = DOFed2VolConsummL/DOFed2VolOfferedmL
+  )
+
+clean<-
+  clean |> 
+  mutate(TotalVol = (D0Fed13or4qt*946.35) + DOFed2VolConsummL)
 
 
 ```
@@ -94,6 +106,7 @@ n_group <-
   clean |> 
   group_by(D0Fed2TxGrp) |> 
   summarize (Count = n())
+ 
 
 
 summary_sex <- 
@@ -101,24 +114,51 @@ summary_sex <-
   group_by(D0Fed2TxGrp, SexMF) |> 
   summarize(Count = n())
 
+table_sex <- pivot_wider(summary_sex, names_from = SexMF, values_from = Count, values_fill = 0)
+table_matrix <- as.matrix(table_sex[, -1])  
+chi_result <- chisq.test(table_matrix)
+chi_result
+
 
 summary_cb <- 
   clean |> 
   group_by(D0Fed2TxGrp, CrossbredYN) |> 
-  summarize(Count = n())
+  summarize(Count = n()) 
+
+table_cb <- pivot_wider(summary_cb, names_from = CrossbredYN, values_from = Count, values_fill = 0)
+table_matrix <- as.matrix(table_cb[, -1])  
+chi_result <- chisq.test(table_matrix)
+chi_result
 
 
 summary_size<-
   clean |> 
   group_by(D0Fed2TxGrp, CalfSizeLgSm) |> 
-  summarize(Count=n())
+  summarize(Count=n()) 
+
+table_size <- pivot_wider(summary_size, names_from = CalfSizeLgSm, values_from = Count, values_fill = 0)
+table_matrix <- as.matrix(table_size[, -1])  
+chi_result <- chisq.test(table_matrix)
+chi_result
+
+
+summary_twin<-
+  clean |> 
+  group_by(D0Fed2TxGrp, SingleTwinST) |> 
+  summarize(Count=n()) 
+
+table_twin <- pivot_wider(summary_twin, names_from = SingleTwinST, values_from = Count, values_fill = 0)
+table_matrix <- as.matrix(table_twin[, -1])  
+chi_result <- chisq.test(table_matrix)
+chi_result
 
 
 sick_<-
   clean |> 
   group_by(D0Fed2TxGrp, FarmDzYN) |> 
   summarize(count=n(), .groups="drop") |> 
-  mutate(proportion = signif(count/sum(count), digits=2))
+  mutate(proportion = signif(count/sum(count), digits=2)) 
+  
 
 
 
@@ -126,6 +166,7 @@ n_group
 summary_sex
 summary_cb
 summary_size
+summary_twin
 sick_
 ```
 
@@ -140,10 +181,11 @@ Calf birth weight was relatively consistent between treatment groups. Calves wei
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 
-  summarize (mean = mean(BirthWtLbs), 
-             sd = sd(BirthWtLbs))
+  summarize (mean = mean(BirthWtLbs)/2.2, 
+             sd = sd(BirthWtLbs)/2.2)
 
-lm_bw <- lm(BirthWtLbs ~ D0Fed2TxGrp, data=clean)
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_bw <- lm(BirthWtLbs/2.2 ~ D0Fed2TxGrp, data=clean)
 summary(lm_bw)
   
 
@@ -152,7 +194,7 @@ clean |>
   summarize (mean = mean(BirthWtLbs), 
              sd = sd(BirthWtLbs))
 
-
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_bwsize <- lm(BirthWtLbs ~ D0Fed2TxGrp*CalfSizeLgSm, data=clean)
 summary(lm_bwsize)
 
@@ -168,6 +210,21 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = BirthWtLbs, color=D0Fed2TxGrp)) +
   scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 25))
 ```
 
+### Serum IgG at 0 hrs (g/L)
+
+```{r}
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(Result0hrgL), 
+             sd = sd(Result0hrgL))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_IgG0 <- lm(Result0hrgL ~ D0Fed2TxGrp, data=clean)
+summary(lm_IgG0)
+```
+
+## FIRST FEEDING
+
 ### Age at First Feeding(min)
 
 ```{r}
@@ -179,6 +236,7 @@ clean |>
   summarize (mean = mean(DOFed1MinOld), 
              sd = sd(DOFed1MinOld))
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_minold <- lm(DOFed1MinOld ~ D0Fed2TxGrp, data=clean)
 summary(lm_minold)
 
@@ -204,6 +262,7 @@ clean |>
   summarize (mean = mean(F1ColostIgGgL), 
              sd = sd(F1ColostIgGgL))
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_F1Colost <- lm(F1ColostIgGgL ~ D0Fed2TxGrp, data=clean)
 summary(lm_F1Colost)
 
@@ -230,6 +289,7 @@ clean |>
   summarize (mean = mean(F1DoseIgGfedg), 
              sd = sd(F1DoseIgGfedg))
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_F1Dose <- lm(F1DoseIgGfedg ~ D0Fed2TxGrp, data=clean)
 summary(lm_F1Dose)
 
@@ -291,6 +351,8 @@ ggplot(mapping = aes(x = F1ColostIgGgL, y = F1Brixpct)) +
   labs(x = "Colostral IgG", y = "Brix %", title = "Scatterplot of Colostral IgG vs. Brix")
 ```
 
+## SECOND FEEDING
+
 ### Hrs Old At Second Feeding
 
 ```{r}
@@ -302,6 +364,7 @@ clean |>
   summarize (mean = mean(DOFed2HrsOld), 
              sd = sd(DOFed2HrsOld))
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_hrsold <- lm(DOFed2HrsOld ~ D0Fed2TxGrp, data=clean)
 summary(lm_hrsold)
 
@@ -327,6 +390,7 @@ clean |>
   summarize (mean = mean(DOFed12IntervHrs), 
              sd = sd(DOFed12IntervHrs))
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_intvhrs <- lm(DOFed12IntervHrs ~ D0Fed2TxGrp, data=clean)
 summary(lm_intvhrs)
 
@@ -351,6 +415,7 @@ clean |>
   summarize (mean = mean(Result8hrgL), 
              sd = sd(Result8hrgL))
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_8hr <- lm(Result8hrgL ~ D0Fed2TxGrp, data=clean)
 summary(lm_8hr)
 
@@ -384,7 +449,7 @@ clean |>
   group_by (D0Fed2TxGrp) |> 
   summarize (refuse = sum(refuse))
 
-
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_refuse <- lm(D0Fed2VolRefusemL ~ D0Fed2TxGrp, data=clean)
 summary(lm_refuse)
 
@@ -401,6 +466,46 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = D0Fed2VolRefusemL, color=D0Fed2TxGrp))
 
 ```
 
+### Amount Consumed Second Feeding
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(DOFed2VolConsummL), 
+             sd = sd(DOFed2VolConsummL))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_refuse <- lm(DOFed2VolConsummL ~ D0Fed2TxGrp, data=clean)
+summary(lm_refuse)
+emmeans(lm_refuse, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
+
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2VolConsummL, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Consumed (mLs)", 
+       title = "Treatment vs. Consumed(mLs)")
+
+
+#proportion consumed
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = propconsume, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Proportion Consumed", 
+       title = "Treatment vs. Proportion Consumed")
+
+```
+
 ### Second Feeding Colostral IgG
 
 ```{r}
@@ -412,9 +517,10 @@ clean |>
   summarize (mean = mean(F2ColostIgGgL), 
              sd = sd(F2ColostIgGgL))
 
-
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_colst2 <- lm(F2ColostIgGgL ~ D0Fed2TxGrp, data=clean)
 summary(lm_colst2)
+emmeans(lm_colst2, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
@@ -440,9 +546,10 @@ clean |>
   summarize (mean = mean(F2DoseIgGfedg), 
              sd = sd(F2DoseIgGfedg))
 
-
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_colst2dose <- lm(F2DoseIgGfedg ~ D0Fed2TxGrp, data=clean)
 summary(lm_colst2dose)
+emmeans(lm_colst2dose, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
@@ -455,6 +562,8 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
        title = "Treatment vs. Second Feeding IgG dose")
 ```
 
+## BOTH FEEDINGS
+
 ### Total Dose IgG Consumed (F1 + F2)
 
 ```{r}
@@ -466,9 +575,10 @@ clean |>
   summarize (mean = mean(F1F2TotIgGconsumg), 
              sd = sd(F1F2TotIgGconsumg))
 
-
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_colstdose <- lm(F1F2TotIgGconsumg ~ D0Fed2TxGrp, data=clean)
 summary(lm_colstdose)
+emmeans(lm_colstdose, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
@@ -480,6 +590,34 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1F2TotIgGconsumg, color=D0Fed2TxGrp))
        y = "Total IgG Dose", 
        title = "Treatment vs. Total IgG Dose")+
   scale_y_continuous(limits = c(0, 600), breaks = seq(0, 600, by = 100))
+```
+
+### Total Volume Consume (F1+F2)
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(TotalVol), 
+             sd = sd(TotalVol))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_Tvol <- lm(TotalVol ~ D0Fed2TxGrp, data=clean)
+summary(lm_Tvol)
+emmeans(lm_Tvol, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = TotalVol, color=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Second Feeding Treatment", 
+       y = "Total Volume Consumed", 
+       title = "Treatment vs. Total Volume")+
+  scale_y_continuous(limits = c(0, 7000), breaks = seq(0, 7000, by = 1000))
 ```
 
 ### 24hr serum IgG
@@ -494,6 +632,7 @@ clean |>
   summarize (mean = mean(Result24hrgL, na.rm=TRUE), 
              sd = sd(Result24hrgL, na.rm=TRUE))
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_24hr <- lm(Result24hrgL ~ D0Fed2TxGrp, data=clean)
 summary(lm_24hr)
 
@@ -508,9 +647,23 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
        title = "Treatment vs. IgG at 24 hours")+
   scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
  
+#serum IgG if calves had refusals at second feeding
+
+clean |> 
+ggplot(mapping = aes(x = refuse, y = Result24hrgL, color=refuse)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter() +
+  labs(x = "Refusals at second feeding (Y/N)", 
+       y = "Serum IgG at 24 hrs", 
+       title = "Refusals vs. IgG at 24 hours")
+
+
 
 
 ```
+
+## POST COLOSTRUM
 
 ### First Milk (only) Feeding - Refusals
 
@@ -527,7 +680,7 @@ clean |>
   group_by (D0Fed2TxGrp) |> 
   summarize (refuse = sum(refuseM1))
 
-
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_refF2 <- lm(D1MilkRefusemL ~ D0Fed2TxGrp, data=clean)
 summary(lm_refF2)
 
@@ -540,4 +693,101 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = D1MilkRefusemL, color=D0Fed2TxGrp)) +
   labs(x = "Second Feeding Treatment", 
        y = "24hr milk refusal", 
        title = "Boxplot of Treatment vs. 24hr milk refusal")
+```
+
+## MODELS
+
+### IgG at 8Hrs
+
+```{r}
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_8hr <- lm(Result8hrgL ~ D0Fed2TxGrp, data=clean)
+summary(lm_8hr) #no
+
+lm_8hrBreed <- lm(Result8hrgL ~ CrossbredYN, data=clean)
+summary(lm_8hrBreed)#no
+
+lm_8hrSize <- lm(Result8hrgL ~ CalfSizeLgSm, data=clean)
+summary(lm_8hrSize) #no
+
+lm_8hrBW <- lm(Result8hrgL ~ BirthWtLbs, data=clean)
+summary(lm_8hrBW)#no
+
+
+lm_8hrSex <- lm(Result8hrgL ~ SexMF, data=clean)
+summary(lm_8hrSex) #yes
+
+lm_8hrST <- lm(Result8hrgL ~ SingleTwinST, data=clean)
+summary(lm_8hrST)#no
+
+lm_minold8 <- lm(Result8hrgL ~ DOFed1MinOld, data=clean)
+summary(lm_minold8) #no
+
+
+
+#model
+glmIgG8 <- lm(Result8hrgL ~ D0Fed2TxGrp + SexMF, data=clean)
+summary(glmIgG8)
+plot(glmIgG8)
+car::Anova(glmIgG8, type=3)
+
+
+emmeans (glmIgG8, ~ D0Fed2TxGrp)
+emmeans(glmIgG8, ~SexMF)
+x<- emmeans (glmIgG8, ~ D0Fed2TxGrp)
+pairwise_comparisons2 <- pairs(x)
+summary(pairwise_comparisons2, adjust="tukey")
+summary(pairwise_comparisons2)
+
+```
+
+### IgG at 24Hrs
+
+```{r}
+
+#Associations between IgG at 24Hr and Calf Demographics
+
+
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_24hr <- lm(Result24hrgL ~ D0Fed2TxGrp, data=clean)
+summary(lm_24hr) #no
+
+lm_24hrBreed <- lm(Result24hrgL ~ CrossbredYN, data=clean)
+summary(lm_24hrBreed)#yes
+
+lm_24hrSize <- lm(Result24hrgL ~ CalfSizeLgSm, data=clean)
+summary(lm_24hrSize) #no
+
+lm_24hrBW <- lm(Result24hrgL ~ BirthWtLbs, data=clean)
+summary(lm_24hrBW)#no
+
+lm_24hrRefuse <- lm(Result24hrgL ~ refuse, data=clean)
+summary(lm_24hrRefuse)#yes
+
+lm_24hrSex <- lm(Result24hrgL ~ SexMF, data=clean)
+summary(lm_24hrSex) #yes
+
+lm_24hrST <- lm(Result24hrgL ~ SingleTwinST, data=clean)
+summary(lm_24hrST)#no
+
+lm_minold <- lm(Result24hrgL ~ DOFed1MinOld, data=clean)
+summary(lm_minold) #no
+
+
+
+#model
+glmIgG24 <- lm(Result24hrgL ~ D0Fed2TxGrp + CrossbredYN  + SexMF, data=clean)
+summary(glmIgG24)
+plot(glmIgG24)
+car::Anova(glmIgG24, type=3)
+
+
+emmeans (glmIgG24, ~ D0Fed2TxGrp)
+emmeans(glmIgG24, ~CrossbredYN)
+emmeans(glmIgG24, ~SexMF)
+x<- emmeans (glmIgG24, ~ D0Fed2TxGrp)
+pairwise_comparisons2 <- pairs(x)
+summary(pairwise_comparisons2, adjust="tukey")
+summary(pairwise_comparisons2)
 ```

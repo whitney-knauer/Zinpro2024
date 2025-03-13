@@ -74,6 +74,20 @@ clean<-
              D1MilkRefusemL == 0   ~ 0))
 
 
+clean<- 
+  clean |> 
+  mutate(refuseMeasure = ifelse(D1MilkRefusemL >= 250, 1, 0)) 
+
+clean<- 
+  clean |> 
+  mutate(Treated = 
+           case_when(
+             FarmDzYN == "Y"  ~ 1,
+             FarmDzYN == "N"  ~ 0
+           ))
+         
+
+
 
 health <- read_csv('data/CHSdata_2024_08_12_08_57.csv')
 health<- health |> 
@@ -128,7 +142,7 @@ hsd1<- hs |>
   filter(age == 1)
 ```
 
-### Data Checks
+## Data Checks
 
 We should have n=155 obs total (n=31 obs per day) for each treatment group but it appears we are missing some data. In addition, not every calf has a recorded observation for each of the health score categories. Not sure that matters too much, but something to note.
 
@@ -205,7 +219,9 @@ Hungry <- table(hs$D0Fed2TxGrp, hs$Refuse, strat)
 print(Hungry)
 ```
 
-### Scour Model
+## Scours
+
+### 3 day Model
 
 ```{r}
 #| warning: false
@@ -238,7 +254,7 @@ CrossTable(hs$Scour,  hs$D0Fed2TxGrp, fisher = TRUE) #no
 # Fit a repeated measures mixed effects model for scours.
 hs$D0Fed2TxGrp <- factor(hs$D0Fed2TxGrp) 
 hs$D0Fed2TxGrp <- relevel(hs$D0Fed2TxGrp, ref = "MRB")
-model <- glmer(Scour ~ D0Fed2TxGrp + age +  CalfSizeLgSm + (1 | CalfID), family = "binomial", data = hs)
+model <- glmer(Scour ~ D0Fed2TxGrp +  CalfSizeLgSm + (1 + age | CalfID), family = "binomial", data = hs)
 
 summary(model)
 emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
@@ -259,7 +275,47 @@ summary(contrasts)
 
 ```
 
-### Sick Model
+### 1 day Model
+
+```{r}
+
+table(hsd1$D0Fed2TxGrp, hsd1$Scour)
+
+#     0  1
+#  MRB 24  7
+#  CSB 25  4
+#  CST 22  8
+#  MCB 25  5
+#  MCT 21  8
+
+
+# Fit a logistic model for Scour on Day 1.
+hsd1$D0Fed2TxGrp <- factor(hsd1$D0Fed2TxGrp) 
+hsd1$D0Fed2TxGrp <- relevel(hsd1$D0Fed2TxGrp, ref = "MRB")
+model <- glm(Scour ~ D0Fed2TxGrp + CalfSizeLgSm, family = "binomial", data = hsd1)
+
+summary(model)
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+em <- emmeans(model, specs = "D0Fed2TxGrp", type = "response")
+em_df <- as.data.frame(em)
+
+em_df$odds <- em_df$prob / (1 - em_df$prob)
+em_df$log_odds <- log(em_df$odds)
+em_df$log_odds_lower <- log(em_df$asymp.LCL / (1 - em_df$asymp.LCL))
+em_df$log_odds_upper <- log(em_df$asymp.UCL / (1 - em_df$asymp.UCL))
+
+ref_log_odds <- em_df$log_odds[em_df$D0Fed2TxGrp == "MRB"]
+em_df$OR <- exp(em_df$log_odds - ref_log_odds)
+em_df$OR_lower <- exp(em_df$log_odds_lower - ref_log_odds)
+em_df$OR_upper <- exp(em_df$log_odds_upper - ref_log_odds)
+print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
+
+```
+
+## Sick Model
+
+### 3 day Model
 
 ```{r}
 #| warning: false
@@ -288,11 +344,11 @@ CrossTable(hs$Sick,  hs$SexMF, fisher=TRUE) #yes
 CrossTable(hs$Sick,  hs$D0Fed2TxGrp, fisher = TRUE) #0.07
 
 
-
+#not sure about this one. Do I add age as interaction or not? 
 # Fit a repeated measures mixed effects model for scours.
 hs$D0Fed2TxGrp <- factor(hs$D0Fed2TxGrp) 
 hs$D0Fed2TxGrp <- relevel(hs$D0Fed2TxGrp, ref = "MRB")
-model <- glmer(Sick ~ D0Fed2TxGrp + age +  SexMF + (1 | CalfID), family = "binomial", data = hs)
+model <- glmer(Sick ~ D0Fed2TxGrp +  SexMF + (1 + age | CalfID), family = "binomial", data = hs)
 
 summary(model)
 emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
@@ -312,7 +368,47 @@ contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
 ```
 
-### Appetite - Health Score
+### 1 Day Model
+
+```{r}
+
+table(hsd1$D0Fed2TxGrp, hsd1$Sick)
+
+#       0  1
+#  MRB 13 17 = 17/30 = 56.6
+#  CSB 23  4 = 4/27  = 14.8
+#  CST 19 10 = 10/29 = 34.4
+#  MCB 16 13 = 13/29 = 44.8
+#  MCT 17 10 = 10/27 = 37.0
+
+
+# Fit a logistic model for Sick on Day 1.
+hsd1$D0Fed2TxGrp <- factor(hsd1$D0Fed2TxGrp) 
+hsd1$D0Fed2TxGrp <- relevel(hsd1$D0Fed2TxGrp, ref = "MRB")
+model <- glm(Sick ~ D0Fed2TxGrp + SexMF, family = "binomial", data = hsd1)
+
+summary(model)
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+em <- emmeans(model, specs = "D0Fed2TxGrp", type = "response")
+em_df <- as.data.frame(em)
+
+em_df$odds <- em_df$prob / (1 - em_df$prob)
+em_df$log_odds <- log(em_df$odds)
+em_df$log_odds_lower <- log(em_df$asymp.LCL / (1 - em_df$asymp.LCL))
+em_df$log_odds_upper <- log(em_df$asymp.UCL / (1 - em_df$asymp.UCL))
+
+ref_log_odds <- em_df$log_odds[em_df$D0Fed2TxGrp == "MRB"]
+em_df$OR <- exp(em_df$log_odds - ref_log_odds)
+em_df$OR_lower <- exp(em_df$log_odds_lower - ref_log_odds)
+em_df$OR_upper <- exp(em_df$log_odds_upper - ref_log_odds)
+print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
+
+```
+
+## Appetite 
+
+### 3 Day Model
 
 ```{r}
 #| warning: false
@@ -329,6 +425,8 @@ table(hs$D0Fed2TxGrp, hs$Refuse)
 #  MCT 72 12 = 12/84=14.3
 #  MRB 67 19 = 19/86=22.1
 
+#What proportion of calves refused milk in each group by day?
+
 prop.table(table(hs$age, hs$Refuse), margin = 1)  
 prop.table(table(hs$CrossbredYN, hs$Refuse), margin = 1)  
 prop.table(table(hs$CalfSizeLgSm, hs$Refuse), margin = 1)  
@@ -343,10 +441,10 @@ CrossTable(hs$Refuse,  hs$D0Fed2TxGrp, fisher = TRUE) #yes
 
 
 
-# Fit a repeated measures mixed effects model for scours.
+# Fit a repeated measures mixed effects model for refusals.
 hs$D0Fed2TxGrp <- factor(hs$D0Fed2TxGrp) 
 hs$D0Fed2TxGrp <- relevel(hs$D0Fed2TxGrp, ref = "MRB")
-model <- glmer(Refuse ~ D0Fed2TxGrp + age + (1 | CalfID), family = "binomial", data = hs)
+model <- glmer(Refuse ~ D0Fed2TxGrp * age + (1 | CalfID), family = "binomial", data = hs)
 
 summary(model)
 emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
@@ -366,60 +464,123 @@ contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
 ```
 
-### Refusals - First Milk Feeding
+### 1 Day Model
 
 ```{r}
 #| warning: false
 
 
 
-#What proportion of calves refused milk at the first feeding?
+#What proportion of calves refused milk at the first feeding according to appetite?
 
-table(hsd1$D0Fed2TxGrp, hsd1$refuseM1)
+table(hsd1$D0Fed2TxGrp, hsd1$Refuse)
 #       0  1
-#  CSB 24  6 = 6/30=20
-#  CST 20 10 = 10/30=33
-#  MCB 10 20 = 20/30=66
-#  MCT 16 13 = 13/29=44
-#  MRB 13 18 = 18/31=58
+#  CSB 25  3 = 3/28=10.7
+#  CST 22  7 = 7/29=24.1
+#  MCB 16 13 = 13/29=44.8
+#  MCT 17 10 = 10/27=37.0
+#  MRB 15 15 = 15/30=50
 
-prop.table(table(hsd1$age, hsd1$refuseM1), margin = 1)  
-prop.table(table(hsd1$CrossbredYN, hsd1$refuseM1), margin = 1)  
-prop.table(table(hsd1$CalfSizeLgSm, hsd1$refuseM1), margin = 1)  
-prop.table(table(hsd1$SexMF, hsd1$refuseM1), margin = 1)  
-
-
-CrossTable(hsd1$refuseM1,  hsd1$CrossbredYN, fisher=TRUE) #no not associated
-CrossTable(hsd1$refuseM1,  hsd1$CalfSizeLgSm,  fisher=TRUE) #no
-CrossTable(hsd1$refuseM1,  hsd1$SexMF, fisher=TRUE) #no
-CrossTable(hsd1$refuseM1,  hsd1$D0Fed2TxGrp, fisher = TRUE) #yes
+#This is a calculated measure based on mL and a calf was considered a refusal if they refused 25% or more milk at first milk feeding
+table(hsd1$D0Fed2TxGrp, hsd1$refuseMeasure)
+#       0  1
+#  CSB 24  6 = 6/30 = 20%
+#  CST 20 10 = 10/30 = 33%
+#  MCB 10 20 = 20/30 = 66%
+#  MCT 16 13 = 13/29 = 45%
+#  MRB 13 18 = 18/31 = 58%
 
 
 
-# Fit a repeated measures mixed effects model for scours.
+prop.table(table(hsd1$age, hsd1$Refuse), margin = 1)  
+prop.table(table(hsd1$CrossbredYN, hsd1$Refuse), margin = 1)  
+prop.table(table(hsd1$CalfSizeLgSm, hsd1$Refuse), margin = 1)  
+prop.table(table(hsd1$SexMF, hsd1$Refuse), margin = 1)  
+
+
+CrossTable(hsd1$Refuse,  hsd1$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(hsd1$Refuse,  hsd1$CalfSizeLgSm,  fisher=TRUE) #no
+CrossTable(hsd1$Refuse,  hsd1$SexMF, fisher=TRUE) #yes
+CrossTable(hsd1$Refuse,  hsd1$D0Fed2TxGrp, fisher = TRUE) #yes
+
+
+
+# Fit a logistic model for refuse.
 hsd1$D0Fed2TxGrp <- factor(hsd1$D0Fed2TxGrp) 
 hsd1$D0Fed2TxGrp <- relevel(hsd1$D0Fed2TxGrp, ref = "MRB")
-model <- glmer(refuseM1 ~ D0Fed2TxGrp + (1 | CalfID), family = "binomial", data = hsd1)
+model <- glm(Refuse ~ D0Fed2TxGrp + SexMF, family = "binomial", data = hsd1)
 
 summary(model)
 emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
 
-fixed_effects <- fixef(model)
-odds_ratios <- exp(fixed_effects)
-cat("Odds Ratios:\n")
-print(odds_ratios)
+em <- emmeans(model, specs = "D0Fed2TxGrp", type = "response")
+em_df <- as.data.frame(em)
 
-type3_p_values <- Anova(model, type="III", test="Chisq")
-cat("\nType III p-values:\n")
-print(type3_p_values)
-adjusted_proportions <- odds_ratios / (1 + odds_ratios)
-cat("\nAdjusted Proportions:\n")
-print(adjusted_proportions)
-contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
-summary(contrasts)
+em_df$odds <- em_df$prob / (1 - em_df$prob)
+em_df$log_odds <- log(em_df$odds)
+em_df$log_odds_lower <- log(em_df$asymp.LCL / (1 - em_df$asymp.LCL))
+em_df$log_odds_upper <- log(em_df$asymp.UCL / (1 - em_df$asymp.UCL))
+
+ref_log_odds <- em_df$log_odds[em_df$D0Fed2TxGrp == "MRB"]
+em_df$OR <- exp(em_df$log_odds - ref_log_odds)
+em_df$OR_lower <- exp(em_df$log_odds_lower - ref_log_odds)
+em_df$OR_upper <- exp(em_df$log_odds_upper - ref_log_odds)
+print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
+
 ```
 
-### Farm Reported Disease (y/n)
+## Refusals - Milk 1 (calculated)
+
+### 1 Day Model
+
+```{r}
+
+#This is a calculated measure based on mL and a calf was considered a refusal if they refused 25% or more milk at first milk feeding
+table(hsd1$D0Fed2TxGrp, hsd1$refuseMeasure)
+#       0  1
+#  CSB 24  6 = 6/30 = 20%
+#  CST 20 10 = 10/30 = 33%
+#  MCB 10 20 = 20/30 = 66%
+#  MCT 16 13 = 13/29 = 45%
+#  MRB 13 18 = 18/31 = 58%
+
+
+CrossTable(hsd1$refuseMeasure,  hsd1$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(hsd1$refuseMeasure,  hsd1$CalfSizeLgSm,  fisher=TRUE) #no
+CrossTable(hsd1$refuseMeasure,  hsd1$SexMF, fisher=TRUE) #no
+CrossTable(hsd1$refuseMeasure,  hsd1$D0Fed2TxGrp, fisher = TRUE) #yes
+
+
+
+# Fit a logistic model for refuse.
+hsd1$D0Fed2TxGrp <- factor(hsd1$D0Fed2TxGrp) 
+hsd1$D0Fed2TxGrp <- relevel(hsd1$D0Fed2TxGrp, ref = "MRB")
+model <- glm(refuseMeasure ~ D0Fed2TxGrp + CalfSizeLgSm, family = "binomial", data = hsd1)
+
+summary(model)
+Anova(model, type = "III")
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+em <- emmeans(model, specs = "D0Fed2TxGrp", type = "response")
+em_df <- as.data.frame(em)
+
+em_df$odds <- em_df$prob / (1 - em_df$prob)
+em_df$log_odds <- log(em_df$odds)
+em_df$log_odds_lower <- log(em_df$asymp.LCL / (1 - em_df$asymp.LCL))
+em_df$log_odds_upper <- log(em_df$asymp.UCL / (1 - em_df$asymp.UCL))
+
+ref_log_odds <- em_df$log_odds[em_df$D0Fed2TxGrp == "MRB"]
+em_df$OR <- exp(em_df$log_odds - ref_log_odds)
+em_df$OR_lower <- exp(em_df$log_odds_lower - ref_log_odds)
+em_df$OR_upper <- exp(em_df$log_odds_upper - ref_log_odds)
+print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
+
+contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
+summary(contrasts)
+
+```
+
+## Farm Reported Disease (y/n)
 
 ```{r}
 #| warning: false
@@ -433,6 +594,9 @@ table(clean$D0Fed2TxGrp, clean$FarmDzYN)
 #  MCT 23  8 = 8/31= 5.2
 #  MRB 17 14 = 14/31= 9.0
 
+table(clean$D0Fed2TxGrp, clean$Treated)
+
+
 
 sick_<-
   clean |> 
@@ -441,5 +605,38 @@ sick_<-
   mutate(proportion = signif(count/sum(count), digits=2))
 sick_
 
+
+CrossTable(clean$FarmDzYN,  clean$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(clean$FarmDzYN,  clean$CalfSizeLgSm,  fisher=TRUE) #yes
+CrossTable(clean$FarmDzYN,  clean$SingleTwinST,  fisher=TRUE) #no
+CrossTable(clean$FarmDzYN,  clean$SexMF, fisher=TRUE) #yes
+CrossTable(clean$FarmDzYN,  clean$D0Fed2TxGrp, fisher = TRUE) #no
+
+
+# Fit a logistic model for Farm Treatment.
+clean$D0Fed2TxGrp <- factor(clean$D0Fed2TxGrp) 
+clean$D0Fed2TxGrp <- relevel(clean$D0Fed2TxGrp, ref = "MRB")
+model <- glm(Treated ~ D0Fed2TxGrp + CalfSizeLgSm + SexMF , family = "binomial", data = clean)
+
+summary(model)
+Anova(model, type = "III")
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+em <- emmeans(model, specs = "D0Fed2TxGrp", type = "response")
+em_df <- as.data.frame(em)
+
+em_df$odds <- em_df$prob / (1 - em_df$prob)
+em_df$log_odds <- log(em_df$odds)
+em_df$log_odds_lower <- log(em_df$asymp.LCL / (1 - em_df$asymp.LCL))
+em_df$log_odds_upper <- log(em_df$asymp.UCL / (1 - em_df$asymp.UCL))
+
+ref_log_odds <- em_df$log_odds[em_df$D0Fed2TxGrp == "MRB"]
+em_df$OR <- exp(em_df$log_odds - ref_log_odds)
+em_df$OR_lower <- exp(em_df$log_odds_lower - ref_log_odds)
+em_df$OR_upper <- exp(em_df$log_odds_upper - ref_log_odds)
+print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
+
+contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
+summary(contrasts)
 
 ```

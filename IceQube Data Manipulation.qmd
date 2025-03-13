@@ -1,5 +1,5 @@
 ---
-title: "IceQube Play"
+title: "IceQube Analysis - Zinpro 2024"
 author: "WAK"
 date: "today"
 format: 
@@ -45,7 +45,7 @@ library(lubridate)
 
 ## Data Steps - All
 
-### Pull in data. 
+### Pull in data.
 
 Goal is to bring in IceQube data to then match to specific calves and specific times. Let's see!
 
@@ -202,11 +202,27 @@ merged_data <- merged_data |>
 
 
 write.csv(merged_data, "data/merged_data.csv", row.names = FALSE)
+
+
+#create a new data set called hour 
+
+hour <- merged_data |> 
+  group_by(CalfID, hour = floor(hoursfrom)) |>  
+  summarise(
+    Lying = sum(`Lying [t]`, na.rm = TRUE)/60,   
+    Standing = sum(`Standing [t]`, na.rm = TRUE)/60,  
+     SingleTwinST = first(SingleTwinST),              
+    CrossbredYN = first(CrossbredYN),               
+    SexMF = first(SexMF),                           
+    D0Fed2TxGrp = first(D0Fed2TxGrp), 
+    bottleyn = first(bottleyn),
+    .groups = "drop")
+
 ```
 
 ## All Calves
 
-### Laying
+### Laying - 24
 
 This data set uses the merged_data set and filters out all hours except for the +/-8hrs around feeding time. Then makes a graph of calf behavior before and after feeding.
 
@@ -241,7 +257,7 @@ ggplot(aes(x = hoursfrom, y = lyingm)) +
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
-### Standing
+### Standing - 24
 
 ```{r}
 #| warning: false
@@ -274,7 +290,129 @@ ggplot(aes(x = hoursfrom, y = standm)) +
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
-## By Treatment Group - Summarized by Hr
+### Laying - 3d
+
+```{r}
+#| warning: false
+#| echo: false
+
+
+laying <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 64) |> 
+  group_by(CalfID, hoursfrom) |>  
+  summarize(
+    `Lying [t]` = sum(`Lying [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom) |>  
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`, na.rm = TRUE)) |> 
+  mutate(
+    lyingm = `Lying [t]` / 60) |> 
+  ungroup()
+
+
+laying |> 
+ggplot(aes(x = hoursfrom, y = lyingm)) +
+  theme_classic() +
+  geom_point(color="purple") +  
+  geom_line(color="purple") +   
+  labs(
+    title = "Lying Time in the 24hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Lying Time (min)")+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 64), breaks = seq(-8, 64, by = 8))
+```
+
+### Standing - 3d
+
+```{r}
+standing <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 64) |> 
+  group_by(CalfID, hoursfrom) |>  
+  summarize(
+    `Standing [t]` = sum(`Standing [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom) |>  
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`, na.rm = TRUE)) |> 
+  mutate(
+    standm = `Standing [t]` / 60) |> 
+  ungroup()
+
+
+standing |> 
+ggplot(aes(x = hoursfrom, y = standm)) +
+  theme_classic() +
+  geom_point(color="purple") +  
+  geom_line(color="purple") +   
+  labs(
+    title = "Standing Time in the 72hrs around the second feeding",
+    x = "Hours from Second Feeding Time",
+    y = "Standing Time (min)") +
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 64), breaks = seq(-8, 64, by = 8))
+```
+
+## By Treatment Group - Full 3d
+
+### Laying
+
+```{r}
+layinggrp <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 64) |> 
+  group_by(CalfID, hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Lying [t]` = sum(`Lying [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Lying [t]` = mean(`Lying [t]`, na.rm = TRUE)) |> 
+  mutate(
+    lyingm = `Lying [t]` / 60) |> 
+  ungroup()
+
+
+layinggrp |> 
+ggplot(aes(x = hoursfrom, y = lyingm, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Lying Time in the 3d around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Lying Time (min)")+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 64), breaks = seq(-8, 64, by = 8))
+```
+
+### Standing
+
+```{r}
+standinggrp <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 64) |> 
+  group_by(CalfID, hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Standing [t]` = sum(`Standing [t]`, na.rm = TRUE)) |> 
+  group_by(hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Standing [t]` = mean(`Standing [t]`, na.rm = TRUE)) |> 
+  mutate(
+    standm = `Standing [t]` / 60) |> 
+  ungroup()
+
+
+standinggrp |> 
+ggplot(aes(x = hoursfrom, y = standm, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +   
+  labs(
+    title = "Standing Time in the 24hrs around the second feeding",
+    x = "Hours from feeding Time",
+    y = "Standing Time (min)") +
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 64), breaks = seq(-8, 64, by = 8))
+```
+
+## By Treatment Group - 8 hr around 2nd Feeding (1hr)
 
 ### Laying
 
@@ -342,7 +480,7 @@ ggplot(aes(x = hoursfrom, y = standm, color=D0Fed2TxGrp)) +
     scale_x_continuous(limits = c(-8, 16), breaks = seq(-8, 16, by = 2))
 ```
 
-## By Treatment Group - 15min Intervals
+## By Treatment Group - 2 hrs around (15min)
 
 ### Laying
 
@@ -542,4 +680,508 @@ ggplot(aes(x = tffeed, y = standm, color=bottleyn)) +
     y = "Standing Time (min)") +
     scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
     scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+```
+
+## Models - Whole Time Period
+
+### Standing
+
+```{r}
+#repeated measures mixed model for time period. Calf as repeated measure
+
+
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 64)
+
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+standmodel <-   lmer(as.numeric(Standing) ~ as.factor(hour) * D0Fed2TxGrp + (1 | CalfID), data = hourfull)
+summary(standmodel)
+plot(standmodel)
+car::Anova(standmodel, type=3)
+
+
+
+emmeans (standmodel, ~ D0Fed2TxGrp)
+emmeans (standmodel, ~ hour)
+modeladj <- emmeans(standmodel, ~hour|D0Fed2TxGrp)
+summary(modeladj)
+
+subset_hour_1 <- subset(modeladj, hour == 1)
+subset_hour_2 <- subset(modeladj, hour == 2)
+pairwise_comparisons_hour_1 <- pairs(subset_hour_1)
+pairwise_comparisons_hour_2 <- pairs(subset_hour_2)
+
+summary(pairwise_comparisons_hour_1)
+summary(pairwise_comparisons_hour_2)
+
+
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Hour", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time by Hour") +
+  theme_classic()
+
+
+
+```
+
+### Laying
+
+```{r}
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 64)
+
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+laymodel <-   lmer(as.numeric(Lying) ~ as.factor(hour) * D0Fed2TxGrp + (1 | CalfID), data = hourfull)
+summary(laymodel)
+plot(laymodel)
+car::Anova(laymodel, type=3)
+
+
+
+emmeans (laymodel, ~ D0Fed2TxGrp)
+emmeans (laymodel, ~ hour)
+modeladj <- emmeans(laymodel, ~hour|D0Fed2TxGrp)
+summary(modeladj)
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Hour", y = "Adjusted Mean Lying Time (min)", title = "Adjusted Mean Lying Time by Hour") +
+  theme_classic()
+```
+
+## Models - 16h around feeding (+/-8)
+
+### Standing 
+
+```{r}
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 8)
+
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+standmodel16 <-   lmer(as.numeric(Standing) ~ as.factor(hour) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hourfull)
+summary(standmodel16)
+plot(standmodel16)
+car::Anova(standmodel16, type=3)
+
+
+
+emmeans (standmodel16, ~ D0Fed2TxGrp)
+emmeans (standmodel16, ~ hour)
+modeladj <- emmeans(standmodel16, ~hour|D0Fed2TxGrp)
+summary(modeladj)
+
+subset_hour_1 <- subset(modeladj, hour == 1)
+subset_hour_2 <- subset(modeladj, hour == 2)
+pairwise_comparisons_hour_1 <- pairs(subset_hour_1)
+pairwise_comparisons_hour_2 <- pairs(subset_hour_2)
+
+summary(pairwise_comparisons_hour_1)
+summary(pairwise_comparisons_hour_2)
+
+
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Hour", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time by Hour") +
+  theme_classic()+
+    scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+
+
+```
+
+### Lying
+
+```{r}
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 8)
+
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+laymodel16 <-   lmer(as.numeric(Lying) ~ as.factor(hour) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hourfull)
+summary(laymodel16)
+plot(laymodel16)
+car::Anova(laymodel16, type=3)
+
+
+
+emmeans (laymodel16, ~ D0Fed2TxGrp)
+emmeans (laymodel16, ~ hour)
+modeladj <- emmeans(laymodel16, ~hour|D0Fed2TxGrp)
+summary(modeladj)
+
+subset_hour_1 <- subset(modeladj, hour == 1)
+subset_hour_2 <- subset(modeladj, hour == 2)
+pairwise_comparisons_hour_1 <- pairs(subset_hour_1)
+pairwise_comparisons_hour_2 <- pairs(subset_hour_2)
+
+summary(pairwise_comparisons_hour_1)
+summary(pairwise_comparisons_hour_2)
+
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Hour", y = "Adjusted Mean Lying Time (min)", title = "Adjusted Mean Lying Time by Hour") +
+  theme_classic()+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+```
+
+## Models - 15 min increments - 4 and 2 hrs around
+
+### Standing
+
+```{r}
+
+
+hr4 <- merged_data |> 
+   filter(tffeed >= -8 & tffeed <= 8) |> 
+    mutate(
+    standm = `Standing [t]` / 60)
+
+hr4$D0Fed2TxGrp <- relevel(factor(hr4$D0Fed2TxGrp), ref = "MRB")
+standm2 <-   lmer(as.numeric(standm) ~ as.factor(tffeed) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hr4)
+summary(standm2)
+plot(standm2)
+car::Anova(standm2, type=3)
+
+
+
+emmeans (standm2, ~ D0Fed2TxGrp)
+emmeans (standm2, ~ tffeed)
+modeladj <- emmeans(standm2, ~tffeed|D0Fed2TxGrp)
+summary(modeladj)
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Time", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time in 15min increments") +
+  theme_classic()
+
+
+#2hrs around
+
+hr2 <- merged_data |> 
+   filter(tffeed >= -4 & tffeed <= 4) |> 
+    mutate(
+    standm = `Standing [t]` / 60)
+
+hr2$D0Fed2TxGrp <- relevel(factor(hr2$D0Fed2TxGrp), ref = "MRB")
+standm2 <-   lmer(as.numeric(standm) ~ as.factor(tffeed) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hr2)
+summary(standm2)
+plot(standm2)
+car::Anova(standm2, type=3)
+
+
+
+emmeans (standm2, ~ D0Fed2TxGrp)
+emmeans (standm2, ~ tffeed)
+modeladj2 <- emmeans(standm2, ~tffeed|D0Fed2TxGrp)
+summary(modeladj)
+
+subset_tffeed_0 <- subset(modeladj2, tffeed == 0)
+subset_tffeed_1 <- subset(modeladj2, tffeed == 1)
+subset_tffeed_2 <- subset(modeladj2, tffeed == 2)
+pairwise_comparisons_tffeed_0 <- pairs(subset_tffeed_0)
+pairwise_comparisons_tffeed_1 <- pairs(subset_tffeed_1)
+pairwise_comparisons_tffeed_2 <- pairs(subset_tffeed_2)
+
+summary(pairwise_comparisons_tffeed_0)
+summary(pairwise_comparisons_tffeed_1)
+summary(pairwise_comparisons_tffeed_2)
+
+#the above gives the tukey adjusted pairwise for T0, T1 and T2
+
+
+emm_df <- as.data.frame(modeladj2)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Time", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time in 15min increments") +
+  theme_classic()+
+  scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))
+
+
+```
+
+### Laying
+
+```{r}
+
+hr4 <- merged_data |> 
+   filter(tffeed >= -8 & tffeed <= 8) |> 
+    mutate(
+    laym = `Lying [t]` / 60)
+
+hr4$D0Fed2TxGrp <- relevel(factor(hr4$D0Fed2TxGrp), ref = "MRB")
+lay1 <-   lmer(as.numeric(laym) ~ as.factor(tffeed) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hr4)
+summary(lay1)
+plot(lay1)
+car::Anova(lay1, type=3)
+
+
+
+emmeans (lay1, ~ D0Fed2TxGrp)
+emmeans (lay1, ~ tffeed)
+modeladj <- emmeans(lay1, ~tffeed|D0Fed2TxGrp)
+summary(modeladj)
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Time", y = "Adjusted Mean Lying Time (min)", title = "Adjusted Mean Lying Time in 15min increments") +
+  theme_classic()
+
+
+
+
+#2HRS AROUND
+
+hr2 <- merged_data |> 
+   filter(tffeed >= -4 & tffeed <= 4) |> 
+    mutate(
+    laym = `Lying [t]` / 60)
+
+hr2$D0Fed2TxGrp <- relevel(factor(hr2$D0Fed2TxGrp), ref = "MRB")
+laym2 <-   lmer(as.numeric(laym) ~ as.factor(tffeed) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hr2)
+summary(laym2)
+plot(laym2)
+car::Anova(laym2, type=3)
+
+
+
+emmeans (laym2, ~ D0Fed2TxGrp)
+emmeans (laym2, ~ tffeed)
+modeladj2 <- emmeans(laym2, ~tffeed|D0Fed2TxGrp)
+summary(modeladj)
+
+subset_tffeed_1 <- subset(modeladj2, tffeed == 1)
+subset_tffeed_2 <- subset(modeladj2, tffeed == 2)
+pairwise_comparisons_tffeed_1 <- pairs(subset_tffeed_1)
+pairwise_comparisons_tffeed_2 <- pairs(subset_tffeed_2)
+
+summary(pairwise_comparisons_tffeed_1)
+summary(pairwise_comparisons_tffeed_2)
+
+#the above gives the tukey adjusted pairwise for T1 and T2
+
+
+emm_df <- as.data.frame(modeladj2)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Time", y = "Adjusted Mean Lying Time (min)", title = "Adjusted Mean Lying Time in 15min increments") +
+  theme_classic()+
+  scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))
+```
+
+## Models - Bottle vs. Tube (16hr around)
+
+### Standing
+
+```{r}
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 8)
+
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+standmodel16b <-   lmer(as.numeric(Standing) ~ as.factor(hour) * bottleyn +  CrossbredYN +  (1 | CalfID), data = hourfull)
+summary(standmodel16b)
+plot(standmodel16)
+car::Anova(standmodel16b, type=3)
+
+
+
+emmeans (standmodel16b, ~ bottleyn)
+emmeans (standmodel16b, ~ hour)
+modeladj <- emmeans(standmodel16b, ~hour|bottleyn)
+summary(modeladj)
+
+subset_hour_1 <- subset(modeladj, hour == 1)
+subset_hour_2 <- subset(modeladj, hour == 2)
+pairwise_comparisons_hour_1 <- pairs(subset_hour_1)
+pairwise_comparisons_hour_2 <- pairs(subset_hour_2)
+
+summary(pairwise_comparisons_hour_1)
+summary(pairwise_comparisons_hour_2)
+
+
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = bottleyn)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Hour", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time by Hour") +
+  theme_classic()+
+    scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+
+
+```
+
+### Laying
+
+```{r}
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 8)
+
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+laymodel16b <-   lmer(as.numeric(Lying) ~ as.factor(hour) * bottleyn + CrossbredYN + (1 | CalfID), data = hourfull)
+summary(laymodel16b)
+plot(laymodel16b)
+car::Anova(laymodel16b, type=3)
+
+
+
+emmeans (laymodel16b, ~ bottleyn)
+emmeans (laymodel16b, ~ hour)
+modeladj <- emmeans(laymodel16b, ~hour|bottleyn)
+summary(modeladj)
+
+subset_hour_1 <- subset(modeladj, hour == 1)
+subset_hour_2 <- subset(modeladj, hour == 2)
+pairwise_comparisons_hour_1 <- pairs(subset_hour_1)
+pairwise_comparisons_hour_2 <- pairs(subset_hour_2)
+
+summary(pairwise_comparisons_hour_1)
+summary(pairwise_comparisons_hour_2)
+
+
+
+emm_df <- as.data.frame(modeladj)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = bottleyn)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Hour", y = "Adjusted Mean Lying Time (min)", title = "Adjusted Mean Lying Time by Hour") +
+  theme_classic()+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+  scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+```
+
+## Models - Bottle vs. Tube (2 hr around  15min increments)
+
+### Standing
+
+```{r}
+#2hrs around
+
+hr2 <- merged_data |> 
+   filter(tffeed >= -4 & tffeed <= 4) |> 
+    mutate(
+    standm = `Standing [t]` / 60)
+
+standm2b <-   lmer(as.numeric(standm) ~ as.factor(tffeed) * bottleyn + CrossbredYN + (1 | CalfID), data = hr2)
+summary(standm2b)
+plot(standm2b)
+car::Anova(standm2b, type=3)
+
+
+
+emmeans (standm2b, ~ bottleyn)
+emmeans (standm2b, ~ tffeed)
+modeladj2b <- emmeans(standm2b, ~tffeed|bottleyn)
+summary(modeladj2b)
+
+subset_tffeed_1 <- subset(modeladj2b, tffeed == 1)
+subset_tffeed_2 <- subset(modeladj2b, tffeed == 2)
+pairwise_comparisons_tffeed_1 <- pairs(subset_tffeed_1)
+pairwise_comparisons_tffeed_2 <- pairs(subset_tffeed_2)
+
+summary(pairwise_comparisons_tffeed_1)
+summary(pairwise_comparisons_tffeed_2)
+
+#the above gives the tukey adjusted pairwise for T1 and T2
+
+
+emm_df <- as.data.frame(modeladj2b)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = bottleyn)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Time", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time in 15min increments") +
+  theme_classic()+
+  scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))
+
+
+```
+
+### Laying
+
+```{r}
+#2HRS AROUND
+
+hr2 <- merged_data |> 
+   filter(tffeed >= -4 & tffeed <= 4) |> 
+    mutate(
+    laym = `Lying [t]` / 60)
+
+laym2b <-   lmer(as.numeric(laym) ~ as.factor(tffeed) * bottleyn + CrossbredYN + (1 | CalfID), data = hr2)
+summary(laym2b)
+plot(laym2b)
+car::Anova(laym2b, type=3)
+
+
+
+emmeans (laym2b, ~ bottleyn)
+emmeans (laym2b, ~ tffeed)
+modeladj2b <- emmeans(laym2b, ~tffeed|bottleyn)
+summary(modeladj2b)
+
+subset_tffeed_1 <- subset(modeladj2b, tffeed == 1)
+subset_tffeed_2 <- subset(modeladj2b, tffeed == 2)
+pairwise_comparisons_tffeed_1 <- pairs(subset_tffeed_1)
+pairwise_comparisons_tffeed_2 <- pairs(subset_tffeed_2)
+
+summary(pairwise_comparisons_tffeed_1)
+summary(pairwise_comparisons_tffeed_2)
+
+#the above gives the tukey adjusted pairwise for T1 and T2
+
+
+emm_df <- as.data.frame(modeladj2b)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = bottleyn)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
+  labs(x = "Time", y = "Adjusted Mean Lying Time (min)", title = "Adjusted Mean Lying Time in 15min increments") +
+  theme_classic()+
+  scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))+
+  scale_y_continuous(limits = c(0, 15), breaks = seq(0, 15, by = 2))
 ```
