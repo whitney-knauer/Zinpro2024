@@ -411,6 +411,10 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed12IntervHrs, color=D0Fed2TxGrp)) 
 #| warning: false
 
 clean |> 
+  summarize(mean=mean(Result8hrgL), 
+            sd = sd(Result8hrgL))
+
+clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(Result8hrgL), 
              sd = sd(Result8hrgL))
@@ -447,7 +451,7 @@ clean |>
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 
-  summarize (refuse = sum(refuse))
+  count(refuse)
 
 clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_refuse <- lm(D0Fed2VolRefusemL ~ D0Fed2TxGrp, data=clean)
