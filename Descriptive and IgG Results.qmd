@@ -232,6 +232,11 @@ summary(lm_IgG0)
 #| warning: false
 
 clean |> 
+  summarize(mean=mean(DOFed1MinOld), 
+            sd = sd (DOFed1MinOld)) 
+
+
+clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(DOFed1MinOld), 
              sd = sd(DOFed1MinOld))
@@ -256,6 +261,10 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed1MinOld, color=D0Fed2TxGrp)) +
 ```{r}
 #| echo: false
 #| warning: false
+
+clean |> 
+  summarize (mean = mean(F1ColostIgGgL), 
+             sd = sd(F1ColostIgGgL))
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 
@@ -360,6 +369,10 @@ ggplot(mapping = aes(x = F1ColostIgGgL, y = F1Brixpct)) +
 #| warning: false
 
 clean |> 
+  summarize (mean = mean(DOFed2HrsOld), 
+             sd = sd(DOFed2HrsOld))
+
+clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(DOFed2HrsOld), 
              sd = sd(DOFed2HrsOld))
@@ -384,6 +397,10 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2HrsOld, color=D0Fed2TxGrp)) +
 ```{r}
 #| echo: false
 #| warning: false
+
+clean |> 
+  summarize (mean = mean(DOFed12IntervHrs), 
+             sd = sd(DOFed12IntervHrs))
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 

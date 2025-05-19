@@ -76,7 +76,7 @@ clean<-
 
 clean<- 
   clean |> 
-  mutate(refuseMeasure = ifelse(D1MilkRefusemL >= 250, 1, 0)) 
+  mutate(refuseMeasure = ifelse(D1MilkRefusemL >= 500, 1, 0)) 
 
 clean<- 
   clean |> 
@@ -406,7 +406,7 @@ print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
 
 ```
 
-## Appetite 
+## Appetite
 
 ### 3 Day Model
 
@@ -535,13 +535,13 @@ print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
 
 ```{r}
 
-#This is a calculated measure based on mL and a calf was considered a refusal if they refused 25% or more milk at first milk feeding
+#This is a calculated measure based on mL and a calf was considered a refusal if they refused 25% or more milk at first milk feeding (500mLs)
 table(hsd1$D0Fed2TxGrp, hsd1$refuseMeasure)
 #       0  1
-#  CSB 24  6 = 6/30 = 20%
-#  CST 20 10 = 10/30 = 33%
-#  MCB 10 20 = 20/30 = 66%
-#  MCT 16 13 = 13/29 = 45%
+#  CSB 24  6 = 5/30 = 16.6%
+#  CST 20 10 = 9/30 = 30%
+#  MCB 10 20 = 16/30 = 53.3%
+#  MCT 16 13 = 11/29 = 37.9%
 #  MRB 13 18 = 18/31 = 58%
 
 
