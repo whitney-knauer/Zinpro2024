@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="WAK">
-<meta name="dcterms.date" content="2025-03-02">
+<meta name="dcterms.date" content="2025-07-07">
 
 <title>Calf Health and IgG Analysis</title>
 <style>
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -52,20 +86,40 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#calf-enrollment-characteristics" id="toc-calf-enrollment-characteristics" class="nav-link" data-scroll-target="#calf-enrollment-characteristics">Calf Enrollment Characteristics</a></li>
   <li><a href="#birth-weight-by-treatment-group" id="toc-birth-weight-by-treatment-group" class="nav-link" data-scroll-target="#birth-weight-by-treatment-group">Birth Weight by Treatment Group</a></li>
+  <li><a href="#serum-igg-at-0-hrs-gl" id="toc-serum-igg-at-0-hrs-gl" class="nav-link" data-scroll-target="#serum-igg-at-0-hrs-gl">Serum IgG at 0 hrs (g/L)</a></li>
+  </ul></li>
+  <li><a href="#first-feeding" id="toc-first-feeding" class="nav-link" data-scroll-target="#first-feeding">FIRST FEEDING</a>
+  <ul class="collapse">
   <li><a href="#age-at-first-feedingmin" id="toc-age-at-first-feedingmin" class="nav-link" data-scroll-target="#age-at-first-feedingmin">Age at First Feeding(min)</a></li>
   <li><a href="#colostral-igg-feeding-1" id="toc-colostral-igg-feeding-1" class="nav-link" data-scroll-target="#colostral-igg-feeding-1">Colostral IgG Feeding 1</a></li>
   <li><a href="#feeding-1-total-igg-dose" id="toc-feeding-1-total-igg-dose" class="nav-link" data-scroll-target="#feeding-1-total-igg-dose">Feeding 1 Total IgG Dose</a></li>
   <li><a href="#assn-between-bacteria-and-colostral-igg" id="toc-assn-between-bacteria-and-colostral-igg" class="nav-link" data-scroll-target="#assn-between-bacteria-and-colostral-igg">Assn between bacteria and Colostral IgG</a></li>
   <li><a href="#brix-vs-colostral-igg" id="toc-brix-vs-colostral-igg" class="nav-link" data-scroll-target="#brix-vs-colostral-igg">Brix% vs Colostral IgG</a></li>
+  </ul></li>
+  <li><a href="#second-feeding" id="toc-second-feeding" class="nav-link" data-scroll-target="#second-feeding">SECOND FEEDING</a>
+  <ul class="collapse">
   <li><a href="#hrs-old-at-second-feeding" id="toc-hrs-old-at-second-feeding" class="nav-link" data-scroll-target="#hrs-old-at-second-feeding">Hrs Old At Second Feeding</a></li>
   <li><a href="#interval-feeding-1---2" id="toc-interval-feeding-1---2" class="nav-link" data-scroll-target="#interval-feeding-1---2">Interval Feeding 1 - 2</a></li>
   <li><a href="#hr-igg-by-treatment-group" id="toc-hr-igg-by-treatment-group" class="nav-link" data-scroll-target="#hr-igg-by-treatment-group">8hr IgG by Treatment Group</a></li>
   <li><a href="#refusals-second-feeding-mls-and-refusal-yn" id="toc-refusals-second-feeding-mls-and-refusal-yn" class="nav-link" data-scroll-target="#refusals-second-feeding-mls-and-refusal-yn">Refusals, second feeding (mLs and Refusal Y/N)</a></li>
+  <li><a href="#amount-consumed-second-feeding" id="toc-amount-consumed-second-feeding" class="nav-link" data-scroll-target="#amount-consumed-second-feeding">Amount Consumed Second Feeding</a></li>
   <li><a href="#second-feeding-colostral-igg" id="toc-second-feeding-colostral-igg" class="nav-link" data-scroll-target="#second-feeding-colostral-igg">Second Feeding Colostral IgG</a></li>
   <li><a href="#second-feeding-dose-igg" id="toc-second-feeding-dose-igg" class="nav-link" data-scroll-target="#second-feeding-dose-igg">Second Feeding Dose IgG</a></li>
+  </ul></li>
+  <li><a href="#both-feedings" id="toc-both-feedings" class="nav-link" data-scroll-target="#both-feedings">BOTH FEEDINGS</a>
+  <ul class="collapse">
   <li><a href="#total-dose-igg-consumed-f1-f2" id="toc-total-dose-igg-consumed-f1-f2" class="nav-link" data-scroll-target="#total-dose-igg-consumed-f1-f2">Total Dose IgG Consumed (F1 + F2)</a></li>
+  <li><a href="#total-volume-consume-f1f2" id="toc-total-volume-consume-f1f2" class="nav-link" data-scroll-target="#total-volume-consume-f1f2">Total Volume Consume (F1+F2)</a></li>
   <li><a href="#hr-serum-igg" id="toc-hr-serum-igg" class="nav-link" data-scroll-target="#hr-serum-igg">24hr serum IgG</a></li>
+  </ul></li>
+  <li><a href="#post-colostrum" id="toc-post-colostrum" class="nav-link" data-scroll-target="#post-colostrum">POST COLOSTRUM</a>
+  <ul class="collapse">
   <li><a href="#first-milk-only-feeding---refusals" id="toc-first-milk-only-feeding---refusals" class="nav-link" data-scroll-target="#first-milk-only-feeding---refusals">First Milk (only) Feeding - Refusals</a></li>
+  </ul></li>
+  <li><a href="#models" id="toc-models" class="nav-link" data-scroll-target="#models">MODELS</a>
+  <ul class="collapse">
+  <li><a href="#igg-at-8hrs" id="toc-igg-at-8hrs" class="nav-link" data-scroll-target="#igg-at-8hrs">IgG at 8Hrs</a></li>
+  <li><a href="#igg-at-24hrs" id="toc-igg-at-24hrs" class="nav-link" data-scroll-target="#igg-at-24hrs">IgG at 24Hrs</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -93,7 +147,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 2, 2025</p>
+      <p class="date">July 7, 2025</p>
     </div>
   </div>
   
@@ -112,6 +166,34 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="calf-enrollment-characteristics">Calf Enrollment Characteristics</h3>
 <p>This generally describes calves in each treatment group by various indicators (breed, sex, size). Calves were balanced between treatment groups (n=31). Majority of enrolled calves were crossbreds, and fairly evenly split between large and small, and male and female. There was one calf who did not have their sex recorded.</p>
 <div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  table_matrix
+X-squared = 6.0646, df = 8, p-value = 0.64</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  table_matrix
+X-squared = 4.2923, df = 4, p-value = 0.3679</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  table_matrix
+X-squared = 2.1088, df = 4, p-value = 0.7157</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  table_matrix
+X-squared = 3.2517, df = 4, p-value = 0.5166</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   D0Fed2TxGrp Count
@@ -172,6 +254,22 @@ ul.task-list li input[type="checkbox"] {
 10 MRB         SM              10</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+# Groups:   D0Fed2TxGrp [5]
+   D0Fed2TxGrp SingleTwinST Count
+   &lt;chr&gt;       &lt;chr&gt;        &lt;int&gt;
+ 1 CSB         S               27
+ 2 CSB         T                4
+ 3 CST         S               30
+ 4 CST         T                1
+ 5 MCB         S               28
+ 6 MCB         T                3
+ 7 MCT         S               28
+ 8 MCT         T                3
+ 9 MRB         S               30
+10 MRB         T                1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 4
    D0Fed2TxGrp FarmDzYN count proportion
    &lt;chr&gt;       &lt;chr&gt;    &lt;int&gt;      &lt;dbl&gt;
@@ -196,32 +294,32 @@ ul.task-list li input[type="checkbox"] {
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          84.7  13.6
-2 CST          86.9  12.0
-3 MCB          83.2  15.3
-4 MCT          87.0  12.9
-5 MRB          83.1  12.3</code></pre>
+1 CSB          38.5  6.20
+2 CST          39.5  5.45
+3 MCB          37.8  6.94
+4 MCT          39.5  5.88
+5 MRB          37.8  5.58</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = BirthWtLbs ~ D0Fed2TxGrp, data = clean)
+lm(formula = BirthWtLbs/2.2 ~ D0Fed2TxGrp, data = clean)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--24.1290  -9.8016  -0.0548   8.8710  28.2258 
+-10.9677  -4.4553  -0.0249   4.0323  12.8299 
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)      84.729      2.383  35.548   &lt;2e-16 ***
-D0Fed2TxGrpCST    2.181      3.371   0.647    0.519    
-D0Fed2TxGrpMCB   -1.555      3.371  -0.461    0.645    
-D0Fed2TxGrpMCT    2.281      3.371   0.677    0.500    
-D0Fed2TxGrpMRB   -1.674      3.371  -0.497    0.620    
+(Intercept)    37.75220    1.08340  34.846   &lt;2e-16 ***
+D0Fed2TxGrpCSB  0.76100    1.53217   0.497    0.620    
+D0Fed2TxGrpCST  1.75220    1.53217   1.144    0.255    
+D0Fed2TxGrpMCB  0.05425    1.53217   0.035    0.972    
+D0Fed2TxGrpMCT  1.79765    1.53217   1.173    0.243    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 13.27 on 150 degrees of freedom
+Residual standard error: 6.032 on 150 degrees of freedom
 Multiple R-squared:  0.01715,   Adjusted R-squared:  -0.009055 
 F-statistic: 0.6545 on 4 and 150 DF,  p-value: 0.6246</code></pre>
 </div>
@@ -229,17 +327,17 @@ F-statistic: 0.6545 on 4 and 150 DF,  p-value: 0.6246</code></pre>
 <pre><code># A tibble: 10 × 4
 # Groups:   D0Fed2TxGrp [5]
    D0Fed2TxGrp CalfSizeLgSm  mean    sd
-   &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;
- 1 CSB         LG            94.2 10.3 
- 2 CSB         SM            73.2  6.03
- 3 CST         LG            93.1  8.99
- 4 CST         SM            73.9  4.71
- 5 MCB         LG            94.1  9.20
- 6 MCB         SM            68.1  6.21
- 7 MCT         LG            93.7  9.83
- 8 MCT         SM            72.9  3.99
- 9 MRB         LG            89.8  7.30
-10 MRB         SM            68.8  7.09</code></pre>
+   &lt;fct&gt;       &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;
+ 1 MRB         LG            89.8  7.30
+ 2 MRB         SM            68.8  7.09
+ 3 CSB         LG            94.2 10.3 
+ 4 CSB         SM            73.2  6.03
+ 5 CST         LG            93.1  8.99
+ 6 CST         SM            73.9  4.71
+ 7 MCB         LG            94.1  9.20
+ 8 MCB         SM            68.1  6.21
+ 9 MCT         LG            93.7  9.83
+10 MCT         SM            72.9  3.99</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -252,16 +350,16 @@ Residuals:
 
 Coefficients:
                                 Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)                    94.235294   1.962971  48.006  &lt; 2e-16 ***
-D0Fed2TxGrpCST                 -1.140056   2.640561  -0.432   0.6666    
-D0Fed2TxGrpMCB                 -0.174183   2.737233  -0.064   0.9493    
-D0Fed2TxGrpMCT                 -0.506723   2.640561  -0.192   0.8481    
-D0Fed2TxGrpMRB                 -4.392437   2.640561  -1.663   0.0984 .  
-CalfSizeLgSmSM                -21.049580   2.920995  -7.206 2.91e-11 ***
-D0Fed2TxGrpCST:CalfSizeLgSmSM   1.874342   4.266386   0.439   0.6611    
-D0Fed2TxGrpMCB:CalfSizeLgSmSM  -4.911531   4.148527  -1.184   0.2384    
-D0Fed2TxGrpMCT:CalfSizeLgSmSM   0.221008   4.266386   0.052   0.9588    
-D0Fed2TxGrpMRB:CalfSizeLgSmSM   0.006723   4.266386   0.002   0.9987    
+(Intercept)                    89.842857   1.766155  50.869  &lt; 2e-16 ***
+D0Fed2TxGrpCSB                  4.392437   2.640561   1.663   0.0984 .  
+D0Fed2TxGrpCST                  3.252381   2.497720   1.302   0.1949    
+D0Fed2TxGrpMCB                  4.218254   2.599710   1.623   0.1069    
+D0Fed2TxGrpMCT                  3.885714   2.497720   1.556   0.1220    
+CalfSizeLgSmSM                -21.042857   3.109637  -6.767 3.02e-10 ***
+D0Fed2TxGrpCSB:CalfSizeLgSmSM  -0.006723   4.266386  -0.002   0.9987    
+D0Fed2TxGrpCST:CalfSizeLgSmSM   1.867619   4.397690   0.425   0.6717    
+D0Fed2TxGrpMCB:CalfSizeLgSmSM  -4.918254   4.283445  -1.148   0.2528    
+D0Fed2TxGrpMCT:CalfSizeLgSmSM   0.214286   4.397690   0.049   0.9612    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -274,18 +372,70 @@ F-statistic: 29.48 on 9 and 145 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </section>
+<section id="serum-igg-at-0-hrs-gl" class="level3">
+<h3 class="anchored" data-anchor-id="serum-igg-at-0-hrs-gl">Serum IgG at 0 hrs (g/L)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>clean <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span> (D0Fed2TxGrp) <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span> (<span class="at">mean =</span> <span class="fu">mean</span>(Result0hrgL), </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">sd =</span> <span class="fu">sd</span>(Result0hrgL))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  D0Fed2TxGrp  mean    sd
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB             0     0
+2 CSB             0     0
+3 CST             0     0
+4 MCB             0     0
+5 MCT             0     0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>clean<span class="sc">$</span>D0Fed2TxGrp <span class="ot">&lt;-</span> <span class="fu">relevel</span>(<span class="fu">factor</span>(clean<span class="sc">$</span>D0Fed2TxGrp), <span class="at">ref =</span> <span class="st">"MRB"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>lm_IgG0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result0hrgL <span class="sc">~</span> D0Fed2TxGrp, <span class="at">data=</span>clean)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_IgG0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result0hrgL ~ D0Fed2TxGrp, data = clean)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+     0      0      0      0      0 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)           0          0     NaN      NaN
+D0Fed2TxGrpCSB        0          0     NaN      NaN
+D0Fed2TxGrpCST        0          0     NaN      NaN
+D0Fed2TxGrpMCB        0          0     NaN      NaN
+D0Fed2TxGrpMCT        0          0     NaN      NaN
+
+Residual standard error: 0 on 150 degrees of freedom
+Multiple R-squared:    NaN, Adjusted R-squared:    NaN 
+F-statistic:   NaN on 4 and 150 DF,  p-value: NA</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="first-feeding" class="level2">
+<h2 class="anchored" data-anchor-id="first-feeding">FIRST FEEDING</h2>
 <section id="age-at-first-feedingmin" class="level3">
 <h3 class="anchored" data-anchor-id="age-at-first-feedingmin">Age at First Feeding(min)</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+   mean    sd
+  &lt;dbl&gt; &lt;dbl&gt;
+1  56.7  17.3</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          55.1  17.2
-2 CST          56.4  14.5
-3 MCB          52.6  15.8
-4 MCT          57.2  19.6
-5 MRB          62.1  18.5</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          62.1  18.5
+2 CSB          55.1  17.2
+3 CST          56.4  14.5
+4 MCB          52.6  15.8
+5 MCT          57.2  19.6</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -298,11 +448,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)      55.065      3.095  17.793   &lt;2e-16 ***
-D0Fed2TxGrpCST    1.290      4.377   0.295    0.769    
-D0Fed2TxGrpMCB   -2.419      4.377  -0.553    0.581    
-D0Fed2TxGrpMCT    2.129      4.377   0.486    0.627    
-D0Fed2TxGrpMRB    7.000      4.377   1.599    0.112    
+(Intercept)      62.065      3.095  20.055   &lt;2e-16 ***
+D0Fed2TxGrpCSB   -7.000      4.377  -1.599    0.112    
+D0Fed2TxGrpCST   -5.710      4.377  -1.305    0.194    
+D0Fed2TxGrpMCB   -9.419      4.377  -2.152    0.033 *  
+D0Fed2TxGrpMCT   -4.871      4.377  -1.113    0.268    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -311,7 +461,7 @@ Multiple R-squared:  0.0325,    Adjusted R-squared:  0.006695
 F-statistic:  1.26 on 4 and 150 DF,  p-value: 0.2885</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -319,14 +469,20 @@ F-statistic:  1.26 on 4 and 150 DF,  p-value: 0.2885</code></pre>
 <h3 class="anchored" data-anchor-id="colostral-igg-feeding-1">Colostral IgG Feeding 1</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+   mean    sd
+  &lt;dbl&gt; &lt;dbl&gt;
+1  84.1  10.4</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          83.8 10.6 
-2 CST          85.6 10.8 
-3 MCB          81.3 10.3 
-4 MCT          87.6 10.8 
-5 MRB          82.4  8.75</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          82.4  8.75
+2 CSB          83.8 10.6 
+3 CST          85.6 10.8 
+4 MCB          81.3 10.3 
+5 MCT          87.6 10.8 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -339,11 +495,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)      83.771      1.845  45.402   &lt;2e-16 ***
-D0Fed2TxGrpCST    1.813      2.609   0.695    0.488    
-D0Fed2TxGrpMCB   -2.452      2.609  -0.940    0.349    
-D0Fed2TxGrpMCT    3.781      2.609   1.449    0.149    
-D0Fed2TxGrpMRB   -1.329      2.609  -0.509    0.611    
+(Intercept)      82.442      1.845  44.681   &lt;2e-16 ***
+D0Fed2TxGrpCSB    1.329      2.609   0.509   0.6113    
+D0Fed2TxGrpCST    3.142      2.609   1.204   0.2304    
+D0Fed2TxGrpMCB   -1.123      2.609  -0.430   0.6677    
+D0Fed2TxGrpMCT    5.110      2.609   1.958   0.0521 .  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -352,7 +508,7 @@ Multiple R-squared:  0.04614,   Adjusted R-squared:  0.0207
 F-statistic: 1.814 on 4 and 150 DF,  p-value: 0.1291</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -362,12 +518,12 @@ F-statistic: 1.814 on 4 and 150 DF,  p-value: 0.1291</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          281.  46.7
-2 CST          300.  57.4
-3 MCB          277.  56.2
-4 MCT          305.  48.3
-5 MRB          288.  49.8</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          288.  49.8
+2 CSB          281.  46.7
+3 CST          300.  57.4
+4 MCB          277.  56.2
+5 MCT          305.  48.3</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -380,11 +536,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     281.368      9.312  30.215   &lt;2e-16 ***
-D0Fed2TxGrpCST   18.281     13.169   1.388   0.1672    
-D0Fed2TxGrpMCB   -4.042     13.169  -0.307   0.7593    
-D0Fed2TxGrpMCT   23.410     13.169   1.778   0.0775 .  
-D0Fed2TxGrpMRB    7.016     13.169   0.533   0.5950    
+(Intercept)     288.384      9.312  30.968   &lt;2e-16 ***
+D0Fed2TxGrpCSB   -7.016     13.169  -0.533    0.595    
+D0Fed2TxGrpCST   11.265     13.169   0.855    0.394    
+D0Fed2TxGrpMCB  -11.058     13.169  -0.840    0.402    
+D0Fed2TxGrpMCT   16.394     13.169   1.245    0.215    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -393,7 +549,7 @@ Multiple R-squared:  0.04048,   Adjusted R-squared:  0.01489
 F-statistic: 1.582 on 4 and 150 DF,  p-value: 0.182</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -421,7 +577,7 @@ Multiple R-squared:  0.06255,   Adjusted R-squared:  0.05642
 F-statistic: 10.21 on 1 and 153 DF,  p-value: 0.001699</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -444,7 +600,7 @@ Multiple R-squared:  0.0249,    Adjusted R-squared:  0.01853
 F-statistic: 3.907 on 1 and 153 DF,  p-value: 0.04989</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -472,22 +628,31 @@ Multiple R-squared:  0.3468,    Adjusted R-squared:  0.3425
 F-statistic: 81.22 on 1 and 153 DF,  p-value: 7.706e-16</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
+</section>
+<section id="second-feeding" class="level2">
+<h2 class="anchored" data-anchor-id="second-feeding">SECOND FEEDING</h2>
 <section id="hrs-old-at-second-feeding" class="level3">
 <h3 class="anchored" data-anchor-id="hrs-old-at-second-feeding">Hrs Old At Second Feeding</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+   mean    sd
+  &lt;dbl&gt; &lt;dbl&gt;
+1  8.99 0.339</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          8.93 0.292
-2 CST          8.98 0.237
-3 MCB          8.91 0.408
-4 MCT          9.04 0.350
-5 MRB          9.11 0.363</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          9.11 0.363
+2 CSB          8.93 0.292
+3 CST          8.98 0.237
+4 MCB          8.91 0.408
+5 MCT          9.04 0.350</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -500,11 +665,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     8.93333    0.06019 148.410   &lt;2e-16 ***
-D0Fed2TxGrpCST  0.04624    0.08513   0.543   0.5878    
-D0Fed2TxGrpMCB -0.02688    0.08513  -0.316   0.7526    
-D0Fed2TxGrpMCT  0.11022    0.08513   1.295   0.1974    
-D0Fed2TxGrpMRB  0.17312    0.08513   2.034   0.0437 *  
+(Intercept)     9.10645    0.06019 151.286   &lt;2e-16 ***
+D0Fed2TxGrpCSB -0.17312    0.08513  -2.034   0.0437 *  
+D0Fed2TxGrpCST -0.12688    0.08513  -1.491   0.1382    
+D0Fed2TxGrpMCB -0.20000    0.08513  -2.349   0.0201 *  
+D0Fed2TxGrpMCT -0.06290    0.08513  -0.739   0.4611    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -513,7 +678,7 @@ Multiple R-squared:  0.04675,   Adjusted R-squared:  0.02133
 F-statistic: 1.839 on 4 and 150 DF,  p-value: 0.1243</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -521,14 +686,20 @@ F-statistic: 1.839 on 4 and 150 DF,  p-value: 0.1243</code></pre>
 <h3 class="anchored" data-anchor-id="interval-feeding-1---2">Interval Feeding 1 - 2</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+   mean    sd
+  &lt;dbl&gt; &lt;dbl&gt;
+1  8.05 0.191</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean     sd
-  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;
-1 CSB          8.02 0.0850
-2 CST          8.04 0.108 
-3 MCB          8.03 0.271 
-4 MCT          8.09 0.183 
-5 MRB          8.07 0.238 </code></pre>
+  &lt;fct&gt;       &lt;dbl&gt;  &lt;dbl&gt;
+1 MRB          8.07 0.238 
+2 CSB          8.02 0.0850
+3 CST          8.04 0.108 
+4 MCB          8.03 0.271 
+5 MCT          8.09 0.183 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -541,11 +712,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     8.01559    0.03434 233.399   &lt;2e-16 ***
-D0Fed2TxGrpCST  0.02473    0.04857   0.509    0.611    
-D0Fed2TxGrpMCB  0.01344    0.04857   0.277    0.782    
-D0Fed2TxGrpMCT  0.07473    0.04857   1.539    0.126    
-D0Fed2TxGrpMRB  0.05645    0.04857   1.162    0.247    
+(Intercept)     8.07204    0.03434 235.043   &lt;2e-16 ***
+D0Fed2TxGrpCSB -0.05645    0.04857  -1.162    0.247    
+D0Fed2TxGrpCST -0.03172    0.04857  -0.653    0.515    
+D0Fed2TxGrpMCB -0.04301    0.04857  -0.886    0.377    
+D0Fed2TxGrpMCT  0.01828    0.04857   0.376    0.707    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -554,7 +725,7 @@ Multiple R-squared:  0.02118,   Adjusted R-squared:  -0.004925
 F-statistic: 0.8113 on 4 and 150 DF,  p-value: 0.5198</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -562,14 +733,20 @@ F-statistic: 0.8113 on 4 and 150 DF,  p-value: 0.5198</code></pre>
 <h3 class="anchored" data-anchor-id="hr-igg-by-treatment-group">8hr IgG by Treatment Group</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+   mean    sd
+  &lt;dbl&gt; &lt;dbl&gt;
+1  31.6  6.76</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          32.6  4.85
-2 CST          30.5  7.15
-3 MCB          32.0  5.09
-4 MCT          31.8  6.09
-5 MRB          31.2  9.70</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          31.2  9.70
+2 CSB          32.6  4.85
+3 CST          30.5  7.15
+4 MCB          32.0  5.09
+5 MCT          31.8  6.09</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -582,11 +759,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     32.5868     1.2226  26.654   &lt;2e-16 ***
-D0Fed2TxGrpCST  -2.1077     1.7290  -1.219    0.225    
-D0Fed2TxGrpMCB  -0.6010     1.7290  -0.348    0.729    
-D0Fed2TxGrpMCT  -0.8181     1.7290  -0.473    0.637    
-D0Fed2TxGrpMRB  -1.3665     1.7290  -0.790    0.431    
+(Intercept)     31.2203     1.2226  25.536   &lt;2e-16 ***
+D0Fed2TxGrpCSB   1.3665     1.7290   0.790    0.431    
+D0Fed2TxGrpCST  -0.7413     1.7290  -0.429    0.669    
+D0Fed2TxGrpMCB   0.7655     1.7290   0.443    0.659    
+D0Fed2TxGrpMCT   0.5484     1.7290   0.317    0.752    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -595,7 +772,7 @@ Multiple R-squared:  0.01125,   Adjusted R-squared:  -0.01511
 F-statistic: 0.4267 on 4 and 150 DF,  p-value: 0.7892</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -605,22 +782,26 @@ F-statistic: 0.4267 on 4 and 150 DF,  p-value: 0.7892</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          244.  384.
-2 CST            0     0 
-3 MCB          685.  687.
-4 MCT            0     0 
-5 MRB          571.  592.</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          571.  592.
+2 CSB          244.  384.
+3 CST            0     0 
+4 MCB          685.  687.
+5 MCT            0     0 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 2
-  D0Fed2TxGrp refuse
-  &lt;chr&gt;        &lt;dbl&gt;
-1 CSB             10
-2 CST              0
-3 MCB             18
-4 MCT              0
-5 MRB             20</code></pre>
+<pre><code># A tibble: 8 × 3
+# Groups:   D0Fed2TxGrp [5]
+  D0Fed2TxGrp refuse     n
+  &lt;fct&gt;       &lt;fct&gt;  &lt;int&gt;
+1 MRB         0         11
+2 MRB         1         20
+3 CSB         0         21
+4 CSB         1         10
+5 CST         0         31
+6 MCB         0         13
+7 MCB         1         18
+8 MCT         0         31</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -633,11 +814,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)      243.55      79.12   3.078  0.00248 ** 
-D0Fed2TxGrpCST  -243.55     111.89  -2.177  0.03107 *  
-D0Fed2TxGrpMCB   441.94     111.89   3.950  0.00012 ***
-D0Fed2TxGrpMCT  -243.55     111.89  -2.177  0.03107 *  
-D0Fed2TxGrpMRB   327.42     111.89   2.926  0.00397 ** 
+(Intercept)      570.97      79.12   7.217 2.47e-11 ***
+D0Fed2TxGrpCSB  -327.42     111.89  -2.926  0.00397 ** 
+D0Fed2TxGrpCST  -570.97     111.89  -5.103 9.98e-07 ***
+D0Fed2TxGrpMCB   114.52     111.89   1.023  0.30774    
+D0Fed2TxGrpMCT  -570.97     111.89  -5.103 9.98e-07 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -646,7 +827,77 @@ Multiple R-squared:  0.3015,    Adjusted R-squared:  0.2828
 F-statistic: 16.18 on 4 and 150 DF,  p-value: 4.874e-11</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="amount-consumed-second-feeding" class="level3">
+<h3 class="anchored" data-anchor-id="amount-consumed-second-feeding">Amount Consumed Second Feeding</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  D0Fed2TxGrp  mean    sd
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB         1329.  592.
+2 CSB          756.  384.
+3 CST         1000     0 
+4 MCB         1215.  687.
+5 MCT         1900     0 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = DOFed2VolConsummL ~ D0Fed2TxGrp, data = clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1329.0     0.0     0.0   243.6   685.5 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     1329.03      79.12  16.798  &lt; 2e-16 ***
+D0Fed2TxGrpCSB  -572.58     111.89  -5.117 9.35e-07 ***
+D0Fed2TxGrpCST  -329.03     111.89  -2.941   0.0038 ** 
+D0Fed2TxGrpMCB  -114.52     111.89  -1.023   0.3077    
+D0Fed2TxGrpMCT   570.97     111.89   5.103 9.98e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 440.5 on 150 degrees of freedom
+Multiple R-squared:  0.4393,    Adjusted R-squared:  0.4243 
+F-statistic: 29.38 on 4 and 150 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$emmeans
+ D0Fed2TxGrp emmean   SE  df lower.CL upper.CL
+ MRB           1329 79.1 150     1173     1485
+ CSB            756 79.1 150      600      913
+ CST           1000 79.1 150      844     1156
+ MCB           1215 79.1 150     1058     1371
+ MCT           1900 79.1 150     1744     2056
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast  estimate  SE  df t.ratio p.value
+ MRB - CSB      573 112 150   5.117  &lt;.0001
+ MRB - CST      329 112 150   2.941  0.0306
+ MRB - MCB      115 112 150   1.023  0.8442
+ MRB - MCT     -571 112 150  -5.103  &lt;.0001
+ CSB - CST     -244 112 150  -2.177  0.1943
+ CSB - MCB     -458 112 150  -4.094  0.0007
+ CSB - MCT    -1144 112 150 -10.220  &lt;.0001
+ CST - MCB     -215 112 150  -1.917  0.3128
+ CST - MCT     -900 112 150  -8.043  &lt;.0001
+ MCB - MCT     -685 112 150  -6.126  &lt;.0001
+
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -656,12 +907,12 @@ F-statistic: 16.18 on 4 and 150 DF,  p-value: 4.874e-11</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB         100    0   
-2 CST         100    0   
-3 MCB          57.7  6.47
-4 MCT          59.0  6.32
-5 MRB          NA   NA   </code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          NA   NA   
+2 CSB         100    0   
+3 CST         100    0   
+4 MCB          57.7  6.47
+5 MCT          59.0  6.32</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -674,11 +925,11 @@ Residuals:
 
 Coefficients:
                  Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     1.000e+02  7.287e-01  137.22   &lt;2e-16 ***
-D0Fed2TxGrpCST -1.428e-14  1.031e+00    0.00        1    
-D0Fed2TxGrpMCB -4.228e+01  1.031e+00  -41.02   &lt;2e-16 ***
-D0Fed2TxGrpMCT -4.103e+01  1.031e+00  -39.81   &lt;2e-16 ***
-D0Fed2TxGrpMRB -1.000e+02  1.039e+00  -96.23   &lt;2e-16 ***
+(Intercept)    -4.581e-15  7.408e-01    0.00        1    
+D0Fed2TxGrpCSB  1.000e+02  1.039e+00   96.23   &lt;2e-16 ***
+D0Fed2TxGrpCST  1.000e+02  1.039e+00   96.23   &lt;2e-16 ***
+D0Fed2TxGrpMCB  5.772e+01  1.039e+00   55.55   &lt;2e-16 ***
+D0Fed2TxGrpMCT  5.897e+01  1.039e+00   56.75   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -687,8 +938,34 @@ Residual standard error: 4.057 on 149 degrees of freedom
 Multiple R-squared:  0.9882,    Adjusted R-squared:  0.9879 
 F-statistic:  3117 on 4 and 149 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$emmeans
+ D0Fed2TxGrp emmean    SE  df lower.CL upper.CL
+ MRB            0.0 0.741 149    -1.46     1.46
+ CSB          100.0 0.729 149    98.56   101.44
+ CST          100.0 0.729 149    98.56   101.44
+ MCB           57.7 0.729 149    56.28    59.16
+ MCT           59.0 0.729 149    57.53    60.41
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast  estimate   SE  df t.ratio p.value
+ MRB - CSB  -100.00 1.04 149 -96.234  &lt;.0001
+ MRB - CST  -100.00 1.04 149 -96.234  &lt;.0001
+ MRB - MCB   -57.72 1.04 149 -55.549  &lt;.0001
+ MRB - MCT   -58.97 1.04 149 -56.747  &lt;.0001
+ CSB - CST     0.00 1.03 149   0.000  1.0000
+ CSB - MCB    42.28 1.03 149  41.023  &lt;.0001
+ CSB - MCT    41.03 1.03 149  39.815  &lt;.0001
+ CST - MCB    42.28 1.03 149  41.023  &lt;.0001
+ CST - MCT    41.03 1.03 149  39.815  &lt;.0001
+ MCB - MCT    -1.25 1.03 149  -1.208  0.7466
+
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -699,12 +976,12 @@ F-statistic:  3117 on 4 and 149 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          75.6  38.4
-2 CST         100     0  
-3 MCB          68.2  38.3
-4 MCT         112.   12.0
-5 MRB           0     0  </code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB           0     0  
+2 CSB          75.6  38.4
+3 CST         100     0  
+4 MCB          68.2  38.3
+5 MCT         112.   12.0</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -716,12 +993,12 @@ Residuals:
 -75.645  -0.984   0.000  14.915  70.474 
 
 Coefficients:
-               Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)      75.645      4.464  16.946  &lt; 2e-16 ***
-D0Fed2TxGrpCST   24.355      6.313   3.858 0.000169 ***
-D0Fed2TxGrpMCB   -7.419      6.313  -1.175 0.241743    
-D0Fed2TxGrpMCT   36.397      6.313   5.766 4.49e-08 ***
-D0Fed2TxGrpMRB  -75.645      6.313 -11.983  &lt; 2e-16 ***
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    1.119e-13  4.464e+00    0.00        1    
+D0Fed2TxGrpCSB 7.565e+01  6.313e+00   11.98   &lt;2e-16 ***
+D0Fed2TxGrpCST 1.000e+02  6.313e+00   15.84   &lt;2e-16 ***
+D0Fed2TxGrpMCB 6.823e+01  6.313e+00   10.81   &lt;2e-16 ***
+D0Fed2TxGrpMCT 1.120e+02  6.313e+00   17.75   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -729,23 +1006,52 @@ Residual standard error: 24.85 on 150 degrees of freedom
 Multiple R-squared:  0.7176,    Adjusted R-squared:  0.7101 
 F-statistic:  95.3 on 4 and 150 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$emmeans
+ D0Fed2TxGrp emmean   SE  df lower.CL upper.CL
+ MRB            0.0 4.46 150    -8.82     8.82
+ CSB           75.6 4.46 150    66.83    84.47
+ CST          100.0 4.46 150    91.18   108.82
+ MCB           68.2 4.46 150    59.41    77.05
+ MCT          112.0 4.46 150   103.22   120.86
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast  estimate   SE  df t.ratio p.value
+ MRB - CSB   -75.65 6.31 150 -11.983  &lt;.0001
+ MRB - CST  -100.00 6.31 150 -15.841  &lt;.0001
+ MRB - MCB   -68.23 6.31 150 -10.808  &lt;.0001
+ MRB - MCT  -112.04 6.31 150 -17.748  &lt;.0001
+ CSB - CST   -24.35 6.31 150  -3.858  0.0016
+ CSB - MCB     7.42 6.31 150   1.175  0.7655
+ CSB - MCT   -36.40 6.31 150  -5.766  &lt;.0001
+ CST - MCB    31.77 6.31 150   5.033  &lt;.0001
+ CST - MCT   -12.04 6.31 150  -1.908  0.3178
+ MCB - MCT   -43.82 6.31 150  -6.941  &lt;.0001
+
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
+</section>
+<section id="both-feedings" class="level2">
+<h2 class="anchored" data-anchor-id="both-feedings">BOTH FEEDINGS</h2>
 <section id="total-dose-igg-consumed-f1-f2" class="level3">
 <h3 class="anchored" data-anchor-id="total-dose-igg-consumed-f1-f2">Total Dose IgG Consumed (F1 + F2)</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          357.  50.3
-2 CST          400.  57.4
-3 MCB          346.  64.0
-4 MCT          417.  51.7
-5 MRB          288.  49.8</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          288.  49.8
+2 CSB          357.  50.3
+3 CST          400.  57.4
+4 MCB          346.  64.0
+5 MCT          417.  51.7</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -758,11 +1064,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     357.013      9.862  36.203  &lt; 2e-16 ***
-D0Fed2TxGrpCST   42.635     13.946   3.057  0.00265 ** 
-D0Fed2TxGrpMCB  -11.468     13.946  -0.822  0.41223    
-D0Fed2TxGrpMCT   59.806     13.946   4.288 3.21e-05 ***
-D0Fed2TxGrpMRB  -68.629     13.946  -4.921 2.24e-06 ***
+(Intercept)     288.384      9.862  29.243  &lt; 2e-16 ***
+D0Fed2TxGrpCSB   68.629     13.946   4.921 2.24e-06 ***
+D0Fed2TxGrpCST  111.265     13.946   7.978 3.54e-13 ***
+D0Fed2TxGrpMCB   57.161     13.946   4.099 6.78e-05 ***
+D0Fed2TxGrpMCT  128.435     13.946   9.209 2.71e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -770,8 +1076,101 @@ Residual standard error: 54.91 on 150 degrees of freedom
 Multiple R-squared:   0.41, Adjusted R-squared:  0.3942 
 F-statistic: 26.06 on 4 and 150 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$emmeans
+ D0Fed2TxGrp emmean   SE  df lower.CL upper.CL
+ MRB            288 9.86 150      269      308
+ CSB            357 9.86 150      338      376
+ CST            400 9.86 150      380      419
+ MCB            346 9.86 150      326      365
+ MCT            417 9.86 150      397      436
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast  estimate   SE  df t.ratio p.value
+ MRB - CSB    -68.6 13.9 150  -4.921  &lt;.0001
+ MRB - CST   -111.3 13.9 150  -7.978  &lt;.0001
+ MRB - MCB    -57.2 13.9 150  -4.099  0.0006
+ MRB - MCT   -128.4 13.9 150  -9.209  &lt;.0001
+ CSB - CST    -42.6 13.9 150  -3.057  0.0219
+ CSB - MCB     11.5 13.9 150   0.822  0.9234
+ CSB - MCT    -59.8 13.9 150  -4.288  0.0003
+ CST - MCB     54.1 13.9 150   3.879  0.0015
+ CST - MCT    -17.2 13.9 150  -1.231  0.7332
+ MCB - MCT    -71.3 13.9 150  -5.111  &lt;.0001
+
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="total-volume-consume-f1f2" class="level3">
+<h3 class="anchored" data-anchor-id="total-volume-consume-f1f2">Total Volume Consume (F1+F2)</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  D0Fed2TxGrp  mean    sd
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB         4809.  711.
+2 CSB         4114.  571.
+3 CST         4480.  450.
+4 MCB         4603.  778.
+5 MCT         5380.  450.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = TotalVol ~ D0Fed2TxGrp, data = clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1664.0  -418.9   136.0   305.3  1082.3 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)      4809.2      109.0  44.136  &lt; 2e-16 ***
+D0Fed2TxGrpCSB   -694.7      154.1  -4.508 1.31e-05 ***
+D0Fed2TxGrpCST   -329.0      154.1  -2.135 0.034366 *  
+D0Fed2TxGrpMCB   -206.1      154.1  -1.337 0.183096    
+D0Fed2TxGrpMCT    571.0      154.1   3.705 0.000296 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 606.7 on 150 degrees of freedom
+Multiple R-squared:  0.3288,    Adjusted R-squared:  0.3109 
+F-statistic: 18.37 on 4 and 150 DF,  p-value: 2.642e-12</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$emmeans
+ D0Fed2TxGrp emmean  SE  df lower.CL upper.CL
+ MRB           4809 109 150     4594     5024
+ CSB           4114 109 150     3899     4330
+ CST           4480 109 150     4265     4695
+ MCB           4603 109 150     4388     4818
+ MCT           5380 109 150     5165     5595
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast  estimate  SE  df t.ratio p.value
+ MRB - CSB      695 154 150   4.508  0.0001
+ MRB - CST      329 154 150   2.135  0.2108
+ MRB - MCB      206 154 150   1.337  0.6683
+ MRB - MCT     -571 154 150  -3.705  0.0027
+ CSB - CST     -366 154 150  -2.373  0.1285
+ CSB - MCB     -489 154 150  -3.171  0.0156
+ CSB - MCT    -1266 154 150  -8.213  &lt;.0001
+ CST - MCB     -123 154 150  -0.798  0.9309
+ CST - MCT     -900 154 150  -5.840  &lt;.0001
+ MCB - MCT     -777 154 150  -5.043  &lt;.0001
+
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -781,12 +1180,12 @@ F-statistic: 26.06 on 4 and 150 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          38.2  5.08
-2 CST          40.3  4.83
-3 MCB          38.9  6.14
-4 MCT          39.9  5.67
-5 MRB          38.7  4.58</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          38.7  4.58
+2 CSB          38.2  5.08
+3 CST          40.3  4.83
+4 MCB          38.9  6.14
+5 MCT          39.9  5.67</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -799,11 +1198,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     38.2200     0.9666  39.543   &lt;2e-16 ***
-D0Fed2TxGrpCST   2.1287     1.3558   1.570    0.119    
-D0Fed2TxGrpMCB   0.6539     1.3558   0.482    0.630    
-D0Fed2TxGrpMCT   1.6865     1.3558   1.244    0.216    
-D0Fed2TxGrpMRB   0.4339     1.3558   0.320    0.749    
+(Intercept)     38.6539     0.9508  40.653   &lt;2e-16 ***
+D0Fed2TxGrpCSB  -0.4339     1.3558  -0.320    0.749    
+D0Fed2TxGrpCST   1.6948     1.3447   1.260    0.209    
+D0Fed2TxGrpMCB   0.2200     1.3447   0.164    0.870    
+D0Fed2TxGrpMCT   1.2526     1.3447   0.932    0.353    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -813,32 +1212,38 @@ Multiple R-squared:  0.02287,   Adjusted R-squared:  -0.003365
 F-statistic: 0.8717 on 4 and 149 DF,  p-value: 0.4825</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-20-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
+</section>
+<section id="post-colostrum" class="level2">
+<h2 class="anchored" data-anchor-id="post-colostrum">POST COLOSTRUM</h2>
 <section id="first-milk-only-feeding---refusals" class="level3">
 <h3 class="anchored" data-anchor-id="first-milk-only-feeding---refusals">First Milk (only) Feeding - Refusals</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   D0Fed2TxGrp  mean    sd
-  &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1 CSB          153.  404.
-2 CST          289.  493.
-3 MCB          650   675.
-4 MCT          515.  739.
-5 MRB          702.  689.</code></pre>
+  &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1 MRB          702.  689.
+2 CSB          153.  404.
+3 CST          289.  493.
+4 MCB          650   675.
+5 MCT          515.  739.</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   D0Fed2TxGrp refuse
-  &lt;chr&gt;        &lt;dbl&gt;
-1 CSB              6
-2 CST             10
-3 MCB             21
-4 MCT             14
-5 MRB             19</code></pre>
+  &lt;fct&gt;        &lt;dbl&gt;
+1 MRB             19
+2 CSB              6
+3 CST             10
+4 MCB             21
+5 MCT             14</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -851,11 +1256,11 @@ Residuals:
 
 Coefficients:
                Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)       153.2      110.2   1.391 0.166296    
-D0Fed2TxGrpCST    135.5      155.8   0.870 0.385867    
-D0Fed2TxGrpMCB    496.8      155.8   3.189 0.001739 ** 
-D0Fed2TxGrpMCT    361.3      155.8   2.319 0.021738 *  
-D0Fed2TxGrpMRB    548.4      155.8   3.520 0.000572 ***
+(Intercept)      701.61     110.16   6.369  2.2e-09 ***
+D0Fed2TxGrpCSB  -548.39     155.79  -3.520 0.000572 ***
+D0Fed2TxGrpCST  -412.90     155.79  -2.650 0.008901 ** 
+D0Fed2TxGrpMCB   -51.61     155.79  -0.331 0.740877    
+D0Fed2TxGrpMCT  -187.10     155.79  -1.201 0.231652    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -864,7 +1269,605 @@ Multiple R-squared:  0.1082,    Adjusted R-squared:  0.08444
 F-statistic: 4.551 on 4 and 150 DF,  p-value: 0.001695</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="models" class="level2">
+<h2 class="anchored" data-anchor-id="models">MODELS</h2>
+<section id="igg-at-8hrs" class="level3">
+<h3 class="anchored" data-anchor-id="igg-at-8hrs">IgG at 8Hrs</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>clean<span class="sc">$</span>D0Fed2TxGrp <span class="ot">&lt;-</span> <span class="fu">relevel</span>(<span class="fu">factor</span>(clean<span class="sc">$</span>D0Fed2TxGrp), <span class="at">ref =</span> <span class="st">"MRB"</span>)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>lm_8hr <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> D0Fed2TxGrp, <span class="at">data=</span>clean)</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_8hr) <span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ D0Fed2TxGrp, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-30.7403  -3.7331   0.8797   4.0242  16.6797 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     31.2203     1.2226  25.536   &lt;2e-16 ***
+D0Fed2TxGrpCSB   1.3665     1.7290   0.790    0.431    
+D0Fed2TxGrpCST  -0.7413     1.7290  -0.429    0.669    
+D0Fed2TxGrpMCB   0.7655     1.7290   0.443    0.659    
+D0Fed2TxGrpMCT   0.5484     1.7290   0.317    0.752    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.807 on 150 degrees of freedom
+Multiple R-squared:  0.01125,   Adjusted R-squared:  -0.01511 
+F-statistic: 0.4267 on 4 and 150 DF,  p-value: 0.7892</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>lm_8hrBreed <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> CrossbredYN, <span class="at">data=</span>clean)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_8hrBreed)<span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ CrossbredYN, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-31.0218  -3.6318   0.9088   3.6382  16.3982 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   32.1612     1.3548  23.739   &lt;2e-16 ***
+CrossbredYNY  -0.6594     1.4793  -0.446    0.656    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.774 on 153 degrees of freedom
+Multiple R-squared:  0.001297,  Adjusted R-squared:  -0.00523 
+F-statistic: 0.1987 on 1 and 153 DF,  p-value: 0.6564</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>lm_8hrSize <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> CalfSizeLgSm, <span class="at">data=</span>clean)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_8hrSize) <span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ CalfSizeLgSm, data = clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-30.155  -3.579   1.195   3.541  15.726 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     32.1742     0.6805  47.278   &lt;2e-16 ***
+CalfSizeLgSmSM  -1.5393     1.1222  -1.372    0.172    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.737 on 153 degrees of freedom
+Multiple R-squared:  0.01215,   Adjusted R-squared:  0.005691 
+F-statistic: 1.881 on 1 and 153 DF,  p-value: 0.1722</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>lm_8hrBW <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> BirthWtLbs, <span class="at">data=</span>clean)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_8hrBW)<span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ BirthWtLbs, data = clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-30.413  -3.899   1.279   3.626  16.378 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 28.53636    3.54634   8.047 2.19e-13 ***
+BirthWtLbs   0.03615    0.04124   0.877    0.382    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.761 on 153 degrees of freedom
+Multiple R-squared:  0.004996,  Adjusted R-squared:  -0.001507 
+F-statistic: 0.7683 on 1 and 153 DF,  p-value: 0.3821</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>lm_8hrSex <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> SexMF, <span class="at">data=</span>clean)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_8hrSex) <span class="co">#yes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ SexMF, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-29.0782  -3.1782  -0.1632   4.2955  14.4968 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  33.4032     0.7234  46.172  &lt; 2e-16 ***
+SexMFM       -3.8450     1.0508  -3.659 0.000348 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.511 on 152 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.08096,   Adjusted R-squared:  0.07491 
+F-statistic: 13.39 on 1 and 152 DF,  p-value: 0.0003483</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>lm_8hrST <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> SingleTwinST, <span class="at">data=</span>clean)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_8hrST)<span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ SingleTwinST, data = clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-31.209  -3.410   1.131   3.451  16.211 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    31.6892     0.5663  55.955   &lt;2e-16 ***
+SingleTwinSTT  -1.0476     2.0354  -0.515    0.608    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.772 on 153 degrees of freedom
+Multiple R-squared:  0.001728,  Adjusted R-squared:  -0.004796 
+F-statistic: 0.2649 on 1 and 153 DF,  p-value: 0.6075</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>lm_minold8 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> DOFed1MinOld, <span class="at">data=</span>clean)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_minold8) <span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ DOFed1MinOld, data = clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-31.009  -3.910   1.059   3.620  17.038 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  32.87573    1.86811  17.598   &lt;2e-16 ***
+DOFed1MinOld -0.02237    0.03154  -0.709    0.479    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.767 on 153 degrees of freedom
+Multiple R-squared:  0.003277,  Adjusted R-squared:  -0.003238 
+F-statistic: 0.503 on 1 and 153 DF,  p-value: 0.4793</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co">#model</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>glmIgG8 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result8hrgL <span class="sc">~</span> D0Fed2TxGrp <span class="sc">+</span> SexMF, <span class="at">data=</span>clean)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(glmIgG8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result8hrgL ~ D0Fed2TxGrp + SexMF, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-28.6616  -3.3259   0.1331   3.6086  14.9678 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     32.9322     1.2735  25.860  &lt; 2e-16 ***
+D0Fed2TxGrpCSB   1.4887     1.6676   0.893 0.373436    
+D0Fed2TxGrpCST  -0.4842     1.6855  -0.287 0.774303    
+D0Fed2TxGrpMCB   0.5209     1.6686   0.312 0.755333    
+D0Fed2TxGrpMCT   0.6707     1.6676   0.402 0.688130    
+SexMFM          -3.7905     1.0664  -3.554 0.000509 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.564 on 148 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.09058,   Adjusted R-squared:  0.05986 
+F-statistic: 2.948 on 5 and 148 DF,  p-value: 0.01443</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(glmIgG8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-22-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-22-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(glmIgG8, <span class="at">type=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Anova Table (Type III tests)
+
+Response: Result8hrgL
+             Sum Sq  Df  F value    Pr(&gt;F)    
+(Intercept) 28811.7   1 668.7447 &lt; 2.2e-16 ***
+D0Fed2TxGrp    67.5   4   0.3914 0.8145404    
+SexMF         544.3   1  12.6339 0.0005089 ***
+Residuals    6376.3 148                       
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span> (glmIgG8, <span class="sc">~</span> D0Fed2TxGrp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> D0Fed2TxGrp emmean   SE  df lower.CL upper.CL
+ MRB           31.0 1.18 148     28.7     33.4
+ CSB           32.5 1.18 148     30.2     34.9
+ CST           30.6 1.20 148     28.2     32.9
+ MCB           31.6 1.19 148     29.2     33.9
+ MCT           31.7 1.18 148     29.4     34.0
+
+Results are averaged over the levels of: SexMF 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(glmIgG8, <span class="sc">~</span>SexMF)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> SexMF emmean    SE  df lower.CL upper.CL
+ F       33.4 0.732 148     31.9     34.8
+ M       29.6 0.771 148     28.1     31.1
+
+Results are averaged over the levels of: D0Fed2TxGrp 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">&lt;-</span> <span class="fu">emmeans</span> (glmIgG8, <span class="sc">~</span> D0Fed2TxGrp)</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>pairwise_comparisons2 <span class="ot">&lt;-</span> <span class="fu">pairs</span>(x)</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pairwise_comparisons2, <span class="at">adjust=</span><span class="st">"tukey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast  estimate   SE  df t.ratio p.value
+ MRB - CSB   -1.489 1.67 148  -0.893  0.8992
+ MRB - CST    0.484 1.69 148   0.287  0.9985
+ MRB - MCB   -0.521 1.67 148  -0.312  0.9979
+ MRB - MCT   -0.671 1.67 148  -0.402  0.9944
+ CSB - CST    1.973 1.68 148   1.172  0.7673
+ CSB - MCB    0.968 1.67 148   0.579  0.9779
+ CSB - MCT    0.818 1.67 148   0.491  0.9881
+ CST - MCB   -1.005 1.69 148  -0.594  0.9758
+ CST - MCT   -1.155 1.68 148  -0.686  0.9592
+ MCB - MCT   -0.150 1.67 148  -0.090  1.0000
+
+Results are averaged over the levels of: SexMF 
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pairwise_comparisons2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast  estimate   SE  df t.ratio p.value
+ MRB - CSB   -1.489 1.67 148  -0.893  0.8992
+ MRB - CST    0.484 1.69 148   0.287  0.9985
+ MRB - MCB   -0.521 1.67 148  -0.312  0.9979
+ MRB - MCT   -0.671 1.67 148  -0.402  0.9944
+ CSB - CST    1.973 1.68 148   1.172  0.7673
+ CSB - MCB    0.968 1.67 148   0.579  0.9779
+ CSB - MCT    0.818 1.67 148   0.491  0.9881
+ CST - MCB   -1.005 1.69 148  -0.594  0.9758
+ CST - MCT   -1.155 1.68 148  -0.686  0.9592
+ MCB - MCT   -0.150 1.67 148  -0.090  1.0000
+
+Results are averaged over the levels of: SexMF 
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
+</div>
+</section>
+<section id="igg-at-24hrs" class="level3">
+<h3 class="anchored" data-anchor-id="igg-at-24hrs">IgG at 24Hrs</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Associations between IgG at 24Hr and Calf Demographics</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>clean<span class="sc">$</span>D0Fed2TxGrp <span class="ot">&lt;-</span> <span class="fu">relevel</span>(<span class="fu">factor</span>(clean<span class="sc">$</span>D0Fed2TxGrp), <span class="at">ref =</span> <span class="st">"MRB"</span>)</span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>lm_24hr <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> D0Fed2TxGrp, <span class="at">data=</span>clean)</span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_24hr) <span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ D0Fed2TxGrp, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-17.7139  -3.7989   0.5361   3.3660  12.6313 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     38.6539     0.9508  40.653   &lt;2e-16 ***
+D0Fed2TxGrpCSB  -0.4339     1.3558  -0.320    0.749    
+D0Fed2TxGrpCST   1.6948     1.3447   1.260    0.209    
+D0Fed2TxGrpMCB   0.2200     1.3447   0.164    0.870    
+D0Fed2TxGrpMCT   1.2526     1.3447   0.932    0.353    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.294 on 149 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.02287,   Adjusted R-squared:  -0.003365 
+F-statistic: 0.8717 on 4 and 149 DF,  p-value: 0.4825</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>lm_24hrBreed <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> CrossbredYN, <span class="at">data=</span>clean)</span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_24hrBreed)<span class="co">#yes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ CrossbredYN, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-15.7191  -3.6291  -0.4691   3.7109  13.3209 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    36.874      1.040  35.450   &lt;2e-16 ***
+CrossbredYNY    2.786      1.136   2.451   0.0154 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.201 on 152 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.03802,   Adjusted R-squared:  0.03169 
+F-statistic: 6.008 on 1 and 152 DF,  p-value: 0.01538</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>lm_24hrSize <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> CalfSizeLgSm, <span class="at">data=</span>clean)</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_24hrSize) <span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ CalfSizeLgSm, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-17.7995  -3.3334  -0.1584   3.7980  13.6316 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     39.3484     0.5353  73.508   &lt;2e-16 ***
+CalfSizeLgSmSM  -0.3889     0.8877  -0.438    0.662    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.299 on 152 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.001261,  Adjusted R-squared:  -0.005309 
+F-statistic: 0.1919 on 1 and 152 DF,  p-value: 0.6619</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>lm_24hrBW <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> BirthWtLbs, <span class="at">data=</span>clean)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_24hrBW)<span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ BirthWtLbs, data = clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-17.550  -3.378   0.048   3.846  13.511 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 36.53892    2.78122  13.138   &lt;2e-16 ***
+BirthWtLbs   0.03137    0.03232   0.971    0.333    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.286 on 152 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.006162,  Adjusted R-squared:  -0.0003769 
+F-statistic: 0.9424 on 1 and 152 DF,  p-value: 0.3332</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>lm_24hrRefuse <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> refuse, <span class="at">data=</span>clean)</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_24hrRefuse)<span class="co">#yes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ refuse, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18.6310  -3.7760   0.7759   3.4550  13.1890 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  39.7910     0.5080   78.33   &lt;2e-16 ***
+refuse1      -1.8740     0.9099   -2.06   0.0411 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.23 on 152 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.02715,   Adjusted R-squared:  0.02075 
+F-statistic: 4.242 on 1 and 152 DF,  p-value: 0.04115</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>lm_24hrSex <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> SexMF, <span class="at">data=</span>clean)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_24hrSex) <span class="co">#yes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ SexMF, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-16.9563  -3.2903   0.2397   3.1538  14.8637 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  38.1162     0.5800  65.713  &lt; 2e-16 ***
+SexMFM        2.2240     0.8397   2.648  0.00895 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.188 on 151 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.04439,   Adjusted R-squared:  0.03806 
+F-statistic: 7.014 on 1 and 151 DF,  p-value: 0.008945</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>lm_24hrST <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> SingleTwinST, <span class="at">data=</span>clean)</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_24hrST)<span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ SingleTwinST, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-17.9834  -3.1334   0.0466   3.4866  13.8366 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    39.1434     0.4446  88.043   &lt;2e-16 ***
+SingleTwinSTT   0.8158     1.5927   0.512    0.609    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.298 on 152 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.001723,  Adjusted R-squared:  -0.004845 
+F-statistic: 0.2624 on 1 and 152 DF,  p-value: 0.6093</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>lm_minold <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> DOFed1MinOld, <span class="at">data=</span>clean)</span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_minold) <span class="co">#no</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ DOFed1MinOld, data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18.3856  -3.0821   0.1292   3.4040  14.1909 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  37.78048    1.46000  25.877   &lt;2e-16 ***
+DOFed1MinOld  0.02522    0.02469   1.021    0.309    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.284 on 152 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.006817,  Adjusted R-squared:  0.0002832 
+F-statistic: 1.043 on 1 and 152 DF,  p-value: 0.3087</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co">#model</span></span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>glmIgG24 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Result24hrgL <span class="sc">~</span> D0Fed2TxGrp <span class="sc">+</span> CrossbredYN  <span class="sc">+</span> SexMF, <span class="at">data=</span>clean)</span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(glmIgG24)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Result24hrgL ~ D0Fed2TxGrp + CrossbredYN + SexMF, 
+    data = clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-15.1262  -3.2700   0.6161   3.5805  13.4500 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     35.7210     1.4081  25.369   &lt;2e-16 ***
+D0Fed2TxGrpCSB  -0.1380     1.3371  -0.103   0.9179    
+D0Fed2TxGrpCST   1.5213     1.3280   1.146   0.2539    
+D0Fed2TxGrpMCB   0.5652     1.3154   0.430   0.6681    
+D0Fed2TxGrpMCT   1.1907     1.3105   0.909   0.3651    
+CrossbredYNY     2.2877     1.1570   1.977   0.0499 *  
+SexMFM           1.9188     0.8495   2.259   0.0254 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.158 on 146 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.08665,   Adjusted R-squared:  0.04911 
+F-statistic: 2.308 on 6 and 146 DF,  p-value: 0.03695</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(glmIgG24)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-23-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-23-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="Descriptive-and-IgG-Results_files/figure-html/unnamed-chunk-23-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(glmIgG24, <span class="at">type=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Anova Table (Type III tests)
+
+Response: Result24hrgL
+             Sum Sq  Df  F value  Pr(&gt;F)    
+(Intercept) 17123.2   1 643.5662 &lt; 2e-16 ***
+D0Fed2TxGrp    63.3   4   0.5951 0.66672    
+CrossbredYN   104.0   1   3.9094 0.04990 *  
+SexMF         135.7   1   5.1017 0.02538 *  
+Residuals    3884.6 146                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span> (glmIgG24, <span class="sc">~</span> D0Fed2TxGrp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> D0Fed2TxGrp emmean   SE  df lower.CL upper.CL
+ MRB           37.8 1.04 146     35.8     39.9
+ CSB           37.7 0.98 146     35.8     39.6
+ CST           39.3 1.02 146     37.3     41.4
+ MCB           38.4 1.00 146     36.4     40.4
+ MCT           39.0 1.04 146     37.0     41.1
+
+Results are averaged over the levels of: CrossbredYN, SexMF 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(glmIgG24, <span class="sc">~</span>CrossbredYN)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> CrossbredYN emmean    SE  df lower.CL upper.CL
+ N             37.3 1.056 146     35.2     39.4
+ Y             39.6 0.458 146     38.7     40.5
+
+Results are averaged over the levels of: D0Fed2TxGrp, SexMF 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(glmIgG24, <span class="sc">~</span>SexMF)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> SexMF emmean    SE  df lower.CL upper.CL
+ F       37.5 0.667 146     36.2     38.8
+ M       39.4 0.756 146     37.9     40.9
+
+Results are averaged over the levels of: D0Fed2TxGrp, CrossbredYN 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>x<span class="ot">&lt;-</span> <span class="fu">emmeans</span> (glmIgG24, <span class="sc">~</span> D0Fed2TxGrp)</span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a>pairwise_comparisons2 <span class="ot">&lt;-</span> <span class="fu">pairs</span>(x)</span>
+<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pairwise_comparisons2, <span class="at">adjust=</span><span class="st">"tukey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast  estimate   SE  df t.ratio p.value
+ MRB - CSB    0.138 1.34 146   0.103  1.0000
+ MRB - CST   -1.521 1.33 146  -1.146  0.7820
+ MRB - MCB   -0.565 1.32 146  -0.430  0.9928
+ MRB - MCT   -1.191 1.31 146  -0.909  0.8932
+ CSB - CST   -1.659 1.34 146  -1.241  0.7275
+ CSB - MCB   -0.703 1.33 146  -0.530  0.9842
+ CSB - MCT   -1.329 1.34 146  -0.995  0.8574
+ CST - MCB    0.956 1.33 146   0.719  0.9518
+ CST - MCT    0.331 1.33 146   0.249  0.9991
+ MCB - MCT   -0.625 1.32 146  -0.475  0.9895
+
+Results are averaged over the levels of: CrossbredYN, SexMF 
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pairwise_comparisons2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast  estimate   SE  df t.ratio p.value
+ MRB - CSB    0.138 1.34 146   0.103  1.0000
+ MRB - CST   -1.521 1.33 146  -1.146  0.7820
+ MRB - MCB   -0.565 1.32 146  -0.430  0.9928
+ MRB - MCT   -1.191 1.31 146  -0.909  0.8932
+ CSB - CST   -1.659 1.34 146  -1.241  0.7275
+ CSB - MCB   -0.703 1.33 146  -0.530  0.9842
+ CSB - MCT   -1.329 1.34 146  -0.995  0.8574
+ CST - MCB    0.956 1.33 146   0.719  0.9518
+ CST - MCT    0.331 1.33 146   0.249  0.9991
+ MCB - MCT   -0.625 1.32 146  -0.475  0.9895
+
+Results are averaged over the levels of: CrossbredYN, SexMF 
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
 </div>
 </div>
 </section>

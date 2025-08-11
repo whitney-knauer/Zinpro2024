@@ -41,6 +41,7 @@ library(multcomp)
 library(hms)
 library(gt)
 library(lubridate)
+library(nlme)
 ```
 
 ## Data Steps - All
@@ -775,7 +776,6 @@ plot(standmodel16)
 car::Anova(standmodel16, type=3)
 
 
-
 emmeans (standmodel16, ~ D0Fed2TxGrp)
 emmeans (standmodel16, ~ hour)
 modeladj <- emmeans(standmodel16, ~hour|D0Fed2TxGrp)
@@ -1184,4 +1184,164 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = bottleyn)) +
   theme_classic()+
   scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))+
   scale_y_continuous(limits = c(0, 15), breaks = seq(0, 15, by = 2))
+```
+
+## Different Correlation Structures for 16h around feeding (+/-8)
+
+### Standing
+
+```{r}
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 8)
+
+#hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+#standmodel16 <-   lmer(as.numeric(Standing) ~ as.factor(hour) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hourfull)
+#summary(standmodel16)
+#plot(standmodel16)
+#car::Anova(standmodel16, type=3)
+
+
+hourfull$hour <- factor(hourfull$hour, levels = unique(hourfull$hour))  # if already time-ordered
+hourfull$TimeNum <- as.numeric(hourfull$hour)
+
+
+mod_base <- lme(
+  fixed = Standing ~ hour * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  data = hourfull
+)
+
+
+mod_ar1 <- lme(
+  fixed = Standing ~ hour * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hourfull
+)
+
+mod_rs <- lme(
+  fixed = Standing ~ hour * D0Fed2TxGrp,
+  random = ~ TimeNum | CalfID,
+  data = hourfull
+)
+
+
+plot (mod_base)
+plot(mod_ar1)
+plot(mod_rs)
+
+anova(mod_base, mod_ar1, mod_rs)
+
+#AR1 is the best model based on fit
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+mod_ar1 <- lme(
+  fixed = Standing ~ hour * D0Fed2TxGrp + CrossbredYN,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hourfull
+)
+summary(mod_ar1)
+car::Anova(mod_ar1, type=3)
+
+emm <- emmeans(mod_ar1, ~ D0Fed2TxGrp * hour)
+summary(emm)
+pairs(emm, by = "hour")
+pairs(emm, by = "D0Fed2TxGrp", adjust="tukey")
+
+
+
+emm_df <- as.data.frame(emm)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  labs(
+    x = "Hour",
+    y = "Estimated Marginal Means of Standing Time",
+    title = "Model-Adjusted Means by Treatment and Time"
+  ) +
+  theme_classic()
+
+
+
+
+
+```
+
+### Lying
+
+```{r}
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 8)
+
+#hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+#standmodel16 <-   lmer(as.numeric(Standing) ~ as.factor(hour) * D0Fed2TxGrp + CrossbredYN + (1 | CalfID), data = hourfull)
+#summary(standmodel16)
+#plot(standmodel16)
+#car::Anova(standmodel16, type=3)
+
+
+hourfull$hour <- factor(hourfull$hour, levels = unique(hourfull$hour))  # if already time-ordered
+hourfull$TimeNum <- as.numeric(hourfull$hour)
+
+
+mod_base <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  data = hourfull
+)
+
+
+mod_ar1 <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hourfull
+)
+
+mod_rs <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp,
+  random = ~ TimeNum | CalfID,
+  data = hourfull
+)
+
+
+plot (mod_base)
+plot(mod_ar1)
+plot(mod_rs)
+
+anova(mod_base, mod_ar1, mod_rs)
+
+#AR1 is the best model based on fit
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+mod_ar1 <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp + CrossbredYN,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hourfull
+)
+summary(mod_ar1)
+car::Anova(mod_ar1, type=3)
+plot(mod_ar1)
+
+emm <- emmeans(mod_ar1, ~ D0Fed2TxGrp * hour)
+summary(emm)
+pairs(emm, by = "hour")
+pairs(emm, by = "D0Fed2TxGrp", adjust="tukey")
+
+
+
+emm_df <- as.data.frame(emm)
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  labs(
+    x = "Hour",
+    y = "Estimated Marginal Means of Lying Time",
+    title = "Model-Adjusted Means by Treatment and Time"
+  ) +
+  theme_classic()
 ```
