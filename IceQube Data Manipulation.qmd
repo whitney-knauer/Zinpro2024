@@ -41,6 +41,7 @@ library(multcomp)
 library(hms)
 library(gt)
 library(lubridate)
+library(nlme)
 ```
 
 ## Data Steps - All
@@ -808,6 +809,8 @@ ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp)) +
 
 ### Lying
 
+#### With random intercepts for CalfID
+
 ```{r}
 hourfull <- hour |> 
   filter(hour >= -8 & hour <= 8)
@@ -847,9 +850,99 @@ ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp)) +
     scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
 ```
 
+#### With appropriate Model Fit
+
+```{r}
+
+hourfull <- hour |> 
+  filter(hour >= -8 & hour <= 8)
+
+hourfull$D0Fed2TxGrp <- relevel(factor(hourfull$D0Fed2TxGrp), ref = "MRB")
+hourfull$hour <- factor(hourfull$hour, levels = unique(hourfull$hour))  # if already time-ordered
+hourfull$TimeNum <- as.numeric(hourfull$hour)
+
+mod_base <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  data = hourfull
+)
+
+mod_ar1 <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hourfull
+)
+
+mod_rs <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp,
+  random = ~ TimeNum | CalfID,
+  data = hourfull
+)
+
+
+plot (mod_base)
+plot(mod_ar1)
+plot(mod_rs)
+
+anova(mod_base, mod_ar1, mod_rs)
+
+
+#AR1 is the best fit, but not really great
+
+mod_ar1 <- lme(
+  fixed = Lying ~ hour * D0Fed2TxGrp + CrossbredYN,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hourfull
+)
+
+summary(mod_ar1)
+car::Anova(mod_ar1, type=3)
+
+emm <- emmeans(mod_ar1, ~ hour * D0Fed2TxGrp)
+summary(emm)
+pairs(emm, by = "hour")
+pairs(emm, by = "D0Fed2TxGrp")
+
+emm_df <- as.data.frame(emm)
+
+line_df <- 
+  emm_df %>% 
+  mutate(emmean_line = ifelse (hour == 0, NA, emmean))
+
+
+ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line(data = line_df, aes (y=emmean_line)) +
+  geom_point() +
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+    labs(
+    x = "Hour from Feeding Time",
+    y = "Lying Time (min)") +
+  theme_classic() +
+   theme(legend.position = "top", 
+        text = element_text(family = "Times New Roman", size = 12))
+
+
+
+
+
+
+```
+
 ## Models - 15 min increments - 4 and 2 hrs around
 
 ### Standing
+
+#### With random intercepts for CalfID
 
 ```{r}
 
@@ -928,9 +1021,98 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp)) +
   scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))
 
 
+
+```
+
+#### With appropriate Model Fit
+
+```{r}
+
+hr2 <- merged_data |> 
+   filter(tffeed >= -4 & tffeed <= 4) |> 
+    mutate(
+    standm = `Standing [t]` / 60)
+
+hr2$D0Fed2TxGrp <- relevel(factor(hr2$D0Fed2TxGrp), ref = "MRB")
+hr2$tffeed <- factor(hr2$tffeed, levels = unique(hr2$tffeed))  # if already time-ordered
+hr2$TimeNum <- as.numeric(hr2$tffeed)
+
+mod_base <- lme(
+  fixed = standm ~ tffeed * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  data = hr2
+)
+
+mod_ar1 <- lme(
+  fixed = standm ~ tffeed * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hr2
+)
+
+mod_rs <- lme(
+  fixed = standm ~ tffeed * D0Fed2TxGrp,
+  random = ~ TimeNum | CalfID,
+  data = hr2
+)
+
+
+plot (mod_base)
+plot(mod_ar1)
+plot(mod_rs)
+
+anova(mod_base, mod_ar1, mod_rs)
+
+#ar1 is the best
+
+mod_ar1 <- lme(
+  fixed = standm ~ tffeed * D0Fed2TxGrp + CrossbredYN,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hr2
+)
+summary(mod_ar1)
+car::Anova(mod_ar1, type=3)
+
+emm <- emmeans(mod_ar1, ~ tffeed * D0Fed2TxGrp)
+summary(emm)
+pairs(emm, by = "tffeed")
+pairs(emm, by = "D0Fed2TxGrp")
+
+emm_df <- as.data.frame(emm)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  scale_x_discrete(
+    breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4),   
+    labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
+  ) +
+  labs(
+    x = NULL,
+    y = "Standing Time (min)") +
+  theme_classic() +
+   theme(legend.position = "top", 
+        text = element_text(family = "Times New Roman", size = 12))
+
+
+
+
+
 ```
 
 ### Laying
+
+#### With random intercepts for CalfID
 
 ```{r}
 
@@ -1005,6 +1187,90 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp)) +
   labs(x = "Time", y = "Adjusted Mean Lying Time (min)", title = "Adjusted Mean Lying Time in 15min increments") +
   theme_classic()+
   scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))
+```
+
+#### With appropriate Model Fit
+
+```{r}
+
+hr2 <- merged_data |> 
+   filter(tffeed >= -4 & tffeed <= 4) |> 
+    mutate(
+    laym = `Lying [t]` / 60)
+
+hr2$D0Fed2TxGrp <- relevel(factor(hr2$D0Fed2TxGrp), ref = "MRB")
+hr2$tffeed <- factor(hr2$tffeed, levels = unique(hr2$tffeed))  # if already time-ordered
+hr2$TimeNum <- as.numeric(hr2$tffeed)
+
+mod_base <- lme(
+  fixed = laym ~ tffeed * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  data = hr2
+)
+
+mod_ar1 <- lme(
+  fixed = laym ~ tffeed * D0Fed2TxGrp,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hr2
+)
+
+mod_rs <- lme(
+  fixed = laym ~ tffeed * D0Fed2TxGrp,
+  random = ~ TimeNum | CalfID,
+  data = hr2
+)
+
+
+plot (mod_base)
+plot(mod_ar1)
+plot(mod_rs)
+
+anova(mod_base, mod_ar1, mod_rs)
+
+#ar1 is the best
+
+mod_ar1 <- lme(
+  fixed = laym ~ tffeed * D0Fed2TxGrp + CrossbredYN,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hr2
+)
+summary(mod_ar1)
+car::Anova(mod_ar1, type=3)
+
+emm <- emmeans(mod_ar1, ~ tffeed * D0Fed2TxGrp)
+summary(emm)
+pairs(emm, by = "tffeed")
+pairs(emm, by = "D0Fed2TxGrp")
+
+emm_df <- as.data.frame(emm)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line() +
+  geom_point() +
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  scale_x_discrete(
+    breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4),   
+    labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
+  ) +
+  labs(
+    x = NULL,
+    y = "Laying Time (min)") +
+  theme_classic() +
+   theme(legend.position = "top", 
+        text = element_text(family = "Times New Roman", size = 12))
+
+
+
 ```
 
 ## Models - Bottle vs. Tube (16hr around)

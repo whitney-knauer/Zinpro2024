@@ -9,7 +9,7 @@ format:
     toc-location: left
 ---
 
-## 
+## Data Steps
 
 ```{r}
 #| include: false
@@ -41,6 +41,8 @@ library(gridGraphics)
 library(multcomp)
 library(hms)
 library(gt)
+library(RColorBrewer)
+library(extrafont)
 ```
 
 ```{r}
@@ -199,15 +201,24 @@ lm_bwsize <- lm(BirthWtLbs ~ D0Fed2TxGrp*CalfSizeLgSm, data=clean)
 summary(lm_bwsize)
 
 
+
 clean |> 
 ggplot(mapping = aes(x = D0Fed2TxGrp, y = BirthWtLbs, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
-  geom_jitter() +
+  geom_jitter(alpha = 0.75) +
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+ 
   labs(x = "Second Feeding Treatment", 
-       y = "Birth Weight (lbs)", 
-       title = "Boxplot of Treatment vs. Birth Weight")+
-  scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 25))
+       y = "Birth Weight (lbs)")+
+  scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 25)) +
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 ```
 
 ### Serum IgG at 0 hrs (g/L)
@@ -250,9 +261,17 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed1MinOld, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
+   scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+ 
   labs(x = "Second Feeding Treatment", 
-       y = "Age at first feeding(min)", 
-       title = "Treatment vs. Age(min) at first feeding")
+       y = "Age at first feeding(min)") +
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 
 ```
 
@@ -280,10 +299,18 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1ColostIgGgL, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
+   scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+ 
   labs(x = "Second Feeding Treatment", 
-       y = "First Feeding IgG in Colostrum", 
-       title = "Treatment vs. ColostIgG")+
-  scale_y_continuous(limits = c(0, 125), breaks = seq(0, 125, by = 25))
+       y = "First Feeding IgG in Colostrum")+
+  scale_y_continuous(limits = c(0, 125), breaks = seq(0, 125, by = 25))+
+   theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 
 ```
 
@@ -307,10 +334,17 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1DoseIgGfedg, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "First Feeding IgG Dose", 
-       title = "Treatment vs. ColostIgG Dose")+
-  scale_y_continuous(limits = c(0, 450), breaks = seq(0, 450, by = 50))
+     scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+ 
+  labs(y = "First Feeding IgG Dose",
+       x = NULL)+
+  scale_y_continuous(limits = c(0, 450), breaks = seq(0, 450, by = 50))+ theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 ```
 
 ### Assn between bacteria and Colostral IgG
@@ -386,9 +420,18 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2HrsOld, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Hours old at second Feeding", 
-       title = "Treatment vs. Age(hrs) at second feeding")
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+ 
+  labs(x = NULL, 
+       y = "Hours old at second Feeding")+
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
+  
 
 ```
 
@@ -416,9 +459,17 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed12IntervHrs, color=D0Fed2TxGrp)) 
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Feeding Interval", 
-       title = "Treatment vs. Feeding Interval(hrs)")
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+ 
+  labs(x = NULL, 
+       y = "Feeding Interval")+
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 ```
 
 ### 8hr IgG by Treatment Group
@@ -445,11 +496,18 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Serum IgG at 8 hrs", 
-       title = "Treatment vs. IgG at 8 hours")+
-  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
-
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Serum IgG at 8 hrs")+
+  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10)) +
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 
 
 
@@ -480,9 +538,17 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = D0Fed2VolRefusemL, color=D0Fed2TxGrp))
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Refusals (mLs)", 
-       title = "Treatment vs. Refusals(mLs)")
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Refusals (mLs)")+
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 
 
 ```
@@ -510,9 +576,17 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2VolConsummL, color=D0Fed2TxGrp))
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Consumed (mLs)", 
-       title = "Treatment vs. Consumed(mLs)")
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Consumed (mLs)")+
+   theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 
 
 #proportion consumed
@@ -549,9 +623,17 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2ColostIgGgL, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Second Feeding IgG", 
-       title = "Treatment vs. Second Feeding IgG")
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Second Feeding IgG (g/L)")+
+   theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 ```
 
 ### Second Feeding Dose IgG
@@ -578,9 +660,20 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Second Feeding IgG dose", 
-       title = "Treatment vs. Second Feeding IgG dose")
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Second Feeding IgG dose (g)")+
+   scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 50)) +
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
+  
+
 ```
 
 ## BOTH FEEDINGS
@@ -607,10 +700,18 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1F2TotIgGconsumg, color=D0Fed2TxGrp))
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Total IgG Dose", 
-       title = "Treatment vs. Total IgG Dose")+
-  scale_y_continuous(limits = c(0, 600), breaks = seq(0, 600, by = 100))
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Total IgG Dose (g)")+
+  scale_y_continuous(limits = c(0, 600), breaks = seq(0, 600, by = 100))+
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 ```
 
 ### Total Volume Consume (F1+F2)
@@ -635,10 +736,18 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = TotalVol, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Total Volume Consumed", 
-       title = "Treatment vs. Total Volume")+
-  scale_y_continuous(limits = c(0, 7000), breaks = seq(0, 7000, by = 1000))
+    scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Total Volume Consumed")+
+  scale_y_continuous(limits = c(0, 7000), breaks = seq(0, 7000, by = 1000))+
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 ```
 
 ### 24hr serum IgG
@@ -663,10 +772,18 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "Serum IgG at 24 hrs", 
-       title = "Treatment vs. IgG at 24 hours")+
-  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10))
+  scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Serum IgG at 24 hrs")+
+  scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10)) +
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
  
 #serum IgG if calves had refusals at second feeding
 
@@ -711,9 +828,17 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = D1MilkRefusemL, color=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.shape=NA) +
   geom_jitter() +
-  labs(x = "Second Feeding Treatment", 
-       y = "24hr milk refusal", 
-       title = "Boxplot of Treatment vs. 24hr milk refusal")
+   scale_color_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "24hr milk refusal (mLs)") +
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
 ```
 
 ## MODELS
