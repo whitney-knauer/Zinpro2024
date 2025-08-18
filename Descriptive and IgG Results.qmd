@@ -92,6 +92,12 @@ clean<-
   mutate(TotalVol = (D0Fed13or4qt*946.35) + DOFed2VolConsummL)
 
 
+IgG <- 
+  clean |> 
+  select ( D0Fed2TxGrp, Result8hrgL, Result24hrgL) |> 
+  pivot_longer(
+  cols = Result8hrgL:Result24hrgL) 
+
 ```
 
 ## Descriptive Analysis
@@ -321,6 +327,10 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1ColostIgGgL, color=D0Fed2TxGrp)) +
 #| warning: false
 
 clean |> 
+  summarize (mean = mean(F1DoseIgGfedg), 
+             sd = sd(F1DoseIgGfedg))
+
+clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(F1DoseIgGfedg), 
              sd = sd(F1DoseIgGfedg))
@@ -479,13 +489,13 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed12IntervHrs, color=D0Fed2TxGrp)) 
 #| warning: false
 
 clean |> 
-  summarize(mean=mean(Result8hrgL), 
-            sd = sd(Result8hrgL))
+  summarize(mean=mean(Result8hrgL, na.rm=TRUE), 
+            sd = sd(Result8hrgL, na.rm = TRUE))
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 
-  summarize (mean = mean(Result8hrgL), 
-             sd = sd(Result8hrgL))
+  summarize (mean = mean(Result8hrgL, na.rm = TRUE), 
+             sd = sd(Result8hrgL, na.rm = TRUE))
 
 clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_8hr <- lm(Result8hrgL ~ D0Fed2TxGrp, data=clean)
@@ -756,6 +766,12 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = TotalVol, color=D0Fed2TxGrp)) +
 #| echo: false
 #| warning: false
 
+
+clean |> 
+  summarize (mean = mean(Result24hrgL, na.rm=TRUE), 
+             sd = sd(Result24hrgL, na.rm=TRUE))
+
+
 #one calf in the CSB group that doesn't have a 24hr blood IgG
 clean |> 
   group_by (D0Fed2TxGrp) |> 
@@ -936,4 +952,47 @@ x<- emmeans (glmIgG24, ~ D0Fed2TxGrp)
 pairwise_comparisons2 <- pairs(x)
 summary(pairwise_comparisons2, adjust="tukey")
 summary(pairwise_comparisons2)
+```
+
+## IgG 8 vs. 24hr Plot
+
+```{r}
+
+
+custom_colors <- c("MRB" = "grey30", "CSB" = "gold", "CST" = "gold3", 
+                   "MCB" = "red3", "MCT" = "red4")
+
+# Set factor orders
+ordered_exp_levels <- c("Result8hrgL", "Result24hrgL")
+
+IgG <- IgG %>%
+  mutate(
+    name = factor(name, levels = ordered_exp_levels),
+    D0Fed2TxGrp = factor(D0Fed2TxGrp, levels = names(custom_colors))
+  )
+
+dodge_width <- 1
+
+ggplot(IgG, aes(x = D0Fed2TxGrp, y = value, fill = D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_boxplot(
+    aes(group = interaction(D0Fed2TxGrp, name)),
+    position = position_dodge(width = dodge_width),
+    outlier.shape = NA
+  ) +
+  geom_jitter(
+    aes(group = interaction(D0Fed2TxGrp, name)),
+    position = position_jitterdodge(
+      jitter.width = 0.5,   # horizontal spread within each dodged box
+      dodge.width = dodge_width
+    ),
+    alpha = 0.5
+  ) +
+  scale_fill_manual(values = custom_colors) +
+  labs(x = NULL, y = "Serum IgG (g/L)") +
+  theme(
+    legend.position = "none",
+    text = element_text(family = "Arial", size = 12))+
+  scale_y_continuous(limits = c(0, 50), breaks = seq(0, 50, by = 5))
+
 ```
