@@ -1,0 +1,69 @@
+---
+title: "Code for Plot"
+author: "wk"
+date: "2025-08-13"
+output: html_document
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| echo: false
+
+
+library(tidyverse)
+library(ggplot2)
+library(ggbeeswarm)
+library(dplyr)
+library(ggpubr)
+library(gridGraphics)  
+library(gt)
+library(RColorBrewer)
+library(extrafont)
+
+```
+
+```{r}
+#create a simple data frame with two variables 
+df <- data.frame(
+  Mat = rnorm(30, mean = 50, sd = 10),   
+  Con = rnorm(30, mean = 65, sd = 12)) 
+
+#add anoher variable called Pre-Post which is equally distributed among Mat/Con
+df$PREPost <- sample(rep(c("PRE", "POST"), each = 15))
+
+df %>% 
+  ggplot(mapping = aes(x = PREPost, y = Mat, color=PREPost)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter(alpha = 0.75) +
+  scale_color_manual( #scale_color_manual because we are using "color" above to signify that we are applying that to PREPost
+    values = c(
+      "PRE" = "gold",
+      "POST" = "red4"))+ 
+  labs(x = "Treatment", 
+       y = "some Value")+
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
+
+
+df %>% 
+  ggplot(mapping = aes(x = PREPost, y = Mat, fill=PREPost)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter(alpha = 0.75) +
+  scale_fill_manual( #scale_fill_manual because we are using "fill" above to signify that we are applying that to PREPost
+    values = c(
+      "PRE" = "gold",
+      "POST" = "red4"))+ 
+  labs(x = "Treatment", 
+       y = "Some Value")+
+  theme(legend.position = "none", 
+        text = element_text(family = "Times New Roman", size = 12))
+
+
+#you can find all the colors available at: https://cocolaberica.github.io/rcolortable
+
+
+```
+
