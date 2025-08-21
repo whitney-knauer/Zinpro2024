@@ -98,6 +98,19 @@ IgG <-
   pivot_longer(
   cols = Result8hrgL:Result24hrgL) 
 
+
+MCCS <- 
+  clean |> 
+  mutate(
+    type = case_when(
+      D0Fed2TxGrp == "MCB"  ~ "COL",
+      D0Fed2TxGrp == "MCT"  ~ "COL", 
+      D0Fed2TxGrp == "CST"  ~ "CS", 
+      D0Fed2TxGrp == "CSB"  ~ "CS", 
+      D0Fed2TxGrp == "MRB"  ~ "NONE"
+    )
+  )
+
 ```
 
 ## Descriptive Analysis
@@ -502,11 +515,11 @@ lm_8hr <- lm(Result8hrgL ~ D0Fed2TxGrp, data=clean)
 summary(lm_8hr)
 
 clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, color=D0Fed2TxGrp)) +
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, fill=D0Fed2TxGrp)) +
   theme_classic()+
-  geom_boxplot(outlier.color="black") +
-  geom_jitter() +
-  scale_color_manual(
+  geom_boxplot() +
+  geom_jitter(alpha = 0.5) +
+  scale_fill_manual(
     values = c(
       "MRB" = "grey30",
       "CSB" = "gold",
@@ -517,7 +530,7 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, color=D0Fed2TxGrp)) +
        y = "Serum IgG at 8 hrs")+
   scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10)) +
   theme(legend.position = "none", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 
 
 
@@ -617,6 +630,11 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = propconsume, color=D0Fed2TxGrp)) +
 #| echo: false
 #| warning: false
 
+MCCS |> 
+  group_by(type) |>  
+  summarize (mean = mean(F2ColostIgGgL, na.rm=TRUE), 
+             sd = sd(F2ColostIgGgL, na.rm = TRUE))
+
 clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(F2ColostIgGgL), 
@@ -688,6 +706,46 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
 
 ## BOTH FEEDINGS
 
+### Time from  Birth to Second Feeding, First feeding to Second Feeding
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+
+clean |> 
+  summarize(
+    meanfull = mean(HrsBtoMilk), 
+    sdfull = sd (HrsBtoMilk), 
+    meanpart = mean(HrsF2toMilk), 
+    sdpart = sd(HrsF2toMilk)
+  )
+
+
+#birth to milk replacer feeding
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(HrsBtoMilk), 
+             sd = sd(HrsBtoMilk))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_full <- lm(HrsBtoMilk ~ D0Fed2TxGrp, data=clean)
+summary(lm_full)
+emmeans(lm_full, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
+
+#first feeding to milk replacer feeding
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(HrsF2toMilk), 
+             sd = sd(HrsF2toMilk))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_part <- lm(HrsF2toMilk ~ D0Fed2TxGrp, data=clean)
+summary(lm_part)
+emmeans(lm_part, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
+```
+
 ### Total Dose IgG Consumed (F1 + F2)
 
 ```{r}
@@ -706,11 +764,11 @@ emmeans(lm_colstdose, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1F2TotIgGconsumg, color=D0Fed2TxGrp)) +
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1F2TotIgGconsumg, fill=D0Fed2TxGrp)) +
   theme_classic()+
-  geom_boxplot(outlier.color="black") +
-  geom_jitter() +
-  scale_color_manual(
+  geom_boxplot() +
+  geom_jitter(alpha = 0.5) +
+  scale_fill_manual(
     values = c(
       "MRB" = "grey30",
       "CSB" = "gold",
@@ -721,7 +779,7 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1F2TotIgGconsumg, color=D0Fed2TxGrp))
        y = "Total IgG Dose (g)")+
   scale_y_continuous(limits = c(0, 600), breaks = seq(0, 600, by = 100))+
   theme(legend.position = "none", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 ```
 
 ### Total Volume Consume (F1+F2)
@@ -742,11 +800,11 @@ emmeans(lm_Tvol, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = TotalVol, color=D0Fed2TxGrp)) +
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = TotalVol, fill=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
-  geom_jitter() +
-    scale_color_manual(
+  geom_jitter(alpha = 0.5) +
+    scale_fill_manual(
     values = c(
       "MRB" = "grey30",
       "CSB" = "gold",
@@ -754,10 +812,10 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = TotalVol, color=D0Fed2TxGrp)) +
       "MCB" = "red3",
       "MCT" = "red4")) +
   labs(x = NULL, 
-       y = "Total Volume Consumed")+
+       y = "Total Volume Consumed (mL)")+
   scale_y_continuous(limits = c(0, 7000), breaks = seq(0, 7000, by = 1000))+
   theme(legend.position = "none", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 ```
 
 ### 24hr serum IgG
@@ -784,11 +842,11 @@ summary(lm_24hr)
 
 
 clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, fill=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
-  geom_jitter() +
-  scale_color_manual(
+  geom_jitter(alpha = 0.5) +
+  scale_fill_manual(
     values = c(
       "MRB" = "grey30",
       "CSB" = "gold",
@@ -799,7 +857,7 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result24hrgL, color=D0Fed2TxGrp)) +
        y = "Serum IgG at 24 hrs")+
   scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 10)) +
   theme(legend.position = "none", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
  
 #serum IgG if calves had refusals at second feeding
 

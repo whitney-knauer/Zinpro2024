@@ -920,7 +920,7 @@ emm_df <- as.data.frame(emm)
 
 
 ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
-  geom_line() +
+  geom_line(size = 1.1) +
   geom_point() +
   scale_color_manual(
     name = NULL, 
@@ -932,11 +932,11 @@ ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGr
       "MCT" = "red4")) +
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
     labs(
-    x = "Hour from Feeding Time",
+    x = "Hour from Second Feeding",
     y = "Standing Time (min)") +
   theme_classic() +
    theme(legend.position = "top", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 
 
 ```
@@ -1215,7 +1215,7 @@ emm_df <- as.data.frame(emm)
 
 
 ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
-  geom_line() +
+  geom_line(size=1.1) +
   geom_point() +
   scale_color_manual(
     name = NULL, 
@@ -1228,10 +1228,10 @@ ggplot(emm_df, aes(x = hour, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGr
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
     labs(
     x = "Hour from Feeding Time",
-    y = "Steps") +
+    y = "Steps(n)") +
   theme_classic() +
    theme(legend.position = "top", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 
 
 
@@ -1397,11 +1397,11 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
     labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
   ) +
   labs(
-    x = NULL,
+    x = "Minutes from Second Feeding",
     y = "Standing Time (min)") +
   theme_classic() +
    theme(legend.position = "top", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 
 
 
@@ -1733,11 +1733,11 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
     labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
   ) +
   labs(
-    x = NULL,
+    x = "Minutes from Sceond Feeding",
     y = "Steps (n)") +
   theme_classic() +
    theme(legend.position = "top", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 
 
 

@@ -640,3 +640,90 @@ contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
 
 ```
+
+## Graphs for Presentation (Scour, THS)
+
+Scours
+
+```{r}
+
+df <- data.frame(
+  Group = c("MRB", "CSB", "CST", "MCB", "MCT"),
+  event = c(15.3, 9.1, 22.0, 9.8, 11.5))
+ 
+df$Group <- factor(df$Group, levels = c("MRB", "CSB", "CST", "MCB", "MCT"))
+
+df |> 
+  ggplot(aes(x = Group, y = event, fill = Group))+
+  geom_bar(stat= "identity")+
+  geom_text(aes(label = paste0(round(event, 1), "%")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+
+  theme_classic() +
+  labs(x = NULL, 
+       y = "Proportion of Observations FS > 1")+
+    scale_y_continuous(limits = c(0, 25), breaks = seq(0, 25, by = 5))+
+  theme(legend.position = "none", 
+        text = element_text(family = "Arial", size = 14))
+```
+
+THS
+
+```{r}
+df <- data.frame(
+  Group = c("MRB", "CSB", "CST", "MCB", "MCT"),
+  event = c(33.6, 16.2, 32.6, 23.2, 25.6))
+ 
+df$Group <- factor(df$Group, levels = c("MRB", "CSB", "CST", "MCB", "MCT"))
+
+df |> 
+  ggplot(aes(x = Group, y = event, fill = Group))+
+  geom_bar(stat= "identity")+
+  geom_text(aes(label = paste0(round(event, 1), "%")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+
+  theme_classic() +
+  labs(x = NULL, 
+       y = "Proportion of Observations THS > 3")+
+    scale_y_continuous(limits = c(0, 40), breaks = seq(0, 40, by = 5))+
+  theme(legend.position = "none", 
+        text = element_text(family = "Arial", size = 14))
+```
+
+Refusals
+
+```{r}
+df <- data.frame(
+  Group = c("MRB", "CSB", "CST", "MCB", "MCT"),
+  event = c(58.0, 16.7, 30.9, 52.2, 39.8))
+ 
+df$Group <- factor(df$Group, levels = c("MRB", "CSB", "CST", "MCB", "MCT"))
+
+df |> 
+  ggplot(aes(x = Group, y = event, fill = Group))+
+  geom_bar(stat= "identity")+
+  geom_text(aes(label = paste0(round(event, 1), "%")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+
+  theme_classic() +
+  labs(x = NULL, 
+       y = "Refusals (% of calves)")+
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+  theme(legend.position = "none", 
+        text = element_text(family = "Arial", size = 14))
+```
