@@ -706,7 +706,7 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
 
 ## BOTH FEEDINGS
 
-### Time from  Birth to Second Feeding, First feeding to Second Feeding
+### Time from Birth to Second Feeding, First feeding to Second Feeding
 
 ```{r}
 #| echo: false

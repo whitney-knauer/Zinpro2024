@@ -669,7 +669,8 @@ df |>
        y = "Proportion of Observations FS > 1")+
     scale_y_continuous(limits = c(0, 25), breaks = seq(0, 25, by = 5))+
   theme(legend.position = "none", 
-        text = element_text(family = "Arial", size = 14))
+        text = element_text(family = "Arial", size = 14)) +
+scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 20))
 ```
 
 THS
@@ -695,7 +696,7 @@ df |>
   theme_classic() +
   labs(x = NULL, 
        y = "Proportion of Observations THS > 3")+
-    scale_y_continuous(limits = c(0, 40), breaks = seq(0, 40, by = 5))+
+    scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 20))+
   theme(legend.position = "none", 
         text = element_text(family = "Arial", size = 14))
 ```
@@ -723,7 +724,7 @@ df |>
   theme_classic() +
   labs(x = NULL, 
        y = "Refusals (% of calves)")+
-    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
+    scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 20))+
   theme(legend.position = "none", 
         text = element_text(family = "Arial", size = 14))
 ```
