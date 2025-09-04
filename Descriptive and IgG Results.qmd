@@ -595,11 +595,11 @@ emmeans(lm_refuse, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2VolConsummL, color=D0Fed2TxGrp)) +
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2VolConsummL, fill=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  scale_color_manual(
+  scale_fill_manual(
     values = c(
       "MRB" = "grey30",
       "CSB" = "gold",
@@ -607,9 +607,9 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed2VolConsummL, color=D0Fed2TxGrp))
       "MCB" = "red3",
       "MCT" = "red4")) +
   labs(x = NULL, 
-       y = "Consumed (mLs)")+
+       y = "Amount consumed (mL)")+
    theme(legend.position = "none", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
 
 
 #proportion consumed
@@ -647,11 +647,11 @@ emmeans(lm_colst2, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2ColostIgGgL, color=D0Fed2TxGrp)) +
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2ColostIgGgL, fill=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  scale_color_manual(
+  scale_fill_manual(
     values = c(
       "MRB" = "grey30",
       "CSB" = "gold",
@@ -684,11 +684,11 @@ emmeans(lm_colst2dose, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 
 
 clean |> 
-ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, fill=D0Fed2TxGrp)) +
   theme_classic()+
   geom_boxplot(outlier.color="black") +
   geom_jitter() +
-  scale_color_manual(
+  scale_fill_manual(
     values = c(
       "MRB" = "grey30",
       "CSB" = "gold",
@@ -696,10 +696,10 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F2DoseIgGfedg, color=D0Fed2TxGrp)) +
       "MCB" = "red3",
       "MCT" = "red4")) +
   labs(x = NULL, 
-       y = "Second Feeding IgG dose (g)")+
+       y = "IgG Dose Cosumed (g)")+
    scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 50)) +
   theme(legend.position = "none", 
-        text = element_text(family = "Times New Roman", size = 12))
+        text = element_text(family = "Arial", size = 14))
   
 
 ```

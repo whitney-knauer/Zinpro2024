@@ -378,7 +378,15 @@ layinggrp |>
 ggplot(aes(x = hoursfrom, y = lyingm, color=D0Fed2TxGrp)) +
   theme_classic() +
   geom_point() +  
-  geom_line() +   
+  geom_line() + 
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
   labs(
     title = "Lying Time in the 3d around the second feeding",
     x = "Hours from feeding Time",
@@ -407,9 +415,17 @@ standinggrp |>
 ggplot(aes(x = hoursfrom, y = standm, color=D0Fed2TxGrp)) +
   theme_classic() +
   geom_point() +  
-  geom_line() +   
+  geom_line() +  
+    scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
   labs(
-    title = "Standing Time in the 24hrs around the second feeding",
+    title = "Standing Time in the 3d around the second feeding",
     x = "Hours from feeding Time",
     y = "Standing Time (min)") +
     scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
@@ -434,9 +450,17 @@ stepgrp |>
 ggplot(aes(x = hoursfrom, y = steps, color=D0Fed2TxGrp)) +
   theme_classic() +
   geom_point() +  
-  geom_line() +   
+  geom_line() +  
+    scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
   labs(
-    title = "Steps in the 24hrs around the second feeding",
+    title = "Steps in the 3d around the second feeding",
     x = "Hours from feeding Time",
     y = "Steps (n)") #+
     #scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, by = 5))+
