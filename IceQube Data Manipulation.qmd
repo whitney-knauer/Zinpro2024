@@ -1802,13 +1802,20 @@ summary(pairwise_comparisons_hour_2)
 emm_df <- as.data.frame(modeladj)
 
 ggplot(emm_df, aes(x = hour, y = emmean, color = bottleyn)) +
-  geom_line() +
-  geom_point() +
-  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
-  labs(x = "Hour", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time by Hour") +
+   geom_line( size = 1.1) +
+  geom_point(size = 1.25) +
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "Y" = "gold3",
+      "N" = "red4")) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  labs(x = "Hour from Second Feeding", y = "Standing Time (min)", title = "Adjusted Mean Standing Time") +
   theme_classic()+
     scale_y_continuous(limits = c(0, 20), breaks = seq(0, 20, by = 5))+
-    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2))
+    scale_x_continuous(limits = c(-8, 8), breaks = seq(-8, 8, by = 2)) +
+  theme(legend.position = "right", 
+        text = element_text(family = "Arial", size = 14))  
 
 
 ```
@@ -1891,12 +1898,28 @@ summary(pairwise_comparisons_tffeed_2)
 emm_df <- as.data.frame(modeladj2b)
 
 ggplot(emm_df, aes(x = tffeed, y = emmean, color = bottleyn)) +
-  geom_line() +
-  geom_point() +
-  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), width = 0.2)+
-  labs(x = "Time", y = "Adjusted Mean Standing Time (min)", title = "Adjusted Mean Standing Time in 15min increments") +
-  theme_classic()+
-  scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, by = 1))
+   geom_line( size = 1.1) +
+  geom_point(size = 1.25) +
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "Y" = "gold3",
+      "N" = "red4")) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  scale_x_continuous(
+    breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4),   
+    labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
+  ) +
+  labs(
+    x = "Minutes from Second Feeding",
+    y = "Standing Time (min)",
+  title = "Adjusted Mean Standing Time")+
+  theme_classic() +
+   theme(legend.position = "right", 
+        text = element_text(family = "Arial", size = 14))+  
+  scale_y_continuous(limits = c(0, 11), breaks = seq(0, 11, by = 2))
+
+  
 
 
 ```
