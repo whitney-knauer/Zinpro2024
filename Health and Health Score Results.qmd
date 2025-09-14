@@ -78,6 +78,12 @@ clean<-
   clean |> 
   mutate(refuseMeasure = ifelse(D1MilkRefusemL >= 500, 1, 0)) 
 
+clean <-
+  clean %>% 
+  mutate(refuse1L = ifelse(D1MilkRefusemL >= 1000, 1, 0))
+
+
+
 clean<- 
   clean |> 
   mutate(Treated = 
@@ -580,6 +586,54 @@ summary(contrasts)
 
 ```
 
+### D1 Model using 50%
+
+```{r}
+#This is a calculated measure based on mL and a calf was considered a refusal if they refused 50% or more milk at first milk feeding (1000mLs)
+table(hsd1$D0Fed2TxGrp, hsd1$refuse1L)
+#       0  1
+#  CSB 29  1 = 1/30 = 3.3%
+#  CST 26  4 = 4/30 = 13%
+#  MCB 23  8 = 8/31 = 25.8%
+#  MCT 24  7 = 7/31 = 22.5%
+#  MRB 19 11 = 11/30 = 36.6%
+
+
+CrossTable(hsd1$refuse1L,  hsd1$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(hsd1$refuse1L,  hsd1$CalfSizeLgSm,  fisher=TRUE) #no
+CrossTable(hsd1$refuse1L,  hsd1$SexMF, fisher=TRUE) #yes
+CrossTable(hsd1$refuse1L,  hsd1$D0Fed2TxGrp, fisher = TRUE) #yes
+
+
+
+# Fit a logistic model for refuse.
+hsd1$D0Fed2TxGrp <- factor(hsd1$D0Fed2TxGrp) 
+hsd1$D0Fed2TxGrp <- relevel(hsd1$D0Fed2TxGrp, ref = "MRB")
+model <- glm(refuse1L ~ D0Fed2TxGrp + SexMF, family = "binomial", data = hsd1)
+
+summary(model)
+Anova(model, type = "III")
+emmeans(model, specs = "D0Fed2TxGrp", at = list(D0Fed2TxGrp = c("CSB", "CST", "MCB", "MCT", "MRB")), type = "response")
+
+em <- emmeans(model, specs = "D0Fed2TxGrp", type = "response")
+em_df <- as.data.frame(em)
+
+em_df$odds <- em_df$prob / (1 - em_df$prob)
+em_df$log_odds <- log(em_df$odds)
+em_df$log_odds_lower <- log(em_df$asymp.LCL / (1 - em_df$asymp.LCL))
+em_df$log_odds_upper <- log(em_df$asymp.UCL / (1 - em_df$asymp.UCL))
+
+ref_log_odds <- em_df$log_odds[em_df$D0Fed2TxGrp == "MRB"]
+em_df$OR <- exp(em_df$log_odds - ref_log_odds)
+em_df$OR_lower <- exp(em_df$log_odds_lower - ref_log_odds)
+em_df$OR_upper <- exp(em_df$log_odds_upper - ref_log_odds)
+print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
+
+contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
+summary(contrasts)
+
+```
+
 ## Farm Reported Disease (y/n)
 
 ```{r}
@@ -701,12 +755,40 @@ df |>
         text = element_text(family = "Arial", size = 14))
 ```
 
-Refusals
+Refusals 25%
 
 ```{r}
 df <- data.frame(
   Group = c("MRB", "CSB", "CST", "MCB", "MCT"),
   event = c(58.0, 16.7, 30.9, 52.2, 39.8))
+ 
+df$Group <- factor(df$Group, levels = c("MRB", "CSB", "CST", "MCB", "MCT"))
+
+df |> 
+  ggplot(aes(x = Group, y = event, fill = Group))+
+  geom_bar(stat= "identity")+
+  geom_text(aes(label = paste0(round(event, 1), "%")), 
+            vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4"))+
+  theme_classic() +
+  labs(x = NULL, 
+       y = "Refusals (% of calves)")+
+    scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, by = 20))+
+  theme(legend.position = "none", 
+        text = element_text(family = "Arial", size = 14))
+```
+
+Refusals 50%
+
+```{r}
+df <- data.frame(
+  Group = c("MRB", "CSB", "CST", "MCB", "MCT"),
+  event = c(36.2, 2.8, 11.0, 26.7, 20.5))
  
 df$Group <- factor(df$Group, levels = c("MRB", "CSB", "CST", "MCB", "MCT"))
 
