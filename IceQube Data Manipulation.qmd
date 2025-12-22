@@ -492,6 +492,39 @@ ggplot(aes(x = hoursfrom, y = lb, color=D0Fed2TxGrp)) +
     y = "Steps (n)")
 ```
 
+### MI
+
+```{r}
+migrp <- merged_data |> 
+  filter(hoursfrom >= -8 & hoursfrom <= 64) |> 
+  group_by(CalfID, hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    `Motion Index` = sum(`Motion Index`, na.rm = TRUE)) |> 
+  group_by(hoursfrom, D0Fed2TxGrp) |>  
+  summarize(
+    mi = mean(`Motion Index`, na.rm = TRUE)) |> 
+  ungroup()
+
+
+migrp |> 
+ggplot(aes(x = hoursfrom, y = mi, color=D0Fed2TxGrp)) +
+  theme_classic() +
+  geom_point() +  
+  geom_line() +  
+    scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(
+    title = "MI in the 3d around the second feeding",
+    x = "Hours from feeding Time",
+    y = "MI (n)")
+```
+
 ## By Treatment Group - 8 hr around 2nd Feeding (1hr)
 
 ### Laying
@@ -1425,7 +1458,7 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
     y = "Standing Time (min)") +
   theme_classic() +
    theme(legend.position = "top", 
-        text = element_text(family = "Arial", size = 14))
+        text = element_text(family = "Times New Roman", size = 12))
 
 
 
@@ -1570,7 +1603,7 @@ pairs(emm, by = "D0Fed2TxGrp")
 emm_df <- as.data.frame(emm)
 
 ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
-  geom_line() +
+  geom_line(aes(linetype=D0Fed2TxGrp, group=D0Fed2TxGrp)) +
   geom_point() +
   scale_color_manual(
     name = NULL, 
@@ -1650,6 +1683,7 @@ car::Anova(mod_ar1, type=3)
 
 emm <- emmeans(mod_ar1, ~ tffeed * D0Fed2TxGrp)
 summary(emm)
+emmeans(mod_ar1, ~tffeed)
 pairs(emm, by = "tffeed")
 pairs(emm, by = "D0Fed2TxGrp")
 
@@ -1761,7 +1795,7 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
     y = "Steps (n)") +
   theme_classic() +
    theme(legend.position = "top", 
-        text = element_text(family = "Arial", size = 14))
+        text = element_text(family = "Times New Roman", size = 12))
 
 
 
