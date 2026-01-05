@@ -73,6 +73,15 @@ clean<-
 
 clean$refuse <- as.factor(clean$refuse)
 
+clean<- 
+  clean |> 
+  mutate(drankall=
+           case_when(
+             D0Fed2VolRefusemL > 0    ~ 0, 
+             D0Fed2VolRefusemL == 0   ~ 1))
+
+clean$drankall <- as.factor(clean$drankall)
+
 
 clean<- 
   clean |> 
@@ -551,6 +560,10 @@ clean |>
   group_by (D0Fed2TxGrp) |> 
   count(refuse)
 
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  count(drankall)
+
 clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_refuse <- lm(D0Fed2VolRefusemL ~ D0Fed2TxGrp, data=clean)
 summary(lm_refuse)
@@ -886,7 +899,15 @@ ggplot(mapping = aes(x = refuse, y = Result24hrgL, color=refuse)) +
 clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(D1MilkRefusemL), 
-             sd = sd(D1MilkRefusemL))
+             sd = sd(D1MilkRefusemL), 
+             meanh = mean(HrsF2toMilk))
+
+clean |> 
+  summarize (
+    meanh = mean(HrsF2toMilk), 
+    sd = sd (HrsF2toMilk), 
+    min = min(HrsF2toMilk), 
+    max = max (HrsF2toMilk))
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 

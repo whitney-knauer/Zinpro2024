@@ -1791,7 +1791,7 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
     labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
   ) +
   labs(
-    x = "Minutes from Sceond Feeding",
+    x = "Minutes from Second Feeding",
     y = "Steps (n)") +
   theme_classic() +
    theme(legend.position = "top", 
