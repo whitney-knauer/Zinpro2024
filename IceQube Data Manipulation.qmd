@@ -1438,8 +1438,8 @@ pairs(emm, by = "D0Fed2TxGrp")
 emm_df <- as.data.frame(emm)
 
 ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
-  geom_line( size = 1.1) +
-  geom_point(size = 1.25) +
+  geom_line(aes(linetype = D0Fed2TxGrp), size = 0.7) + 
+  geom_point(size = 1.5) +
   scale_color_manual(
     name = NULL, 
     values = c(
@@ -1448,6 +1448,9 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
       "CST" = "gold3",
       "MCB" = "red3",
       "MCT" = "red4")) +
+scale_linetype_manual(
+    name = NULL,
+    values = c("solid", "dotted", "dashed", "dotdash", "longdash")) + 
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
   scale_x_discrete(
     breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4),   
@@ -1457,8 +1460,10 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
     x = "Minutes from Second Feeding",
     y = "Standing Time (min)") +
   theme_classic() +
-   theme(legend.position = "top", 
-        text = element_text(family = "Times New Roman", size = 12))
+  theme(legend.position = "top", 
+        text = element_text(family = "Times New Roman", size = 12))+
+  scale_y_continuous(limits = c(0,10), breaks = seq(0,10,2))+
+  guides(color = guide_legend(override.aes = list(linetype = c("solid", "dotted", "dashed", "dotdash", "longdash"))))
 
 
 
@@ -1775,8 +1780,8 @@ pairs(emm, by = "D0Fed2TxGrp")
 emm_df <- as.data.frame(emm)
 
 ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
-  geom_line(size = 1.1) +
-  geom_point() +
+  geom_line(aes(linetype = D0Fed2TxGrp), size = 0.7) + 
+  geom_point(size = 1.5) +
   scale_color_manual(
     name = NULL, 
     values = c(
@@ -1785,6 +1790,9 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
       "CST" = "gold3",
       "MCB" = "red3",
       "MCT" = "red4")) +
+scale_linetype_manual(
+    name = NULL,
+    values = c("solid", "dotted", "dashed", "dotdash", "longdash")) + 
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
   scale_x_discrete(
     breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4),   
@@ -1794,9 +1802,10 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2Tx
     x = "Minutes from Second Feeding",
     y = "Steps (n)") +
   theme_classic() +
-   theme(legend.position = "top", 
-        text = element_text(family = "Times New Roman", size = 12))
-
+  theme(legend.position = "top", 
+        text = element_text(family = "Times New Roman", size = 12))+
+  scale_y_continuous(limits = c(0,45), breaks = seq(0,45,5))+
+  guides(color = guide_legend(override.aes = list(linetype = c("solid", "dotted", "dashed", "dotdash", "longdash"))))
 
 
 ```

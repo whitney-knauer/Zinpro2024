@@ -57,6 +57,15 @@ clean <-
   enroll |> 
   filter(removeyn != 1)
 
+clean<- clean %>% 
+  mutate(
+    bwkg = BirthWtLbs/2.2, 
+    percFirst = Fed1VolL/bwkg, 
+    D0Fed2VolConsumL = DOFed2VolConsummL/1000,
+    DOFed2VolOfferedL = DOFed2VolOfferedmL/1000,
+    percSecond = D0Fed2VolConsumL/bwkg, 
+    totaloffered = Fed1VolL + DOFed2VolOfferedL)
+
 #removes calf 113, who did not have correct information    
 
 #changes these variables to "hours" vs. "seconds"
@@ -116,9 +125,17 @@ MCCS <-
       D0Fed2TxGrp == "MCT"  ~ "COL", 
       D0Fed2TxGrp == "CST"  ~ "CS", 
       D0Fed2TxGrp == "CSB"  ~ "CS", 
-      D0Fed2TxGrp == "MRB"  ~ "NONE"
-    )
-  )
+      D0Fed2TxGrp == "MRB"  ~ "NONE"))
+
+
+clean <- clean |> 
+  mutate(
+    botvstube = case_when(
+      D0Fed2TxGrp == "MCB"  ~ "BOT",
+      D0Fed2TxGrp == "MCT"  ~ "TUB", 
+      D0Fed2TxGrp == "CST"  ~ "TUB", 
+      D0Fed2TxGrp == "CSB"  ~ "BOT", 
+      D0Fed2TxGrp == "MRB"  ~ "BOT"))
 
 ```
 
@@ -379,6 +396,37 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = F1DoseIgGfedg, color=D0Fed2TxGrp)) +
         text = element_text(family = "Times New Roman", size = 12))
 ```
 
+### Fed 1 BBW%
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  summarize (mean = mean(percFirst), 
+             sd = sd(percFirst))
+
+
+clean |> 
+  group_by(CalfSizeLgSm) %>% 
+  summarize (mean = mean(percFirst),
+             sd = sd(percFirst), 
+             meanv = mean(Fed1VolL), 
+             sdv = sd(Fed1VolL))
+
+
+
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(percFirst), 
+             sd = sd(percFirst))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_F1perc <- lm(percFirst ~ D0Fed2TxGrp, data=clean)
+summary(lm_F1perc)
+```
+
 ### Assn between bacteria and Colostral IgG
 
 ```{r}
@@ -632,6 +680,13 @@ clean |>
              sd = sd(propconsume))
 
 
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_percon <- lm(propconsume ~ D0Fed2TxGrp, data=clean)
+summary(lm_percon)
+emmeans(lm_percon, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
+
+
+
 clean |> 
 ggplot(mapping = aes(x = D0Fed2TxGrp, y = propconsume, color=D0Fed2TxGrp)) +
   theme_classic()+
@@ -641,6 +696,33 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = propconsume, color=D0Fed2TxGrp)) +
        y = "Proportion Consumed", 
        title = "Treatment vs. Proportion Consumed")
 
+
+clean |> 
+  group_by (botvstube) |> 
+  summarize (mean = mean(propconsume), 
+             sd = sd(propconsume))
+
+```
+
+### Fed 2 BBW%
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  summarize (mean = mean(percSecond), 
+             sd = sd(percSecond))
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(percSecond), 
+             sd = sd(percSecond))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_F2perc <- lm(percSecond ~ D0Fed2TxGrp, data=clean)
+summary(lm_F2perc)
+emmeans(lm_F2perc, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 ```
 
 ### Second Feeding Colostral IgG
@@ -835,6 +917,27 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = TotalVol, fill=D0Fed2TxGrp)) +
   scale_y_continuous(limits = c(0, 7000), breaks = seq(0, 7000, by = 1000))+
   theme(legend.position = "none", 
         text = element_text(family = "Arial", size = 14))
+```
+
+### Total % consume
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean |> 
+  summarize (mean = mean(TotalPropConvOffered), 
+             sd = sd(TotalPropConvOffered))
+
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(TotalPropConvOffered), 
+             sd = sd(TotalPropConvOffered))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_totalperc <- lm(TotalPropConvOffered ~ D0Fed2TxGrp, data=clean)
+summary(lm_totalperc)
+emmeans(lm_totalperc, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 ```
 
 ### 24hr serum IgG
@@ -1079,5 +1182,32 @@ ggplot(IgG, aes(x = D0Fed2TxGrp, y = value, fill = D0Fed2TxGrp)) +
     legend.position = "none",
     text = element_text(family = "Arial", size = 12))+
   scale_y_continuous(limits = c(0, 50), breaks = seq(0, 50, by = 5))
+
+```
+
+## Time to Milk
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+timetomilk <- read_csv("data/timetomilk.csv")
+
+
+
+timetomilk |> 
+  summarize (mean = mean(HrsF2toMilk), 
+             sd = sd(HrsF2toMilk))
+
+timetomilk |> 
+  group_by (TRT) |> 
+  summarize (mean = mean(HrsF2toMilk), 
+             sd = sd(HrsF2toMilk))
+
+timetomilk$TRT <- relevel(factor(timetomilk$TRT), ref = "MRB")
+lm_timetomilk <- lm(HrsF2toMilk ~ TRT, data=timetomilk)
+summary(lm_timetomilk)
+
 
 ```

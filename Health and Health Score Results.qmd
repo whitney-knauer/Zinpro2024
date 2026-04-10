@@ -424,12 +424,13 @@ print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
 #What proportion of calves refused milk in each group?
 
 table(hs$D0Fed2TxGrp, hs$Refuse)
+    
 #       0  1
-#  CSB 83  3 = 3/86=3.4
-#  CST 79  8 = 8/87=9.2
-#  MCB 74 13 = 13/87=14.9
-#  MCT 72 12 = 12/84=14.3
-#  MRB 67 19 = 19/86=22.1
+#  CSB 85  3 = 3/88=3.4
+#  CST 81  8 = 8/89=8.9
+#  MCB 75 13 = 13/88=14.7
+#  MCT 77 13 = 13/90=14.4
+#  MRB 66 20 = 20/86=23.3
 
 #What proportion of calves refused milk in each group by day?
 
@@ -475,7 +476,7 @@ summary(contrasts)
 ```{r}
 #| warning: false
 
-
+ 
 
 #What proportion of calves refused milk at the first feeding according to appetite?
 
