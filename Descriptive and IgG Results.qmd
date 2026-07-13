@@ -43,6 +43,7 @@ library(hms)
 library(gt)
 library(RColorBrewer)
 library(extrafont)
+library(nlme)
 ```
 
 ```{r}
@@ -51,11 +52,16 @@ library(extrafont)
 #| warning: false
 
 enroll <- read_csv('data/Zinpro 2024 enrollment final.csv')
+rmm<- read_csv('data/RMM.csv')
 
 
 clean <-
   enroll |> 
-  filter(removeyn != 1)
+  filter(CalfID!=113)
+
+rmm_clean <-
+  rmm |> 
+  filter(CalfID != 113)
 
 clean<- clean %>% 
   mutate(
@@ -110,6 +116,7 @@ clean<-
   mutate(TotalVol = (D0Fed13or4qt*946.35) + DOFed2VolConsummL)
 
 
+
 IgG <- 
   clean |> 
   select ( D0Fed2TxGrp, Result8hrgL, Result24hrgL) |> 
@@ -154,7 +161,7 @@ n_group <-
   group_by(D0Fed2TxGrp) |> 
   summarize (Count = n())
  
-
+n_group
 
 summary_sex <- 
   clean |> 
@@ -600,8 +607,18 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = Result8hrgL, fill=D0Fed2TxGrp)) +
 #| warning: false
 
 clean |> 
+  summarize (mean = mean(D0Fed2VolRefusemL), 
+             median = median (D0Fed2VolRefusemL),
+             min = min(D0Fed2VolRefusemL),
+             max = max(D0Fed2VolRefusemL),
+             sd = sd(D0Fed2VolRefusemL))
+
+clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(D0Fed2VolRefusemL), 
+             median = median (D0Fed2VolRefusemL),
+             min = min(D0Fed2VolRefusemL),
+             max = max(D0Fed2VolRefusemL),
              sd = sd(D0Fed2VolRefusemL))
 
 clean |> 
@@ -1007,7 +1024,8 @@ ggplot(mapping = aes(x = refuse, y = Result24hrgL, color=refuse)) +
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 
-  summarize (mean = mean(D1MilkRefusemL), 
+  summarize (mean = mean(D1MilkRefusemL),
+             median = median (D1MilkRefusemL),
              sd = sd(D1MilkRefusemL), 
              meanh = mean(HrsF2toMilk))
 
@@ -1073,6 +1091,12 @@ summary(lm_8hrST)#no
 lm_minold8 <- lm(Result8hrgL ~ DOFed1MinOld, data=clean)
 summary(lm_minold8) #no
 
+lm_perc <- lm(Result8hrgL ~ percFirst, data=clean)
+summary(lm_perc)#not associated
+
+lm_dose <- lm(Result8hrgL ~ F1DoseIgGfedg, data=clean)
+summary(lm_dose)#not associated
+
 
 
 #model
@@ -1124,10 +1148,19 @@ summary(lm_24hrST)#no
 lm_minold <- lm(Result24hrgL ~ DOFed1MinOld, data=clean)
 summary(lm_minold) #no
 
+lm_8hrv24<- lm(Result24hrgL ~ Result8hrgL, data=clean)
+summary(lm_8hrv24) #no
+
+lm_perc <- lm(Result24hrgL ~ percFirst, data=clean)
+summary(lm_perc)#not associated
+
+lm_dose <- lm(Result24hrgL ~ F1DoseIgGfedg, data=clean)
+summary(lm_dose)#not associated
+
 
 
 #model
-glmIgG24 <- lm(Result24hrgL ~ D0Fed2TxGrp + CrossbredYN  + SexMF, data=clean)
+glmIgG24 <- lm(Result24hrgL ~ D0Fed2TxGrp + CrossbredYN + SexMF, data=clean)
 summary(glmIgG24)
 plot(glmIgG24)
 car::Anova(glmIgG24, type=3)
@@ -1208,6 +1241,164 @@ timetomilk |>
 timetomilk$TRT <- relevel(factor(timetomilk$TRT), ref = "MRB")
 lm_timetomilk <- lm(HrsF2toMilk ~ TRT, data=timetomilk)
 summary(lm_timetomilk)
+
+
+```
+
+## Change in IgG 8 to 24h
+
+```{r}
+
+#| echo: false
+#| warning: false
+
+
+clean |> 
+  summarize (mean = mean(changeIgG, na.rm=TRUE), 
+             sd = sd(changeIgG, na.rm=TRUE))
+
+
+#one calf in the CSB group that doesn't have a 24hr blood IgG
+clean |> 
+  group_by (D0Fed2TxGrp) |> 
+  summarize (mean = mean(changeIgG, na.rm=TRUE), 
+             sd = sd(changeIgG, na.rm=TRUE))
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_change <- lm(changeIgG ~ D0Fed2TxGrp, data=clean)
+summary(lm_change)
+
+
+clean |> 
+ggplot(mapping = aes(x = D0Fed2TxGrp, y = changeIgG, fill=D0Fed2TxGrp)) +
+  theme_classic()+
+  geom_boxplot(outlier.color="black") +
+  geom_jitter(alpha = 0.5) +
+  scale_fill_manual(
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+  labs(x = NULL, 
+       y = "Change in IgG from 8 to 24 hrs")+
+  scale_y_continuous(limits = c(-20, 30), breaks = seq(-20, 30, by = 5)) +
+  theme(legend.position = "none", 
+        text = element_text(family = "Arial", size = 12))
+ 
+
+
+
+
+
+
+
+
+```
+
+### Model
+
+```{r}
+#| echo: false
+#| warning: false
+
+clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
+lm_24hr <- lm(changeIgG ~ D0Fed2TxGrp, data=clean)
+summary(lm_24hr) #trend 0.09
+
+lm_24hrBreed <- lm(changeIgG ~ CrossbredYN, data=clean)
+summary(lm_24hrBreed)#yes 0.07
+
+lm_24hrSize <- lm(changeIgG ~ CalfSizeLgSm, data=clean)
+summary(lm_24hrSize) #no
+
+lm_24hrBW <- lm(changeIgG ~ BirthWtLbs, data=clean)
+summary(lm_24hrBW)#no
+
+lm_24hrRefuse <- lm(changeIgG ~ refuse, data=clean)
+summary(lm_24hrRefuse)#no
+
+lm_24hrSex <- lm(changeIgG ~ SexMF, data=clean)
+summary(lm_24hrSex) #yes
+
+lm_24hrST <- lm(changeIgG ~ SingleTwinST, data=clean)
+summary(lm_24hrST)#no
+
+lm_minold <- lm(changeIgG ~ DOFed1MinOld, data=clean)
+summary(lm_minold) #no
+
+
+
+
+
+#model
+glmchange <- lm(changeIgG ~ D0Fed2TxGrp + CrossbredYN + SexMF, data=clean)
+summary(glmchange)
+plot(glmchange)
+car::Anova(glmchange, type=3)
+
+
+emmeans (glmchange, ~ D0Fed2TxGrp)
+emmeans(glmchange, ~CrossbredYN)
+emmeans(glmchange, ~SexMF)
+x<- emmeans (glmchange, ~ D0Fed2TxGrp)
+pairwise_comparisons2 <- pairs(x)
+summary(pairwise_comparisons2, adjust="tukey")
+summary(pairwise_comparisons2)
+```
+
+## RMM Model
+
+```{r}
+#| echo: false
+#| warning: false
+
+
+
+rmm_clean$D0Fed2TxGrp <- relevel(factor(rmm_clean$D0Fed2TxGrp), ref = "MRB")
+
+mod_base <- lme(
+  fixed = IgG ~ Time * D0Fed2TxGrp + CrossbredYN + SexMF ,
+  random = ~ 1 | CalfID,
+  data = rmm_clean, 
+  na.action = na.omit)
+
+summary(mod_base)
+car::Anova(mod_base, type=3)
+
+emm <- emmeans(mod_base, ~ Time * D0Fed2TxGrp)
+summary(emm)
+pairs(emm, by = "Time")
+pairs(emm, by = "D0Fed2TxGrp")
+
+emm_df <- as.data.frame(emm)
+emm_df <- emm_df %>%
+  mutate(Time = factor(Time, levels = c("8hr", "24hr")))
+
+ggplot(emm_df, aes(x = Time, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line(aes(linetype = D0Fed2TxGrp), size = 0.7) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+scale_linetype_manual(
+    name = NULL,
+    values = c("solid", "dotted", "dashed", "dotdash", "longdash")) + 
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  labs(
+    x = "Time",
+    y = "Serum IgG (g/L)") +
+  theme_classic() +
+  theme(legend.position = "top", 
+        text = element_text(family = "Times New Roman", size = 12))+
+  scale_y_continuous(limits = c(20,45), breaks = seq(20,45,5))+
+  guides(color = guide_legend(override.aes = list(linetype = c("solid", "dotted", "dashed", "dotdash", "longdash"))))
 
 
 ```
