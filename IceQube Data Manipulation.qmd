@@ -1382,6 +1382,8 @@ ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp)) +
 
 #### With appropriate Model Fit
 
+And messing around with using replacement rather than crossbred.
+
 ```{r}
 
 hr2 <- merged_data |> 
@@ -1466,6 +1468,49 @@ scale_linetype_manual(
   guides(color = guide_legend(override.aes = list(linetype = c("solid", "dotted", "dashed", "dotdash", "longdash"))))
 
 
+mod_ar1.1 <- lme(
+  fixed = standm ~ tffeed * D0Fed2TxGrp + Replacement,
+  random = ~ 1 | CalfID,
+  correlation = corAR1(form = ~ TimeNum | CalfID),
+  data = hr2
+)
+summary(mod_ar1.1)
+car::Anova(mod_ar1.1, type=3)
+
+emm <- emmeans(mod_ar1, ~ tffeed * D0Fed2TxGrp)
+summary(emm)
+pairs(emm, by = "tffeed")
+pairs(emm, by = "D0Fed2TxGrp")
+
+emm_df <- as.data.frame(emm)
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line(aes(linetype = D0Fed2TxGrp), size = 0.7) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    name = NULL, 
+    values = c(
+      "MRB" = "grey30",
+      "CSB" = "gold",
+      "CST" = "gold3",
+      "MCB" = "red3",
+      "MCT" = "red4")) +
+scale_linetype_manual(
+    name = NULL,
+    values = c("solid", "dotted", "dashed", "dotdash", "longdash")) + 
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  scale_x_discrete(
+    breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4),   
+    labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
+  ) +
+  labs(
+    x = "Minutes from Second Feeding",
+    y = "Standing Time (min)") +
+  theme_classic() +
+  theme(legend.position = "top", 
+        text = element_text(family = "Times New Roman", size = 12))+
+  scale_y_continuous(limits = c(0,10), breaks = seq(0,10,2))+
+  guides(color = guide_legend(override.aes = list(linetype = c("solid", "dotted", "dashed", "dotdash", "longdash"))))
 
 
 

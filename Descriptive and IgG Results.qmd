@@ -207,6 +207,19 @@ chi_result <- chisq.test(table_matrix)
 chi_result
 
 
+summary_replace <- 
+  clean |> 
+  group_by(D0Fed2TxGrp, Replacement) |> 
+  summarize(Count = n())
+
+table_replace <- pivot_wider(summary_replace, names_from = Replacement, values_from = Count, values_fill = 0)
+table_matrix <- as.matrix(table_replace[, -1])  
+chi_result <- chisq.test(table_matrix)
+chi_result
+
+
+
+
 sick_<-
   clean |> 
   group_by(D0Fed2TxGrp, FarmDzYN) |> 
@@ -221,6 +234,7 @@ summary_sex
 summary_cb
 summary_size
 summary_twin
+summary_replace
 sick_
 ```
 
@@ -1097,6 +1111,9 @@ summary(lm_perc)#not associated
 lm_dose <- lm(Result8hrgL ~ F1DoseIgGfedg, data=clean)
 summary(lm_dose)#not associated
 
+lm_rep <- lm(Result8hrgL ~ Replacement, data=clean)
+summary(lm_rep)#nope
+
 
 
 #model
@@ -1149,7 +1166,7 @@ lm_minold <- lm(Result24hrgL ~ DOFed1MinOld, data=clean)
 summary(lm_minold) #no
 
 lm_8hrv24<- lm(Result24hrgL ~ Result8hrgL, data=clean)
-summary(lm_8hrv24) #no
+summary(lm_8hrv24) #no 
 
 lm_perc <- lm(Result24hrgL ~ percFirst, data=clean)
 summary(lm_perc)#not associated
@@ -1157,14 +1174,25 @@ summary(lm_perc)#not associated
 lm_dose <- lm(Result24hrgL ~ F1DoseIgGfedg, data=clean)
 summary(lm_dose)#not associated
 
+lm_rep <- lm(Result24hrgL ~ Replacement, data=clean)
+summary(lm_rep)#yes
+
 
 
 #model
-glmIgG24 <- lm(Result24hrgL ~ D0Fed2TxGrp + CrossbredYN + SexMF, data=clean)
+#tested REPLACEMENT in the model, but the model with SexMF and CrossbredYN fit the data better (lower AIC)
+glmIgG24 <- lm(Result24hrgL ~ D0Fed2TxGrp  + Replacement + CrossbredYN, data=clean)
 summary(glmIgG24)
 plot(glmIgG24)
 car::Anova(glmIgG24, type=3)
 
+
+glmIgG24.2 <- lm(Result24hrgL ~ D0Fed2TxGrp  + SexMF + CrossbredYN, data=clean)
+summary(glmIgG24)
+plot(glmIgG24)
+car::Anova(glmIgG24, type=3)
+
+AIC(glmIgG24, glmIgG24.2)
 
 emmeans (glmIgG24, ~ D0Fed2TxGrp)
 emmeans(glmIgG24, ~CrossbredYN)
@@ -1333,14 +1361,13 @@ summary(lm_minold) #no
 
 
 #model
-glmchange <- lm(changeIgG ~ D0Fed2TxGrp + CrossbredYN + SexMF, data=clean)
+glmchange <- lm(changeIgG ~ D0Fed2TxGrp + SexMF, data=clean)
 summary(glmchange)
 plot(glmchange)
 car::Anova(glmchange, type=3)
 
 
 emmeans (glmchange, ~ D0Fed2TxGrp)
-emmeans(glmchange, ~CrossbredYN)
 emmeans(glmchange, ~SexMF)
 x<- emmeans (glmchange, ~ D0Fed2TxGrp)
 pairwise_comparisons2 <- pairs(x)
