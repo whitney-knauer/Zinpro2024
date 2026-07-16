@@ -349,6 +349,14 @@ ggplot(mapping = aes(x = D0Fed2TxGrp, y = DOFed1MinOld, color=D0Fed2TxGrp)) +
 
 clean |> 
   summarize (mean = mean(F1ColostIgGgL), 
+             sd = sd(F1ColostIgGgL), 
+             median = median(F1ColostIgGgL), 
+             min = min(F1ColostIgGgL), 
+             max = max (F1ColostIgGgL))
+
+clean |> 
+  group_by(D0Fed1Batchnum) %>% 
+  summarize (mean = mean(F1ColostIgGgL), 
              sd = sd(F1ColostIgGgL))
 
 clean |> 
@@ -765,12 +773,26 @@ emmeans(lm_F2perc, pairwise ~ D0Fed2TxGrp, adjust = "tukey")
 MCCS |> 
   group_by(type) |>  
   summarize (mean = mean(F2ColostIgGgL, na.rm=TRUE), 
-             sd = sd(F2ColostIgGgL, na.rm = TRUE))
+             sd = sd(F2ColostIgGgL, na.rm = TRUE), 
+            median =median (F2ColostIgGgL, na.rm=TRUE), 
+             min = min (F2ColostIgGgL, na.rm=TRUE), 
+             max = max (F2ColostIgGgL, na.rm=TRUE))
+
 
 clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(F2ColostIgGgL), 
+             sd = sd(F2ColostIgGgL), 
+             median =median (F2ColostIgGgL), 
+             min = min (F2ColostIgGgL), 
+             max = max (F2ColostIgGgL))
+
+clean |> 
+  group_by (D0Fed2Batchnum) |> 
+  summarize (mean = mean(F2ColostIgGgL), 
              sd = sd(F2ColostIgGgL))
+
+
 
 clean$D0Fed2TxGrp <- relevel(factor(clean$D0Fed2TxGrp), ref = "MRB")
 lm_colst2 <- lm(F2ColostIgGgL ~ D0Fed2TxGrp, data=clean)
@@ -1036,11 +1058,24 @@ ggplot(mapping = aes(x = refuse, y = Result24hrgL, color=refuse)) +
 #| echo: false
 #| warning: false
 
+
+clean |> 
+  summarize (mean = mean(D1MilkRefusemL),
+             median = median (D1MilkRefusemL),
+             sd = sd(D1MilkRefusemL), 
+             min = min(D1MilkRefusemL), 
+             max = max (D1MilkRefusemL),
+             meanh = mean(HrsF2toMilk))
+
+
+
 clean |> 
   group_by (D0Fed2TxGrp) |> 
   summarize (mean = mean(D1MilkRefusemL),
              median = median (D1MilkRefusemL),
-             sd = sd(D1MilkRefusemL), 
+             sd = sd(D1MilkRefusemL),
+             min = min(D1MilkRefusemL), 
+             max = max (D1MilkRefusemL),
              meanh = mean(HrsF2toMilk))
 
 clean |> 
@@ -1111,6 +1146,9 @@ summary(lm_perc)#not associated
 lm_dose <- lm(Result8hrgL ~ F1DoseIgGfedg, data=clean)
 summary(lm_dose)#not associated
 
+lm_batch <- lm(Result8hrgL ~ D0Fed1Batchnum, data=clean)
+summary(lm_batch) #no
+
 lm_rep <- lm(Result8hrgL ~ Replacement, data=clean)
 summary(lm_rep)#nope
 
@@ -1177,22 +1215,23 @@ summary(lm_dose)#not associated
 lm_rep <- lm(Result24hrgL ~ Replacement, data=clean)
 summary(lm_rep)#yes
 
-
+lm_batch <- lm(Result24hrgL ~ D0Fed2Batchnum, data=clean)
+summary(lm_batch)
 
 #model
 #tested REPLACEMENT in the model, but the model with SexMF and CrossbredYN fit the data better (lower AIC)
-glmIgG24 <- lm(Result24hrgL ~ D0Fed2TxGrp  + Replacement + CrossbredYN, data=clean)
+glmIgG24.2 <- lm(Result24hrgL ~ D0Fed2TxGrp  + Replacement + CrossbredYN, data=clean)
 summary(glmIgG24)
 plot(glmIgG24)
 car::Anova(glmIgG24, type=3)
 
 
-glmIgG24.2 <- lm(Result24hrgL ~ D0Fed2TxGrp  + SexMF + CrossbredYN, data=clean)
+glmIgG24 <- lm(Result24hrgL ~ D0Fed2TxGrp  + SexMF + CrossbredYN, data=clean)
 summary(glmIgG24)
 plot(glmIgG24)
 car::Anova(glmIgG24, type=3)
 
-AIC(glmIgG24, glmIgG24.2)
+#AIC(glmIgG24, glmIgG24.2)
 
 emmeans (glmIgG24, ~ D0Fed2TxGrp)
 emmeans(glmIgG24, ~CrossbredYN)

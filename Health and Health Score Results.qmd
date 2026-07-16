@@ -50,7 +50,7 @@ enroll <- read_csv('data/Zinpro 2024 enrollment final.csv')
 
 clean <-
   enroll |> 
-  filter(removeyn != 1)
+  filter(CalfID!=113)
 
 #removes calf 113, who did not have correct information    
 
@@ -237,11 +237,11 @@ print(Hungry)
 
 table(hs$D0Fed2TxGrp, hs$Scour)
 #        0  1
-#   CSB 77 11 = 11/88=12.5
-#   CST 68 21 = 21/89=23.6
-#   MCB 78 12 = 12/90=13.3
-#   MCT 74 13 = 13/87=14.9
-#   MRB 72 16 = 16/88=18.2
+#   CSB 79 11 = 11/90=12.2
+#   CST 70 21 = 21/91=23.0
+#   MCB 79 12 = 12/91=13.2
+#   MCT 80 13 = 13/93=13.9
+#   MRB 73 15 = 15/88=17.0
 
 prop.table(table(hs$age, hs$Scour), margin = 1)  
 prop.table(table(hs$CrossbredYN, hs$Scour), margin = 1)  
@@ -279,6 +279,9 @@ print(adjusted_proportions)
 contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
 
+em_link_hs <- emmeans(model, specs = "D0Fed2TxGrp")
+mrb_contrasts <- contrast(em_link_hs, method = "trt.vs.ctrl", ref = 1)
+summary(mrb_contrasts, type = "response", infer = c(TRUE, TRUE))
 ```
 
 ### 1 day Model
@@ -331,10 +334,10 @@ print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
 
 table(hs$D0Fed2TxGrp, hs$Sick)
 #        0  1
-#   CSB 69 16 = 16/85=18.8
-#   CST 56 29 = 29/85=34.1
-#   MCB 63 23 = 23/86=26.7
-#   MCT 59 25 = 25/84=29.7
+#   CSB 71 16 = 16/87=18.4
+#   CST 57 30 = 30/87=34.1
+#   MCB 64 23 = 23/87=26.4
+#   MCT 64 26 = 26/90=28.8
 #   MRB 54 32 = 32/86=37.2
 
 prop.table(table(hs$age, hs$Sick), margin = 1)  
@@ -372,6 +375,11 @@ cat("\nAdjusted Proportions:\n")
 print(adjusted_proportions)
 contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
+
+
+em_link_hs <- emmeans(model, specs = "D0Fed2TxGrp")
+mrb_contrasts <- contrast(em_link_hs, method = "trt.vs.ctrl", ref = 1)
+summary(mrb_contrasts, type = "response", infer = c(TRUE, TRUE))
 ```
 
 ### 1 Day Model
@@ -543,7 +551,7 @@ print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
 ```{r}
 
 #This is a calculated measure based on mL and a calf was considered a refusal if they refused 25% or more milk at first milk feeding (500mLs)
-table(hsd1$D0Fed2TxGrp, hsd1$refuseMeasure)
+table(clean$D0Fed2TxGrp, clean$refuseCALC)
 #       0  1
 #  CSB 24  6 = 5/30 = 16.6%
 #  CST 20 10 = 9/30 = 30%
@@ -552,17 +560,17 @@ table(hsd1$D0Fed2TxGrp, hsd1$refuseMeasure)
 #  MRB 13 18 = 18/31 = 58%
 
 
-CrossTable(hsd1$refuseMeasure,  hsd1$CrossbredYN, fisher=TRUE) #no not associated
-CrossTable(hsd1$refuseMeasure,  hsd1$CalfSizeLgSm,  fisher=TRUE) #no
-CrossTable(hsd1$refuseMeasure,  hsd1$SexMF, fisher=TRUE) #no
-CrossTable(hsd1$refuseMeasure,  hsd1$D0Fed2TxGrp, fisher = TRUE) #yes
+CrossTable(clean$refuseCALC,  clean$CrossbredYN, fisher=TRUE) #no not associated
+CrossTable(clean$refuseCALC,  clean$CalfSizeLgSm,  fisher=TRUE) #no
+CrossTable(clean$refuseCALC,  clean$SexMF, fisher=TRUE) #no
+CrossTable(clean$refuseCALC,  clean$D0Fed2TxGrp, fisher = TRUE) #yes
 
 
 
 # Fit a logistic model for refuse.
-hsd1$D0Fed2TxGrp <- factor(hsd1$D0Fed2TxGrp) 
-hsd1$D0Fed2TxGrp <- relevel(hsd1$D0Fed2TxGrp, ref = "MRB")
-model <- glm(refuseMeasure ~ D0Fed2TxGrp + CalfSizeLgSm, family = "binomial", data = hsd1)
+clean$D0Fed2TxGrp <- factor(clean$D0Fed2TxGrp) 
+clean$D0Fed2TxGrp <- relevel(clean$D0Fed2TxGrp, ref = "MRB")
+model <- glm(refuseCALC ~ D0Fed2TxGrp + CalfSizeLgSm, family = "binomial", data = clean)
 
 summary(model)
 Anova(model, type = "III")
@@ -585,6 +593,40 @@ print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
 contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
 
+
+OR_model <- exp(cbind(OR = coef(model), confint(model)))
+print(OR_model)
+
+
+#ORs for the Table in manuscript: 
+
+# Setup factor and reference group
+clean$D0Fed2TxGrp <- factor(clean$D0Fed2TxGrp) 
+clean$D0Fed2TxGrp <- relevel(clean$D0Fed2TxGrp, ref = "MRB")
+
+# Fit the model
+model <- glm(refuseCALC ~ D0Fed2TxGrp + CalfSizeLgSm, family = "binomial", data = clean)
+
+# Method 1: Quick look at ORs relative to MRB
+round(exp(cbind(OR = coef(model), confint(model))), 3)
+
+# Method 2: Clean EMMEANS output with adjusted p-values vs MRB
+library(emmeans)
+em_link <- emmeans(model, specs = "D0Fed2TxGrp", type = "link")
+or_contrasts <- contrast(em_link, method = "trt.vs.ctrl", ref = 1)
+summary(or_contrasts, type = "response")
+
+
+#ALL comparisons: 
+# 1. Get the estimated marginal means on the log-odds (link) scale
+em_link <- emmeans(model, specs = "D0Fed2TxGrp")
+
+# 2. Compute all pairwise comparisons and exponentiate to get Odds Ratios
+pairwise_results <- contrast(em_link, method = "pairwise", type = "response")
+
+# 3. View the results (includes ORs, Confidence Intervals, and Tukey-adjusted p-values)
+summary(pairwise_results)
+plot(pairwise_results, comparisons = TRUE)
 ```
 
 ### D1 Model using 50%
@@ -643,11 +685,11 @@ summary(contrasts)
 table(clean$D0Fed2TxGrp, clean$FarmDzYN)
 
 #       N  Y
-#  CSB 19 12 = 12/31= 7.7
-#  CST 19 12 = 12/31= 7.7
-#  MCB 19 12 = 12/31= 7.7
-#  MCT 23  8 = 8/31= 5.2
-#  MRB 17 14 = 14/31= 9.0
+#  CSB 19 12 = 12/31= 38.7
+#  CST 19 12 = 12/31= 38.7
+#  MCB 19 12 = 12/31= 38.7
+#  MCT 23  8 = 8/31= 25.8
+#  MRB 17 14 = 14/31= 45.1
 
 table(clean$D0Fed2TxGrp, clean$Treated)
 
@@ -666,6 +708,7 @@ CrossTable(clean$FarmDzYN,  clean$CalfSizeLgSm,  fisher=TRUE) #yes
 CrossTable(clean$FarmDzYN,  clean$SingleTwinST,  fisher=TRUE) #no
 CrossTable(clean$FarmDzYN,  clean$SexMF, fisher=TRUE) #yes
 CrossTable(clean$FarmDzYN,  clean$D0Fed2TxGrp, fisher = TRUE) #no
+CrossTable(clean$FarmDzYN,  clean$Replacement, fisher = TRUE) #no
 
 
 # Fit a logistic model for Farm Treatment.
@@ -694,6 +737,10 @@ print(em_df[, c("D0Fed2TxGrp", "prob", "odds", "OR", "OR_lower", "OR_upper")])
 contrasts <- glht(model, linfct = mcp(D0Fed2TxGrp = "Tukey"))
 summary(contrasts)
 
+
+em_link_hs <- emmeans(model, specs = "D0Fed2TxGrp")
+mrb_contrasts <- contrast(em_link_hs, method = "trt.vs.ctrl", ref = 1)
+summary(mrb_contrasts, type = "response", infer = c(TRUE, TRUE))
 ```
 
 ## Graphs for Presentation (Scour, THS)

@@ -1082,7 +1082,7 @@ anova(mod_base, mod_ar1, mod_rs)
 #AR1 is the best fit, but not really great
 
 mod_ar1 <- lme(
-  fixed = Lying ~ hour * D0Fed2TxGrp + CrossbredYN,
+  fixed = Lying ~ hour * D0Fed2TxGrp + Replacement,
   random = ~ 1 | CalfID,
   correlation = corAR1(form = ~ TimeNum | CalfID),
   data = hourfull
@@ -1424,7 +1424,7 @@ anova(mod_base, mod_ar1, mod_rs)
 #ar1 is the best
 
 mod_ar1 <- lme(
-  fixed = standm ~ tffeed * D0Fed2TxGrp + CrossbredYN,
+  fixed = standm ~ tffeed * D0Fed2TxGrp + Replacement,
   random = ~ 1 | CalfID,
   correlation = corAR1(form = ~ TimeNum | CalfID),
   data = hr2
@@ -1509,9 +1509,43 @@ scale_linetype_manual(
   theme_classic() +
   theme(legend.position = "top", 
         text = element_text(family = "Times New Roman", size = 12))+
-  scale_y_continuous(limits = c(0,10), breaks = seq(0,10,2))+
+  scale_y_continuous(limits = c(0,11), breaks = seq(0,11,2))+
   guides(color = guide_legend(override.aes = list(linetype = c("solid", "dotted", "dashed", "dotdash", "longdash"))))
 
+
+#More accessible color palette: 
+
+ggplot(emm_df, aes(x = tffeed, y = emmean, color = D0Fed2TxGrp, group = D0Fed2TxGrp)) +
+  geom_line(aes(linetype = D0Fed2TxGrp), linewidth = 0.7) + 
+  geom_point(size = 1.5) +
+  # Using ColorBrewer's colorblind-friendly Dark2 palette
+  scale_color_brewer(palette = "Dark2", name = NULL) +
+  scale_linetype_manual(
+    name = NULL,
+    values = c("solid", "dotted", "dashed", "dotdash", "longdash")
+  ) + 
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  scale_x_discrete(
+    breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4),    
+    labels = c("-60", "-45", "-30", "-15", "0", "15", "30", "45", "60")  
+  ) +
+  labs(
+    x = "Minutes from Second Feeding",
+    y = "Standing Time (min)"
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top", 
+    text = element_text(family = "Times New Roman", size = 12)
+  ) +
+  scale_y_continuous(limits = c(0, 11), breaks = seq(0, 11, 2)) +
+  guides(
+    color = guide_legend(
+      override.aes = list(
+        linetype = c("solid", "dotted", "dashed", "dotdash", "longdash")
+      )
+    )
+  )
 
 
 ```
@@ -1637,7 +1671,7 @@ anova(mod_base, mod_ar1, mod_rs)
 #ar1 is the best
 
 mod_ar1 <- lme(
-  fixed = laym ~ tffeed * D0Fed2TxGrp + CrossbredYN,
+  fixed = laym ~ tffeed * D0Fed2TxGrp + Replacement,
   random = ~ 1 | CalfID,
   correlation = corAR1(form = ~ TimeNum | CalfID),
   data = hr2
@@ -1723,7 +1757,7 @@ anova(mod_base, mod_ar1)
 #not sig different from each other. Going to choose AR1
 
 mod_ar1 <- lme(
-  fixed = lb ~ tffeed * D0Fed2TxGrp + CrossbredYN,
+  fixed = lb ~ tffeed * D0Fed2TxGrp + Replacement,
   random = ~ 1 | CalfID,
   correlation = corAR1(form = ~ TimeNum | CalfID),
   data = hr2
@@ -1809,7 +1843,7 @@ anova(mod_base, mod_ar1, mod_rs)
 #AR1 is best
 
 mod_ar1 <- lme(
-  fixed = Steps ~ tffeed * D0Fed2TxGrp + CrossbredYN,
+  fixed = Steps ~ tffeed * D0Fed2TxGrp + Replacement,
   random = ~ 1 | CalfID,
   correlation = corAR1(form = ~ TimeNum | CalfID),
   data = hr2
